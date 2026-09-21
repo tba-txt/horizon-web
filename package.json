@@ -1,0 +1,32 @@
+{
+  "name": "horizon-web",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "node --experimental-require-module ./node_modules/@angular/cli/bin/ng.js",
+    "start": "node --experimental-require-module ./node_modules/@angular/cli/bin/ng.js serve",
+    "build": "node --experimental-require-module ./node_modules/@angular/cli/bin/ng.js build",
+    "watch": "node --experimental-require-module ./node_modules/@angular/cli/bin/ng.js build --watch --configuration development",
+    "test": "node --experimental-require-module ./node_modules/@angular/cli/bin/ng.js test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/common": "^22.1.0",
+    "@angular/compiler": "^22.1.0",
+    "@angular/core": "^22.1.0",
+    "@angular/forms": "^22.1.0",
+    "@angular/platform-browser": "^22.1.0",
+    "@angular/router": "^22.1.0",
+    "bootstrap": "^5.3.8",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^22.1.8",
+    "@angular/cli": "^22.1.8",
+    "@angular/compiler-cli": "^22.1.0",
+    "jsdom": "^28.0.0",
+    "prettier": "^3.8.1",
+    "typescript": "~6.0.2",
+    "vitest": "^4.0.8"
+  }
+}

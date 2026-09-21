@@ -1,0 +1,79 @@
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Global styles for Horizon */
+:root {
+  --primary-horizon: #0056b3;
+}
+
+/* Smooth transitions globally */
+a, button, .btn, input, select {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Card hover effect for destinations and flights */
+.card {
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important;
+}
+
+/* Smooth custom dropdowns */
+.dropdown-menu.show {
+  animation: slideDownFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top;
+  display: block; /* Ensure display block works with animation */
+}
+
+@keyframes slideDownFade {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scaleY(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+/* Page entrance animation */
+app-root > * {
+  animation: fadeInPage 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInPage {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Form controls focus smoothness */
+.form-control, .form-select {
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out !important;
+}
+.form-control:focus, .form-select:focus {
+  border-color: #5BA4D8;
+  box-shadow: 0 0 0 0.25rem rgba(91, 164, 216, 0.25) !important;
+}
+
+/* Wireframe box placeholder */
+.wireframe-box {
+  background-color: #e0e0e0;
+  background-image: linear-gradient(to top left, transparent calc(50% - 1px), #a0a0a0, transparent calc(50% + 1px)),
+                    linear-gradient(to top right, transparent calc(50% - 1px), #a0a0a0, transparent calc(50% + 1px));
+  border: 1px solid #c0c0c0;
+  border-radius: 4px;
+}
+
+/* Toast animation */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
