@@ -1,0 +1,237 @@
+<!-- Backdrop com Blur e Efeito Vidro Escuro -->
+<div class="modal-backdrop-glass" (click)="onClose($event)">
+  
+  <!-- Janela do Modal com Glassmorphism e Cantos Arredondados -->
+  <div
+    class="modal-card-glass"
+    [class.eco-theme]="isEcoDestination()"
+    [class.common-theme]="!isEcoDestination()"
+    (click)="$event.stopPropagation()">
+    
+    <!-- Botão de Fechar Circular em Vidro Fosco -->
+    <button type="button" class="glass-close-btn" (click)="onClose($event)" aria-label="Fechar Modal">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="4" y2="12"></line><line x1="4" y1="4" x2="12" y2="12"></line></svg>
+    </button>
+
+    <!-- Cabeçalho Hero com Imagem do Destino e Overlay de Vidro -->
+    <div class="modal-hero-header">
+      <img 
+        [src]="destination.imageUrl || placeholderImage" 
+        [alt]="destination.name"
+        class="hero-img"
+        (error)="handleImageError($event)"
+      />
+      
+      <!-- Gradiente e metadados em texto -->
+      <div class="hero-overlay">
+        <div class="hero-meta-line mb-2">
+          <span>{{ destination.country }}</span>
+          @if (destination.tourismType) {
+            <span class="hero-meta-separator" aria-hidden="true">·</span>
+            <span>{{ tourismTypeLabel() }}</span>
+          }
+        </div>
+        <h2 class="hero-title">{{ destination.name }}</h2>
+      </div>
+    </div>
+
+    <!-- Conteúdo Scrollável com Efeito de Vidro Suave -->
+    <div class="modal-scroll-content">
+      
+      <div class="row g-4 mb-4">
+        
+        <!-- Coluna 1: Card de Clima em Tempo Real com Barras Animadas (Open-Meteo) -->
+        <div class="col-12 col-lg-6 d-flex">
+          <div class="glass-card p-4 h-100 w-100 d-flex flex-column justify-content-between">
+            
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <button 
+                type="button"
+                class="weather-nav-btn rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
+                [class.eco-nav-btn]="isEcoDestination()"
+                [class.common-nav-btn]="!isEcoDestination()"
+                (click)="prevForecastPage()" 
+                [disabled]="isLoadingWeather || forecastPage() === 0"
+                aria-label="Previsão anterior"
+              >
+                <img src="assets/seta.png" alt="Anterior" class="weather-arrow-icon arrow-left" />
+              </button>
+              
+              <div class="d-flex align-items-center gap-2 text-center">
+                <span class="live-dot-pulse" [class.live-dot-loading]="isLoadingWeather"></span>
+                <span class="fw-bold text-dark" style="font-size: 0.95rem;">Previsão em Tempo Real</span>
+              </div>
+
+              <button 
+                type="button"
+                class="weather-nav-btn rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
+                [class.eco-nav-btn]="isEcoDestination()"
+                [class.common-nav-btn]="!isEcoDestination()"
+                (click)="nextForecastPage()" 
+                [disabled]="isLoadingWeather || forecastPage() === 3"
+                aria-label="Próxima previsão"
+              >
+                <img src="assets/seta.png" alt="Próximo" class="weather-arrow-icon arrow-right" />
+              </button>
+            </div>
+
+            @if (isLoadingWeather) {
+              <!-- Loader Pequeno da Previsão do Tempo -->
+              <div class="weather-loading-container d-flex flex-column align-items-center justify-content-center my-auto py-5">
+                <div class="weather-mini-spinner mb-3">
+                  <div class="spinner-ring" [class.eco-spinner]="isEcoDestination()"></div>
+                  <i class="bi bi-cloud-sun fs-4" [class.text-success]="isEcoDestination()" [class.text-primary]="!isEcoDestination()"></i>
+                </div>
+                <span class="fw-semibold text-dark small">Consultando dados meteorológicos...</span>
+                <span class="text-muted mt-1" style="font-size: 0.75rem;">Conectando à Open-Meteo em tempo real</span>
+              </div>
+            } @else {
+              <!-- Gráfico com Colunas Animadas (Moving Bars) -->
+              <div class="weather-chart-wrapper my-auto">
+                <div class="weather-columns-grid">
+                  @for (day of forecastDays(); track day.label; let idx = $index) {
+                    <div class="weather-col" [style.--bar-index]="idx">
+                      <span class="day-title">{{ day.label }}</span>
+                      
+                      <!-- Trilho da Barra com overflow:hidden para a animação moving-bars -->
+                      <div class="bar-track">
+                        <div 
+                          class="moving-bar" 
+                          [style.height.%]="day.barPercent"
+                          [class.eco-bar]="isEcoDestination()"
+                          [class.polar-bar]="isPolarDestination()"
+                        >
+                          <span class="bar-value">{{ day.temp }}°C</span>
+                        </div>
+                      </div>
+
+                      <!-- Detalhes Climáticos do Dia -->
+                      <div class="day-metrics">
+                        <i class="bi {{ day.icon }}" [class.text-warning]="day.isSunny" [class.text-primary]="!day.isSunny && !day.isRainy" [class.text-info]="day.isRainy"></i>
+                        <span class="hum-text"><i class="bi bi-droplet-fill"></i> {{ day.humidity }}%</span>
+                      </div>
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Faixa de Dados Extras do Clima Open-Meteo -->
+              <div class="weather-extra-strip mt-3 pt-2">
+                <div class="extra-item">
+                  <i class="bi bi-thermometer-half text-danger"></i>
+                  <span>Sensação: <strong>{{ apparentTemp() }}°C</strong></span>
+                </div>
+                <div class="extra-item">
+                  <i class="bi bi-wind text-primary"></i>
+                  <span>Vento: <strong>{{ windSpeed() }} km/h</strong></span>
+                </div>
+                <div class="extra-item">
+                  <i class="bi bi-info-circle text-secondary"></i>
+                  <span><strong>{{ weatherCondition() }}</strong></span>
+                </div>
+              </div>
+            }
+
+          </div>
+        </div>
+
+        <!-- Coluna 2: Informações Ricas do Destino (Não Genéricas) -->
+        <div class="col-12 col-lg-6 d-flex">
+          <div class="glass-card p-4 h-100 w-100 d-flex flex-column justify-content-between">
+            <div>
+              <h3 class="destination-headline mb-2">{{ curated().headline }}</h3>
+              <p class="destination-text mb-3">
+                {{ curated().description }}
+              </p>
+
+              <!-- Melhor época -->
+              <div class="mb-3">
+                <h4 class="section-heading">Melhor época para viajar</h4>
+                <div class="best-time-box mt-1"
+                     [style.background-color]="destinationAccent()"
+                     [style.border-color]="destinationAccentBorder()"
+                     [style.color]="'#ffffff'">
+                  <i class="bi bi-calendar2-week me-2" [style.color]="'#ffffff'"></i>
+                  <span [style.color]="'#ffffff'">{{ curated().bestTime }}</span>
+                </div>
+              </div>
+
+              <!-- Principais Atrações -->
+              <div>
+                <h4 class="section-heading">Atrações imperdíveis</h4>
+                <ul class="attractions-grid list-unstyled mt-2 mb-0">
+                  @for (attr of curated().topAttractions; track attr) {
+                    <li class="attraction-item"
+                        [style.background-color]="destinationAccent()"
+                        [style.border-color]="destinationAccentBorder()">
+                      <i class="bi bi-star-fill" aria-hidden="true" [style.color]="'#ffffff'"></i>
+                      <span [attr.title]="attr" [style.color]="'#ffffff'">{{ attr }}</span>
+                    </li>
+                  }
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Seção Galeria Fotográfica Real (Em Standby para TCC - Para reativar, basta mudar 'showGallery = true' no TS) -->
+      @if (showGallery) {
+        <div class="glass-card p-4 mt-2">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="gallery-heading m-0">
+              <i class="bi bi-camera me-2 text-primary"></i>Galeria de Fotos de {{ destination.name }}
+            </h4>
+            <span class="text-secondary small fw-medium">Experiências inspiradoras</span>
+          </div>
+
+          <div class="row g-3">
+            @for (photo of curated().gallery; track photo.url; let i = $index) {
+              <div [class]="i === 0 ? 'col-12 col-md-6' : (i === 1 ? 'col-12 col-md-6' : 'col-6 col-md-6')">
+                <div class="gallery-photo-card position-relative overflow-hidden">
+                  <img 
+                    [src]="photo.url" 
+                    [alt]="photo.title" 
+                    class="w-100 h-100 object-fit-cover gallery-img"
+                    loading="lazy"
+                  />
+                  <div class="gallery-caption-overlay">
+                    <span class="gallery-caption">{{ photo.title }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+    </div>
+
+    <!-- Barra Inferior Sticky com Efeito Vidro e Ação de Reserva -->
+    <div class="modal-glass-footer">
+      <div class="d-flex align-items-center gap-2">
+        <div class="flight-route-icon">
+          <img src="assets/spImage.avif" alt="São Paulo" class="flight-route-img" />
+        </div>
+        <div>
+          <span class="text-secondary small d-block lh-1">Voo saindo de</span>
+          <strong class="text-dark fs-6">São Paulo (SAO) ➔ {{ destination.name }}</strong>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <div class="text-end d-none d-sm-block">
+          <span class="text-secondary small d-block lh-1">Ida e volta a partir de</span>
+          <span class="price-highlight">{{ formatPrice(destination.basePrice) }}</span>
+        </div>
+        <button class="btn btn-reserve-glow" (click)="onReserve()">
+          <span>RESERVAR AGORA</span>
+          <i class="bi bi-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+

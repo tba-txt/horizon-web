@@ -1,0 +1,99 @@
+:host {
+  display: block;
+}
+
+.hero-container {
+  width: 100%;
+  height: 320px;
+  background: #0b2545;
+  max-height: 320px;
+  overflow: hidden;
+
+  .hero-image {
+    width: 100%;
+    height: 320px;
+    max-height: 320px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+}
+
+.page-title {
+  color: #63B921;
+}
+
+.nav-tabs {
+  gap: 1.5rem;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 4px;
+  }
+
+  .nav-link {
+    cursor: pointer;
+    color: #495057;
+    font-weight: 500;
+    border: none;
+    background: transparent;
+
+    &:hover {
+      color: #63B921 !important;
+    }
+
+    &.active-tab {
+      color: #63B921 !important;
+      border-bottom: 3px solid #63B921 !important;
+    }
+  }
+}
+
+.destination-card {
+  border-color: #63B921 !important;
+  border-width: 2px !important;
+  background-color: #f4f7f9;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08) !important;
+  }
+
+  .card-img-wrapper {
+    height: 220px;
+
+    .brand-logo-tag {
+      height: 28px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+      pointer-events: none;
+    }
+
+    .btn-info-badge {
+      bottom: -16px;
+      right: 15px;
+      width: 32px;
+      height: 32px;
+      background-color: #63B921;
+      border: 2px solid white;
+      z-index: 5;
+    }
+  }
+
+  .dest-card-title {
+    color: #63B921;
+  }
+
+  .dest-price-tag {
+    color: #63B921;
+    font-size: 0.95rem;
+  }
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}

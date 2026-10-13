@@ -6,10 +6,12 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 import { DestinationsService } from '../services/destinations.service';
 import { Destination } from '../models/destination.model';
 
+import { PlaneLoaderComponent } from '../../../shared/components/plane-loader/plane-loader.component';
+
 @Component({
   selector: 'app-destination-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent],
+  imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent, PlaneLoaderComponent],
   template: `
     <app-navbar></app-navbar>
 
@@ -26,11 +28,8 @@ import { Destination } from '../models/destination.model';
 
       <!-- Estado: Loading -->
       @if (isLoading()) {
-        <div class="d-flex flex-column align-items-center justify-content-center py-5">
-          <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
-            <span class="visually-hidden">Carregando detalhes...</span>
-          </div>
-          <p class="text-muted fw-medium">Buscando informações do destino...</p>
+        <div class="py-5">
+          <app-plane-loader></app-plane-loader>
         </div>
       }
 

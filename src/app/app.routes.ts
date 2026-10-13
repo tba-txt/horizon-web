@@ -13,7 +13,11 @@ export const routes: Routes = [
   },
   {
     path: 'forgot-password',
-    redirectTo: 'login'
+    loadComponent: () => import('./features/auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./features/auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent)
   },
   {
     path: 'destinations',
@@ -56,6 +60,16 @@ export const routes: Routes = [
     path: 'flights',
     canActivate: [authGuard],
     loadComponent: () => import('./features/flights/flight-search/flight-search.component').then(m => m.FlightSearchComponent)
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent)
+  },
+  {
+    path: 'checkout',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent)
   },
   { path: '**', redirectTo: 'destinations' }
 ];

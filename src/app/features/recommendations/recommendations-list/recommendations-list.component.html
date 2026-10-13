@@ -1,0 +1,287 @@
+<app-navbar></app-navbar>
+
+<!-- Hero Section -->
+<header class="hero-container position-relative overflow-hidden">
+  <img 
+    src="assets/recommend.webp" 
+    alt="Recomendações de Destinos Horizon" 
+    class="w-100 hero-image"
+    fetchpriority="high"
+    (error)="handleHeroError($event)"
+  />
+</header>
+
+<main class="container px-3 px-lg-4 py-5 mx-auto main-content">
+  
+  <!-- Header da Página (Centralizado e Limpo) -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2">
+    <div>
+      <h1 class="h3 fw-bold text-dark mb-0">Recomendações</h1>
+    </div>
+
+    <div class="d-flex gap-2 mt-3 mt-sm-0">
+      <a routerLink="/quiz" class="btn btn-outline-secondary btn-sm px-3 rounded-pill fw-semibold">
+        <i class="bi bi-patch-question me-1"></i> Refazer Quiz
+      </a>
+      <button (click)="loadRecommendations()" class="btn btn-primary btn-sm px-3 rounded-pill fw-semibold shadow-sm" [disabled]="isLoading()">
+        <i class="bi bi-arrow-clockwise me-1"></i> Atualizar
+      </button>
+    </div>
+  </div>
+
+  <!-- Estado: Loading -->
+  @if (isLoading()) {
+    <div class="py-5">
+      <app-plane-loader></app-plane-loader>
+    </div>
+  }
+
+  <!-- Estado: Erro -->
+  @else if (errorMessage()) {
+    <div class="alert alert-danger d-flex flex-column align-items-center justify-content-center p-4 my-4 rounded-4 text-center" role="alert">
+      <h5 class="fw-bold mb-2">Não foi possível carregar as recomendações.</h5>
+      <p class="mb-3 small text-danger-emphasis">{{ errorMessage() }}</p>
+      <button class="btn btn-outline-danger btn-sm px-4 rounded-pill" (click)="loadRecommendations()">
+        Tentar novamente
+      </button>
+    </div>
+  }
+
+  <!-- Estado: Lista Vazia -->
+  @else if (recommendations().length === 0) {
+    <div class="card border shadow-sm rounded-4 text-center p-5 bg-white">
+      <div class="display-4 text-secondary mb-3">🧭</div>
+      <h3 class="h5 fw-bold text-dark mb-2">Nenhuma recomendação gerada ainda</h3>
+      <p class="text-muted small mb-4 col-md-6 mx-auto">
+        Responda ao nosso Quiz de Viagens para descobrirmos suas preferências de clima, aventura e orçamento!
+      </p>
+      <div class="d-flex justify-content-center gap-2">
+        <a routerLink="/quiz" class="btn btn-primary btn-sm px-4 rounded-pill fw-bold">
+          Responder Quiz Agora →
+        </a>
+        <a routerLink="/destinations" class="btn btn-outline-secondary btn-sm px-4 rounded-pill">
+          Explorar Destinos
+        </a>
+      </div>
+    </div>
+  }
+
+  <!-- Estado: Recomendações Disponíveis -->
+  @else {
+    
+    <!-- SEÇÃO: TOP 3 RECOMENDAÇÕES EM DESTAQUE (3D CARDS ALTERNADOS) -->
+    <!-- LEGENDA: 0 = Editorial (1 col) | 1 1 = Card 3D (2 cols) | - = Margens centralizadas -->
+    <!-- Linha 1: - 1 1 0 - -->
+    <!-- Linha 2: - 0 1 1 - -->
+    <!-- Linha 3: - 1 1 0 - -->
+    @if (topRecommendations().length > 0) {
+      <section class="mb-5">
+        <div class="featured-3d-section mt-3">
+          @for (rec of topRecommendations(); track rec.destinationId; let i = $index) {
+            <div class="featured-3d-row" [class.row-reverse]="i === 1">
+              
+              <!-- CARD 3D (Ocupa 2 colunas: '1 1') -->
+              <div class="card-3d-col">
+                <div class="card-3d-container" appCard3d [maxRotation]="15" [routerLink]="['/flights']" [queryParams]="{ destinationId: rec.destinationId }">
+                  <div class="card-3d-body">
+                    
+                    <!-- Camada Base: Imagem com Overlay -->
+                    <div class="card-3d-media-wrapper">
+                      <img 
+                        [src]="getImageUrl(rec)" 
+                        [alt]="'Recomendação ' + rec.destinationName + ', ' + rec.country" 
+                        class="card-3d-image"
+                        loading="lazy"
+                        decoding="async"
+                        (error)="handleImageError($event)"
+                      />
+                      <div class="card-3d-overlay"></div>
+                    </div>
+
+                    <!-- Camada Flutuante: Badges (translateZ: z-40) -->
+                    <div class="card-3d-badges card-3d-item z-40">
+                      <span class="rank-badge">
+                        {{ i + 1 }}º {{ getRankLabel(i) }}
+                      </span>
+                    </div>
+
+                    <!-- Camada Flutuante: Logo Horizon (translateZ: z-30) -->
+                    <div class="card-3d-brand card-3d-item z-30">
+                      <img src="assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
+                    </div>
+
+                    <!-- Camada Flutuante: Conteúdo do Card (translateZ: z-60) -->
+                    <div class="card-3d-content card-3d-item z-60">
+                      <div class="card-3d-item z-40 mb-1">
+                        <span class="destination-country-tag">
+                          <i class="bi bi-geo-alt-fill me-1"></i>{{ rec.country }}
+                        </span>
+                      </div>
+                      
+                      <h3 class="card-3d-title card-3d-item z-60">{{ rec.destinationName }}</h3>
+                      
+                      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3 pt-2">
+                        <div class="card-3d-item z-40">
+                          <span class="text-white-50 small d-block">A partir de</span>
+                          <strong class="text-white fs-5">{{ formatPrice(rec.basePrice) }}</strong>
+                        </div>
+
+                        <div class="card-3d-item z-80">
+                          <span class="btn-3d-action shadow">
+                            Ver Voos
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                              <line x1="5" y1="12" x2="19" y2="12"></line>
+                              <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- PAINEL EDITORIAL (Ocupa 1 coluna: '0') -->
+              <div class="editorial-col">
+                <div class="editorial-card h-100 p-4 d-flex flex-column justify-content-between position-relative" [class.is-ecotourism]="rec.tourismType === 'ECOTURISMO'">
+                  
+                  <!-- Rank indicator at bottom-left corner -->
+                  <div class="rank-triangle">
+                    <span class="rank-number">{{ i + 1 }}º</span>
+                  </div>
+
+                  <div>
+                    <!-- Header da coluna direita -->
+                    <div class="d-flex align-items-start justify-content-between mb-4 position-relative z-1">
+                      <div>
+                        @if (rec.tourismType) {
+                          <span class="tourism-type-badge px-3 py-1 fw-bold rounded-pill border text-uppercase d-inline-block mb-3">
+                            {{ formatTourismType(rec.tourismType) }}
+                          </span>
+                        }
+                        <p class="text-muted small mb-0 fw-medium location-text">
+                          <i class="bi bi-pin-map-fill me-1 location-icon"></i>
+                          {{ rec.city }}, {{ rec.country }}
+                        </p>
+                      </div>
+
+                      <!-- Match Ring -->
+                      @if (rec.score !== undefined && rec.score !== null) {
+                        <div class="match-ring-container" title="Índice de afinidade com o seu perfil">
+                          <svg viewBox="0 0 36 36" class="circular-chart">
+                            <path class="circle-bg"
+                              d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                            />
+                            <path class="circle"
+                              [attr.stroke-dasharray]="getScorePercentage(rec.score) + ', 100'"
+                              d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                            />
+                          </svg>
+                          <div class="match-text">
+                            <span class="percentage">{{ formatScore(rec.score) }}</span>
+                          </div>
+                        </div>
+                      }
+                    </div>
+
+                    <!-- Texto Editorial (Motivo) -->
+                    <div class="editorial-body mb-3 position-relative z-1">
+                      <p class="mb-0 editorial-quote">
+                        {{ getEditorialText(rec, i) }}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="pt-3 mt-auto d-flex justify-content-end position-relative" style="z-index: 2;">
+                    <a [routerLink]="['/flights']" [queryParams]="{ destinationId: rec.destinationId }" class="btn CartBtn btn-embarcar rounded-pill fw-bold text-white border-0 shadow-sm" style="width: 140px; text-decoration: none;">
+                      <div class="btn-text-wrapper">
+                        <span class="btn-text">Embarcar</span>
+                      </div>
+                    </a>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- SEÇÃO: QUEM SOU EU DE ACORDO COM O HORIZON (DNA & INSIGHTS DO ALGORITMO) -->
+    <app-traveler-identity></app-traveler-identity>
+
+    <!-- SEÇÃO: OUTRAS RECOMENDAÇÕES (CARDS PADRÃO) -->
+    @if (otherRecommendations().length > 0) {
+      <section class="mt-5 pt-3">
+        <div class="mb-4">
+          <h2 class="h5 fw-bold text-dark mb-0">Mais Destinos Compatíveis</h2>
+        </div>
+
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
+          @for (rec of otherRecommendations(); track rec.destinationId) {
+            <div class="col">
+              <div class="card h-100 border rounded-3 overflow-hidden destination-card shadow-sm">
+                
+                <div class="position-relative cursor-pointer card-img-wrapper" [routerLink]="['/flights']" [queryParams]="{ destinationId: rec.destinationId }">
+                  <img 
+                    [src]="getImageUrl(rec)" 
+                    [alt]="'Recomendação ' + rec.destinationName + ', ' + rec.country" 
+                    class="w-100 h-100 object-fit-cover"
+                    loading="lazy"
+                    decoding="async"
+                    (error)="handleImageError($event)"
+                  />
+                  
+                  <!-- Horizon Tag (Top Left) -->
+                  <div class="position-absolute top-0 start-0 p-2 pointer-events-none">
+                    <img src="assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
+                  </div>
+
+                  <!-- Score Pill (Top Right) -->
+                  @if (rec.score !== undefined && rec.score !== null) {
+                    <div class="position-absolute top-0 end-0 m-2">
+                      <span class="badge text-white rounded-pill px-3 py-2 fw-bold shadow-sm score-tag-small">
+                        ⭐ {{ formatScore(rec.score) }} compatível
+                      </span>
+                    </div>
+                  }
+
+                  <!-- Botão Info (Bottom Right overlapping) -->
+                  <button class="btn position-absolute rounded-3 p-1 d-flex align-items-center justify-content-center shadow-sm btn-info-badge"
+                          [attr.aria-label]="'Ver voos disponíveis para ' + rec.destinationName"
+                          [routerLink]="['/flights']" [queryParams]="{ destinationId: rec.destinationId }">
+                    <img src="assets/info-icon.png" alt="Informações" class="w-100 h-100 object-fit-contain">
+                  </button>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body p-4 pt-3 d-flex flex-column cursor-pointer" [routerLink]="['/flights']" [queryParams]="{ destinationId: rec.destinationId }">
+                  <h3 class="h6 mb-1 cursor-pointer dest-card-title">
+                    <span class="fw-bold">{{ rec.destinationName }}</span> 
+                    <span class="fw-normal">({{ rec.country }})</span>
+                  </h3>
+                  <p class="mb-0 fw-semibold mt-1 dest-price-tag">
+                    Voo ida e volta a partir de {{ formatPrice(rec.basePrice) }}
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+  }
+
+</main>
+
+<!-- Footer -->
+<app-footer></app-footer>

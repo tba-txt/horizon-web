@@ -22,11 +22,19 @@ export class AuthService {
 
   public isLoggedIn = signal<boolean>(!!this.tokenStorage.getToken());
 
-  public login(credentials: LoginRequest): Observable<LoginResponse> {
+  public isAuthenticated(): boolean {
+    const hasToken = !!this.tokenStorage.getToken();
+    if (this.isLoggedIn() !== hasToken) {
+      this.isLoggedIn.set(hasToken);
+    }
+    return hasToken;
+  }
+
+  public login(credentials: LoginRequest, rememberMe: boolean = true): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login`, credentials).pipe(
       tap(response => {
         if (response?.token) {
-          this.tokenStorage.saveToken(response.token);
+          this.tokenStorage.saveToken(response.token, rememberMe);
           this.isLoggedIn.set(true);
         }
       })

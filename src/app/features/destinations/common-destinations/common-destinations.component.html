@@ -1,0 +1,94 @@
+<app-navbar></app-navbar>
+
+<!-- Hero Section -->
+<header class="hero-container position-relative overflow-hidden">
+  <img 
+    src="assets/comum.webp" 
+    alt="Destinos Comuns Hero" 
+    class="w-100 hero-image"
+    (error)="handleHeroError($event)"
+  />
+</header>
+
+<main class="container py-5">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/destinations" class="text-decoration-none">Destinos</a></li>
+      <li class="breadcrumb-item active" aria-current="page">Destinos Comuns</li>
+    </ol>
+  </nav>
+
+  <div class="mb-4 pb-3">
+    <h1 class="h2 fw-bold mb-1 page-title">Destinos Comuns</h1>
+  </div>
+
+  <!-- Filtro por Continente -->
+  <div class="mb-4">
+    <ul class="nav nav-tabs border-0 custom-tabs flex-nowrap overflow-auto">
+      <li class="nav-item">
+        <a class="nav-link px-0 pb-3" [class.active-tab]="selectedContinent() === null" (click)="setContinent(null)">Todos</a>
+      </li>
+      @for (continent of continents; track continent) {
+        <li class="nav-item">
+          <a class="nav-link px-0 pb-3 text-nowrap" [class.active-tab]="selectedContinent() === continent" (click)="setContinent(continent)">{{ continent }}</a>
+        </li>
+      }
+    </ul>
+  </div>
+
+  @if (isLoading()) {
+    <div class="py-5">
+      <app-plane-loader></app-plane-loader>
+    </div>
+  } @else if (filteredDestinations().length === 0) {
+    <div class="text-center py-5 rounded-4 bg-light border border-secondary border-opacity-10">
+      <p class="text-secondary mb-0 fw-medium">Não foram encontrados destinos para este continente.</p>
+    </div>
+  } @else {
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-4">
+      @for (dest of filteredDestinations(); track dest.id) {
+        <div class="col">
+          <div class="card h-100 border rounded-3 overflow-hidden destination-card shadow-sm">
+            
+            <div class="position-relative cursor-pointer card-img-wrapper" [routerLink]="['/flights']" [queryParams]="{ destinationId: dest.id }">
+              <img 
+                [src]="dest.imageUrl || placeholderImage" 
+                [alt]="dest.name" 
+                class="w-100 h-100 object-fit-cover"
+                loading="lazy"
+                (error)="handleImageError($event)"
+              />
+              
+              <!-- Horizon Tag (Top Left) -->
+              <div class="position-absolute top-0 start-0 p-2 pointer-events-none">
+                <img src="assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
+              </div>
+
+              <!-- Botão Info (Bottom Right overlapping) -->
+              <button class="btn position-absolute rounded-3 p-1 d-flex align-items-center justify-content-center shadow-sm btn-info-badge"
+                      [routerLink]="['/flights']" [queryParams]="{ destinationId: dest.id }">
+                <img src="assets/info-icon.png" alt="Info" class="w-100 h-100 object-fit-contain">
+              </button>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body p-4 pt-3 d-flex flex-column cursor-pointer" [routerLink]="['/flights']" [queryParams]="{ destinationId: dest.id }">
+              <h3 class="h5 mb-1 cursor-pointer dest-card-title">
+                <span class="fw-bold">{{ dest.name }}</span> 
+                <span class="fw-normal">({{ dest.country }})</span>
+              </h3>
+              <p class="mb-0 fw-semibold mt-1 dest-price-tag">
+                Voo de ida e volta a partir de {{ formatPrice(dest.basePrice) }}
+              </p>
+            </div>
+
+          </div>
+        </div>
+      }
+    </div>
+  }
+</main>
+
+<!-- Footer -->
+<app-footer></app-footer>

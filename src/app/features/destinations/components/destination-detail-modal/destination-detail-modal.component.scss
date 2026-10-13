@@ -1,0 +1,652 @@
+// Modal Backdrop com Efeito de Vidro Fosco
+.modal-backdrop-glass {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow-y: auto;
+  animation: fadeIn 0.25s ease-out;
+}
+
+// Janela Principal do Modal (Glassmorphism de Alto Padrão)
+.modal-card-glass {
+  width: 100%;
+  max-width: 920px;
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-radius: 28px;
+  box-shadow: 0 30px 80px -15px rgba(15, 23, 42, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+  position: relative;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --destination-accent: #5ba4d8;
+  --destination-accent-strong: #266892;
+  --destination-accent-ink: #ffffff;
+
+  &.eco-theme {
+    --destination-accent: #65a30d;
+    --destination-accent-strong: #3f6600;
+  }
+}
+
+// Botão de Fechar em Vidro Fosco
+.glass-close-btn {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 20;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.75);
+    transform: rotate(90deg) scale(1.08);
+  }
+}
+
+// Hero Header com Imagem e Gradiente
+.modal-hero-header {
+  position: relative;
+  height: 280px;
+  width: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &:hover .hero-img {
+    transform: scale(1.03);
+  }
+
+  .hero-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 24px 28px 20px;
+    background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.88) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  .hero-title {
+    color: #ffffff;
+    font-size: 2.4rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  }
+}
+
+// País e categoria sem badges ou fundos arredondados
+.hero-meta-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+
+  .hero-meta-separator {
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+// Conteúdo Scrollável com Scrollbar Minimalista
+.modal-scroll-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 28px;
+  background: #f8fafc;
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+}
+
+// Cards Internos de Vidro Fosco
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+// Indicador Ao Vivo Open-Meteo
+.live-dot-pulse {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: #10b981;
+  display: inline-block;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulseGreen 1.8s infinite;
+}
+
+@keyframes pulseGreen {
+  0% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 7px rgba(16, 185, 129, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+  }
+}
+
+// Botões de Navegação da Previsão de Tempo
+.weather-nav-btn {
+  width: 38px;
+  height: 38px;
+  background: transparent !important;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    border-color: rgba(148, 163, 184, 0.5) !important;
+  }
+
+  &.common-nav-btn {
+    border: 2px solid var(--destination-accent);
+    &:hover:not(:disabled) {
+      background: rgba(91, 164, 216, 0.12) !important;
+      transform: scale(1.05);
+    }
+  }
+
+  &.eco-nav-btn {
+    border: 2px solid var(--destination-accent-strong);
+    &:hover:not(:disabled) {
+      background: rgba(99, 185, 33, 0.12) !important;
+      transform: scale(1.05);
+    }
+  }
+
+  .weather-arrow-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: none;
+
+    &.arrow-left {
+      transform: scaleX(-1);
+    }
+
+    &.arrow-right {
+      transform: none;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------
+// GRÁFICOS QUE SE MOVIMENTAM (ANIMATED MOVING-BARS CHART)
+// ---------------------------------------------------------------------
+.weather-chart-wrapper {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.weather-columns-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  align-items: flex-end;
+
+  &:hover .moving-bar {
+    animation-play-state: paused;
+  }
+}
+
+.weather-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.day-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+// Trilho da Barra com overflow:hidden conforme especificação
+.bar-track {
+  height: 240px;
+  width: 100%;
+  background: rgba(241, 245, 249, 0.75);
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+// Barra Móvel com a Animação moving-bars
+.moving-bar {
+  width: 100%;
+  border-radius: 10px 10px 4px 4px;
+  background: linear-gradient(180deg, #5ba4d8 0%, #266892 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 8px;
+  box-shadow: 0 4px 12px rgba(11, 37, 69, 0.14);
+  animation: moving-bars 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform: translateY(100%);
+  animation-delay: calc(var(--bar-index) * 0.15s);
+  transform-origin: bottom center;
+  min-height: 38px;
+
+  &.eco-bar {
+    background: linear-gradient(180deg, #65a30d 0%, #3f6600 100%);
+    box-shadow: 0 4px 12px rgba(11, 37, 69, 0.14);
+  }
+
+  &.polar-bar {
+    background: linear-gradient(180deg, #5ba4d8 0%, #266892 100%);
+    box-shadow: 0 4px 12px rgba(11, 37, 69, 0.14);
+  }
+}
+
+.bar-value {
+  color: #ffffff;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+// Efeito de movimento das barras conforme especificado pelo usuário
+@keyframes moving-bars { 0% { transform: translateY(100%); } 100% { transform: translateY(0); } }
+
+.day-metrics {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+
+  i {
+    font-size: 1.15rem;
+  }
+
+  .hum-text {
+    font-size: 0.72rem;
+    color: #64748b;
+    font-weight: 600;
+  }
+}
+
+// Faixa com dados extras do Open-Meteo
+.weather-extra-strip {
+  margin-top: 10px;
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.78rem;
+  color: #64748b;
+
+  .extra-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    strong {
+      color: #1e293b;
+    }
+  }
+}
+
+// Tipografia e Conteúdo do Destino
+.destination-headline {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #000000;
+  line-height: 1.35;
+}
+
+.destination-text {
+  font-size: 0.88rem;
+  color: #475569;
+  line-height: 1.6;
+}
+
+.section-heading {
+  margin: 0;
+  color: #000000;
+  font-size: 0.96rem;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.best-time-box {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 16px;
+  background: var(--destination-accent);
+  border: 1px solid var(--destination-accent-strong);
+  border-radius: 14px;
+  color: var(--destination-accent-ink);
+  font-size: 0.82rem;
+  font-weight: 600;
+
+  i {
+    color: var(--destination-accent-ink);
+  }
+}
+
+.attractions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 60px;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.attraction-item {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  height: 60px;
+  padding: 10px 12px;
+  border: 1px solid var(--destination-accent-strong);
+  border-radius: 16px;
+  background: var(--destination-accent);
+  color: var(--destination-accent-ink);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.25;
+
+  span {
+    flex: 1 1 auto;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  i {
+    flex: 0 0 auto;
+    color: var(--destination-accent-ink);
+    font-size: 0.72rem;
+  }
+}
+
+// Galeria de Fotos Real
+.gallery-heading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.gallery-photo-card {
+  height: 170px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+
+  .gallery-img {
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &:hover .gallery-img {
+    transform: scale(1.06);
+  }
+
+  .gallery-caption-overlay {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    z-index: 2;
+  }
+
+  .gallery-caption {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 0.72rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+}
+
+// Barra Inferior Sticky com Efeito Vidro
+.modal-glass-footer {
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 16px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0 0 28px 28px;
+  z-index: 10;
+  flex-shrink: 0;
+
+  .flight-route-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #f0f7ff;
+    border: 1px solid #bae6fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+
+    .flight-route-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .price-highlight {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #10b981;
+    display: block;
+    line-height: 1.2;
+  }
+
+  .btn-reserve-glow {
+    background: linear-gradient(135deg, #ff4081 0%, #f50057 100%);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.92rem;
+    padding: 10px 24px;
+    border-radius: 12px;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 15px rgba(245, 0, 87, 0.35);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    letter-spacing: 0.5px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(245, 0, 87, 0.5);
+      background: linear-gradient(135deg, #f50057 0%, #d81b60 100%);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Animações Globais do Modal
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-hero-header {
+    height: 220px;
+    .hero-title {
+      font-size: 1.8rem;
+    }
+  }
+
+  .weather-extra-strip {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .modal-glass-footer {
+    padding: 12px 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .attractions-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Loader Pequeno da Previsão do Tempo (Open-Meteo)
+.weather-loading-container {
+  min-height: 220px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.weather-mini-spinner {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid rgba(13, 110, 253, 0.15);
+    border-top-color: #0d6efd;
+    animation: spinWeather 1s linear infinite;
+
+    &.eco-spinner {
+      border: 3px solid rgba(25, 135, 84, 0.15);
+      border-top-color: #198754;
+    }
+  }
+
+  i {
+    animation: pulseWeatherIcon 2s ease-in-out infinite alternate;
+  }
+}
+
+.live-dot-loading {
+  background-color: #f59e0b !important;
+  box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7) !important;
+}
+
+@keyframes spinWeather {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulseWeatherIcon {
+  from {
+    transform: scale(0.9);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+

@@ -1,0 +1,273 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+:host(.wide-card) {
+  grid-column: span 2;
+}
+
+.dest-card-wrapper {
+  height: 320px;
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  background-color: #1a2a3a;
+}
+
+.dest-card {
+  border-radius: 16px;
+  transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.6s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2) !important;
+
+    .dest-image {
+      transform: scale(1.05);
+    }
+    
+    .dest-overlay {
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.1) 100%);
+    }
+
+    .dest-content {
+      transform: translateY(-10px);
+    }
+
+    .dest-actions {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      margin-top: 16px;
+      max-height: 140px;
+    }
+    
+    .dest-info {
+      opacity: 0.8;
+    }
+  }
+}
+
+.dest-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.dest-overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 40%, transparent 100%);
+  transition: background 0.6s ease;
+}
+
+.dest-content {
+  transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dest-title {
+  font-size: 1.5rem;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.dest-info {
+  transition: opacity 0.3s ease;
+}
+
+.dest-actions {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(16px);
+  max-height: 0;
+  margin-top: 0;
+  overflow: hidden;
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              max-height 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              margin-top 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              visibility 0.65s ease;
+}
+
+/* =========================================================
+   BOTÃO HORIZON TAKEOFF (Idêntico ao Login)
+   ========================================================= */
+.CartBtn {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: linear-gradient(135deg, #4A90E2 0%, #2b6cb0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+  box-shadow: 0 10px 24px rgba(74, 144, 226, 0.35);
+  position: relative;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: linear-gradient(135deg, #357ABD 0%, #1d5088 100%);
+    box-shadow: 0 12px 28px rgba(74, 144, 226, 0.45);
+    transform: translateY(-2px);
+
+    .IconContainer {
+      left: calc(50% - 68px);
+      opacity: 1;
+      transform: rotate(-6deg);
+    }
+
+    .btn-text-wrapper {
+      transform: translateX(14px);
+    }
+
+    .btn-chevron {
+      transform: translateX(4px);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0) scale(0.98);
+    transition-duration: 0.2s;
+  }
+
+  &.is-takeoff {
+    background: linear-gradient(135deg, #2b6cb0 0%, #153e75 100%);
+    cursor: wait;
+
+    .IconContainer {
+      opacity: 1;
+      animation: airplaneFlyAway 2.2s cubic-bezier(0.35, 0, 0.25, 1) forwards;
+    }
+
+    .btn-text-wrapper {
+      transform: translateX(0);
+    }
+
+    .btn-chevron {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    .jet-stream {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      height: 2px;
+      width: 70%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+      animation: jetStreamAnim 2.2s ease-out forwards;
+      z-index: 1;
+    }
+  }
+}
+
+.IconContainer {
+  position: absolute;
+  left: -40px;
+  width: 28px;
+  height: 28px;
+  background-color: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  z-index: 3;
+  transition: all 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.plane-svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+  transition: transform 0.6s ease;
+  width: 16px;
+  height: 16px;
+}
+
+.btn-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.btn-text {
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.btn-chevron {
+  color: rgba(255, 255, 255, 0.85);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+}
+
+@keyframes airplaneFlyAway {
+  0% {
+    left: calc(50% - 68px);
+    transform: translateY(0) rotate(-6deg) scale(1);
+    opacity: 1;
+  }
+  20% {
+    left: calc(50% - 76px);
+    transform: translateY(2px) rotate(0deg) scale(0.96);
+    opacity: 1;
+  }
+  50% {
+    left: calc(50% + 15px);
+    transform: translateY(-4px) rotate(-12deg) scale(1.08);
+    opacity: 1;
+  }
+  75% {
+    left: calc(50% + 75px);
+    transform: translateY(-16px) rotate(-18deg) scale(1.18);
+    opacity: 1;
+  }
+  100% {
+    left: 110%;
+    transform: translateY(-42px) rotate(-24deg) scale(1.28);
+    opacity: 0;
+  }
+}
+
+@keyframes jetStreamAnim {
+  0% {
+    opacity: 0;
+    transform: scaleX(0.2) translateX(-50px);
+  }
+  30% {
+    opacity: 0.9;
+  }
+  70% {
+    opacity: 0.7;
+    transform: scaleX(1) translateX(10px);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(1.5) translateX(50px);
+  }
+}
+
+.btn-discover {
+  background: transparent;
+  border: none;
+  
+  &:hover {
+    color: #e2e8f0 !important;
+  }
+}
+
+/* Responsividade para no quebrar no mobile */
+@media (max-width: 767.98px) {
+  .dest-card-wrapper {
+    
+  }
+}

@@ -1,13 +1,15 @@
 import { Component, OnInit, inject, signal, computed, HostListener } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { FlightsService } from '../services/flights.service';
 import { DestinationsService } from '../../destinations/services/destinations.service';
 import { Flight, FlightSearchParams, FlightSeatClass, SelectedFlightBooking } from '../models/flight.model';
 import { Destination } from '../../destinations/models/destination.model';
+import { ReservationService } from '../../../core/reservations/services/reservation.service';
+import { CheckoutDraft, TripType, SeatClass } from '../../../core/reservations/models/reservation.model';
 
 export interface CalendarDay {
   date: Date;
@@ -18,10 +20,12 @@ export interface CalendarDay {
   isSelected: boolean;
 }
 
+import { PlaneLoaderComponent } from '../../../shared/components/plane-loader/plane-loader.component';
+
 @Component({
   selector: 'app-flight-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, FooterComponent, DatePipe],
+  imports: [CommonModule, FormsModule, NavbarComponent, FooterComponent, PlaneLoaderComponent, DatePipe],
   template: `
     <app-navbar></app-navbar>
 
@@ -49,7 +53,7 @@ export interface CalendarDay {
           <!-- Origem -->
           <div class="col-12 col-md-2">
             <label class="form-label small fw-semibold text-secondary">
-              A partir de
+              Origem
             </label>
             <input 
               type="text" 
@@ -64,21 +68,28 @@ export interface CalendarDay {
             <label for="destinationSelect" class="form-label small fw-semibold text-secondary">
               Destino *
             </label>
-            <select 
-              id="destinationSelect" 
-              class="form-select"
-              [ngModel]="selectedDestinationId()" 
-              (ngModelChange)="onDestinationChange($event)"
-              name="destinationId" 
-              required
-            >
-              <option [ngValue]="null" disabled>Selecione</option>
-              @for (dest of destinations(); track dest.id) {
-                <option [ngValue]="dest.id">
-                  {{ dest.name }} ({{ dest.city }})
-                </option>
+            <div class="destination-picker">
+              <button id="destinationSelect" type="button" class="destination-picker-trigger" [class.destination-picker-open]="isDestinationDropdownOpen()" (click)="toggleDestinationDropdown($event)" [attr.aria-expanded]="isDestinationDropdownOpen()" aria-haspopup="listbox">
+                <span [class.text-muted]="!selectedDestination()">{{ selectedDestinationLabel() }}</span>
+                <span class="destination-picker-caret" aria-hidden="true"></span>
+              </button>
+              @if (isDestinationDropdownOpen()) {
+                <div class="destination-picker-menu" role="listbox" aria-label="Selecione um destino" (click)="$event.stopPropagation()">
+                  <div class="destination-group-label destination-group-label-common">Itinerário Comum</div>
+                  <div class="destination-group-options">
+                    @for (dest of commonDestinations(); track dest.id) {
+                      <button type="button" role="option" class="destination-option" [attr.aria-selected]="selectedDestinationId() === dest.id" [class.destination-option-selected]="selectedDestinationId() === dest.id" (click)="selectDestination(dest, $event)">{{ formatDestinationOption(dest) }}</button>
+                    }
+                  </div>
+                  <div class="destination-group-label destination-group-label-eco">Ecoturismo</div>
+                  <div class="destination-group-options">
+                    @for (dest of ecotourismDestinations(); track dest.id) {
+                      <button type="button" role="option" class="destination-option" [attr.aria-selected]="selectedDestinationId() === dest.id" [class.destination-option-selected]="selectedDestinationId() === dest.id" (click)="selectDestination(dest, $event)">{{ formatDestinationOption(dest) }}</button>
+                    }
+                  </div>
+                </div>
               }
-            </select>
+            </div>
           </div>
 
           <!-- Data de Ida -->
@@ -448,20 +459,22 @@ export interface CalendarDay {
             }
           </div>
 
-          <div class="d-flex justify-content-between align-items-center pt-2">
-            <span class="text-secondary">Total por passageiro</span>
-            <span class="fs-4 fw-bold text-dark">{{ formatTotalPrice() }}</span>
+          <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
+            <div>
+              <span class="text-secondary small d-block">{{ selectionTotalLabel() }}</span>
+              <span class="fs-4 fw-bold text-dark">{{ formatTotalPrice() }}</span>
+            </div>
+            <button class="btn btn-primary px-4 py-2 fw-semibold" (click)="proceedToCheckout()">
+              Prosseguir para Reserva
+            </button>
           </div>
         </div>
       }
 
       <!-- Estado: Loading -->
       @if (isLoading()) {
-        <div class="text-center py-5">
-          <div class="spinner-border mb-3" style="width: 3rem; height: 3rem; color: #4895CC;" role="status">
-            <span class="visually-hidden">Buscando voos...</span>
-          </div>
-          <p class="text-secondary">Buscando voos...</p>
+        <div class="py-5">
+          <app-plane-loader></app-plane-loader>
         </div>
       }
 
@@ -525,7 +538,7 @@ export interface CalendarDay {
                     </div>
 
                     <div class="col-12 col-sm-6 col-md-2">
-                      <span class="text-muted small d-block">Data & Horário</span>
+                      <span class="text-muted small d-block">Data e Horário</span>
                       <span class="fw-bold text-dark d-block">
                         {{ flight.flightDate | date:'dd/MM/yyyy' }}
                       </span>
@@ -547,7 +560,7 @@ export interface CalendarDay {
                     </div>
 
                     <div class="col-12 col-md-5">
-                      <span class="text-muted small d-block mb-2">Selecione a classe:</span>
+                      <span class="text-muted small d-block mb-2">Selecione a classe · preço por trecho e passageiro:</span>
                       <div class="d-flex flex-column gap-1">
                         
                         <!-- Básico -->
@@ -563,7 +576,7 @@ export interface CalendarDay {
                           <span class="d-flex align-items-center gap-1">
                             <span class="fw-semibold">Básico</span>
                             @if (isClassSelected(flight.id, 'BASIC', 'outbound')) {
-                              <span class="text-primary fw-bold ms-1 small">✓ Selecionada</span>
+                              <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
                             }
                           </span>
                           <span class="fw-bold">{{ formatPrice(flight.pricePerPerson) }}</span>
@@ -583,7 +596,7 @@ export interface CalendarDay {
                             <span class="d-flex align-items-center gap-1">
                               <span class="fw-semibold">Executivo</span>
                               @if (isClassSelected(flight.id, 'EXECUTIVE', 'outbound')) {
-                                <span class="text-primary fw-bold ms-1 small">✓ Selecionada</span>
+                                <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
                               }
                             </span>
                             <span class="fw-bold">{{ formatPrice(flight.priceExecutive) }}</span>
@@ -604,7 +617,7 @@ export interface CalendarDay {
                             <span class="d-flex align-items-center gap-1">
                               <span class="fw-semibold">Premium</span>
                               @if (isClassSelected(flight.id, 'PREMIUM', 'outbound')) {
-                                <span class="text-primary fw-bold ms-1 small">✓ Selecionada</span>
+                                <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
                               }
                             </span>
                             <span class="fw-bold">{{ formatPrice(flight.pricePremium) }}</span>
@@ -621,12 +634,13 @@ export interface CalendarDay {
           }
         </section>
 
-        <!-- SEÇÃO: VOOS DE VOLTA (SE EXISTIREM) -->
-        <section class="mt-4">
-          <h3 class="h5 fw-bold text-dark mb-3 d-flex align-items-center gap-2">
-            <span>Voos de Volta</span>
-            <span class="text-secondary fs-6 ms-1">({{ returnFlights().length }})</span>
-          </h3>
+        <!-- SEÇÃO: VOOS DE VOLTA (APENAS SE DATA DE VOLTA FOR SELECIONADA) -->
+        @if (endDate()) {
+          <section class="mt-4">
+            <h3 class="h5 fw-bold text-dark mb-3 d-flex align-items-center gap-2">
+              <span>Voos de Volta</span>
+              <span class="text-secondary fs-6 ms-1">({{ returnFlights().length }})</span>
+            </h3>
 
           @if (returnFlights().length === 0) {
             <div class="p-3 bg-light rounded-3 text-muted small">
@@ -653,7 +667,7 @@ export interface CalendarDay {
                     </div>
 
                     <div class="col-12 col-sm-6 col-md-2">
-                      <span class="text-muted small d-block">Data & Horário</span>
+                      <span class="text-muted small d-block">Data e Horário</span>
                       <span class="fw-bold text-dark d-block">
                         {{ flight.flightDate | date:'dd/MM/yyyy' }}
                       </span>
@@ -675,7 +689,7 @@ export interface CalendarDay {
                     </div>
 
                     <div class="col-12 col-md-5">
-                      <span class="text-muted small d-block mb-2">Selecione a classe:</span>
+                      <span class="text-muted small d-block mb-2">Selecione a classe · preço por trecho e passageiro:</span>
                       <div class="d-flex flex-column gap-1">
                         
                         <!-- Básico -->
@@ -691,7 +705,7 @@ export interface CalendarDay {
                           <span class="d-flex align-items-center gap-1">
                             <span class="fw-semibold">Básico</span>
                             @if (isClassSelected(flight.id, 'BASIC', 'return')) {
-                              <span class="text-primary fw-bold ms-1 small">✓ Selecionada</span>
+                              <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
                             }
                           </span>
                           <span class="fw-bold">{{ formatPrice(flight.pricePerPerson) }}</span>
@@ -711,7 +725,7 @@ export interface CalendarDay {
                             <span class="d-flex align-items-center gap-1">
                               <span class="fw-semibold">Executivo</span>
                               @if (isClassSelected(flight.id, 'EXECUTIVE', 'return')) {
-                                <span class="text-primary fw-bold ms-1 small">✓ Selecionada</span>
+                                <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
                               }
                             </span>
                             <span class="fw-bold">{{ formatPrice(flight.priceExecutive) }}</span>
@@ -732,7 +746,7 @@ export interface CalendarDay {
                             <span class="d-flex align-items-center gap-1">
                               <span class="fw-semibold">Premium</span>
                               @if (isClassSelected(flight.id, 'PREMIUM', 'return')) {
-                                <span class="text-primary fw-bold ms-1 small">✓ Selecionada</span>
+                                <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
                               }
                             </span>
                             <span class="fw-bold">{{ formatPrice(flight.pricePremium) }}</span>
@@ -748,8 +762,9 @@ export interface CalendarDay {
             </div>
           }
         </section>
-
       }
+
+    }
 
     </main>
 
@@ -760,12 +775,16 @@ export interface CalendarDay {
     .hero-container {
       width: 100%;
       background: #0b2545;
-      max-height: 480px;
+      height: 320px;
+      max-height: 320px;
+      overflow: hidden;
     }
     .hero-image {
       width: 100%;
-      height: 480px;
+      height: 320px;
+      max-height: 320px;
       object-fit: cover;
+      object-position: center;
       display: block;
     }
     .flight-card {
@@ -963,12 +982,30 @@ export interface CalendarDay {
     .calendar-day-selected .flight-dot {
       background-color: #ffffff;
     }
+
+    .destination-picker { position: relative; }
+    .destination-picker-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 38px; padding: 0.375rem 0.75rem; border: 1px solid #ced4da; border-radius: 0.75rem; background: #ffffff; color: #212529; font-size: 0.95rem; text-align: left; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .destination-picker-trigger:hover, .destination-picker-open { border-color: #4895CC; }
+    .destination-picker-trigger:focus-visible { outline: 0; border-color: #4895CC; box-shadow: 0 0 0 0.2rem rgba(72, 149, 204, 0.2); }
+    .destination-picker-caret { width: 0.5rem; height: 0.5rem; margin-left: 0.75rem; border-right: 2px solid #475569; border-bottom: 2px solid #475569; transform: rotate(45deg) translateY(-2px); transition: transform 0.2s ease; }
+    .destination-picker-open .destination-picker-caret { transform: rotate(225deg) translateY(-2px); }
+    .destination-picker-menu { position: absolute; z-index: 1060; bottom: calc(100% + 0.5rem); left: 0; width: min(21rem, calc(100vw - 2rem)); max-height: 22rem; overflow-y: auto; border: 1px solid #dbe7f0; border-radius: 0.875rem; background: #ffffff; box-shadow: 0 14px 32px rgba(11, 37, 69, 0.16); padding: 0.375rem; }
+    .destination-group-label { margin: 0.25rem 0.25rem 0.375rem; padding: 0.55rem 0.75rem; border-radius: 0.55rem; color: #ffffff; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.01em; }
+    .destination-group-label-common { background: #4895CC; }
+    .destination-group-label-eco { background: #63B921; }
+    .destination-group-options + .destination-group-label { margin-top: 0.25rem; border-top: 1px solid #e2e8f0; }
+    .destination-option { display: block; width: 100%; border: 0; border-radius: 0.5rem; background: transparent; color: #1e293b; padding: 0.5rem 0.75rem; font-size: 0.9rem; text-align: left; }
+    .destination-option:hover, .destination-option:focus-visible { background: #edf6fc; color: #0B2545; outline: 0; }
+    .destination-option-selected { background: #4895CC; color: #ffffff; font-weight: 600; }
+    .destination-option-selected:hover, .destination-option-selected:focus-visible { background: #357fad; color: #ffffff; }
   `]
 })
 export class FlightSearchComponent implements OnInit {
   private flightsService = inject(FlightsService);
   private destinationsService = inject(DestinationsService);
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private reservationService = inject(ReservationService);
 
   readonly placeholderImage = 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop';
 
@@ -977,11 +1014,32 @@ export class FlightSearchComponent implements OnInit {
   }
 
   destinations = signal<Destination[]>([]);
+  commonDestinations = computed(() =>
+    this.destinations().filter(dest => (dest.tourismType || '').trim().toUpperCase() === 'COMUM')
+  );
+  ecotourismDestinations = computed(() =>
+    this.destinations().filter(dest => (dest.tourismType || '').trim().toUpperCase() === 'ECOTURISMO')
+  );
   allFlights = signal<Flight[]>([]);
   destinationFlights = signal<Flight[]>([]);
   isLoadingFlightDates = signal<boolean>(false);
   
   selectedDestinationId = signal<number | null>(null);
+  isDestinationDropdownOpen = signal(false);
+  selectedDestination = computed(() => this.destinations().find(dest => dest.id === this.selectedDestinationId()) ?? null);
+  selectedDestinationLabel = computed(() => {
+    const destination = this.selectedDestination();
+    return destination ? this.formatDestinationOption(destination) : 'Selecione';
+  });
+
+  formatDestinationOption(dest: Destination): string {
+    const name = (dest.name || '').trim();
+    const country = (dest.country || '').trim();
+    if (!country || country.toLowerCase() === name.toLowerCase()) {
+      return name;
+    }
+    return `${name} (${country})`;
+  }
   startDate = signal<string>('');
   endDate = signal<string>('');
   passengers = signal<number>(1);
@@ -998,6 +1056,7 @@ export class FlightSearchComponent implements OnInit {
 
   selectedOutbound = signal<SelectedFlightBooking | null>(null);
   selectedReturn = signal<SelectedFlightBooking | null>(null);
+  preferredSeatClass = signal<FlightSeatClass>('BASIC');
 
   selectedOutboundFlight = computed(() => this.selectedOutbound()?.flight ?? null);
   selectedReturnFlight = computed(() => this.selectedReturn()?.flight ?? null);
@@ -1061,16 +1120,12 @@ export class FlightSearchComponent implements OnInit {
 
   returnFlights = computed(() => {
     const end = this.endDate();
-    const start = this.startDate();
+    if (!end) {
+      return [];
+    }
     return this.allFlights().filter(f => {
       if (f.destinationAirportCode !== 'GRU') return false;
-      if (end) {
-        return f.flightDate.substring(0, 10) === end;
-      }
-      if (start) {
-        return f.flightDate.substring(0, 10) >= start;
-      }
-      return true;
+      return f.flightDate.substring(0, 10) === end;
     });
   });
 
@@ -1079,6 +1134,18 @@ export class FlightSearchComponent implements OnInit {
 
     this.route.queryParams.subscribe(params => {
       let shouldSearch = false;
+      if (params['seatClass']) {
+        const sc = String(params['seatClass']).toUpperCase();
+        if (sc === 'BASIC' || sc === 'EXECUTIVE' || sc === 'PREMIUM') {
+          this.preferredSeatClass.set(sc as FlightSeatClass);
+        }
+      }
+      if (params['passengers']) {
+        const p = Number(params['passengers']);
+        if (!isNaN(p)) {
+          this.passengers.set(p);
+        }
+      }
       if (params['destinationId']) {
         const dId = Number(params['destinationId']);
         if (!isNaN(dId)) {
@@ -1090,17 +1157,13 @@ export class FlightSearchComponent implements OnInit {
             }
             if (params['endDate']) {
               this.endDate.set(params['endDate']);
+            } else {
+              this.endDate.set('');
             }
             if (shouldSearch) {
               this.onSearch();
             }
           });
-        }
-      }
-      if (params['passengers']) {
-        const p = Number(params['passengers']);
-        if (!isNaN(p)) {
-          this.passengers.set(p);
         }
       }
     });
@@ -1134,6 +1197,16 @@ export class FlightSearchComponent implements OnInit {
     }
   }
 
+  toggleDestinationDropdown(event: Event): void {
+    event.stopPropagation();
+    this.isDestinationDropdownOpen.update(isOpen => !isOpen);
+  }
+
+  selectDestination(destination: Destination, event: Event): void {
+    event.stopPropagation();
+    this.isDestinationDropdownOpen.set(false);
+    this.onDestinationChange(destination.id);
+  }
   loadDestinationFlights(destId: number, callback?: () => void): void {
     this.isLoadingFlightDates.set(true);
     this.flightsService.searchFlights({ destinationId: destId }).subscribe({
@@ -1250,6 +1323,7 @@ export class FlightSearchComponent implements OnInit {
 
     if (this.endDate() && this.endDate() < day.dateStr) {
       this.endDate.set('');
+      this.selectedReturn.set(null);
     }
 
     const [y, m, d] = day.dateStr.split('-').map(Number);
@@ -1259,6 +1333,9 @@ export class FlightSearchComponent implements OnInit {
   selectReturnDate(day: CalendarDay, event: Event): void {
     event.stopPropagation();
     if (!day.isAvailable) return;
+    if (this.endDate() !== day.dateStr) {
+      this.selectedReturn.set(null);
+    }
     this.endDate.set(day.dateStr);
     this.isReturnCalendarOpen.set(false);
   }
@@ -1266,6 +1343,7 @@ export class FlightSearchComponent implements OnInit {
   clearReturnDate(event: Event): void {
     event.stopPropagation();
     this.endDate.set('');
+    this.selectedReturn.set(null);
     this.isReturnCalendarOpen.set(false);
   }
 
@@ -1312,6 +1390,9 @@ export class FlightSearchComponent implements OnInit {
       this.isOutboundCalendarOpen.set(false);
       this.isReturnCalendarOpen.set(false);
     }
+    if (!target.closest('.destination-picker')) {
+      this.isDestinationDropdownOpen.set(false);
+    }
   }
 
   loadDestinations(): void {
@@ -1333,6 +1414,10 @@ export class FlightSearchComponent implements OnInit {
     const destId = this.selectedDestinationId();
     if (!destId) return;
 
+    if (!this.endDate()) {
+      this.selectedReturn.set(null);
+    }
+
     this.isLoading.set(true);
     this.errorMessage.set(null);
     this.hasSearched.set(true);
@@ -1346,6 +1431,7 @@ export class FlightSearchComponent implements OnInit {
     this.flightsService.searchFlights(searchParams).subscribe({
       next: (data) => {
         this.allFlights.set(data || []);
+        this.autoSelectFlightsByPreferredClass();
         this.isLoading.set(false);
       },
       error: (error) => {
@@ -1353,6 +1439,38 @@ export class FlightSearchComponent implements OnInit {
         this.errorMessage.set(error.message || 'Falha ao buscar voos.');
       }
     });
+  }
+
+  private resolveAvailableSeatClass(flight: Flight, desired: FlightSeatClass): FlightSeatClass {
+    if (desired === 'EXECUTIVE' && flight.priceExecutive) return 'EXECUTIVE';
+    if (desired === 'PREMIUM' && flight.pricePremium) return 'PREMIUM';
+    return 'BASIC';
+  }
+
+  private autoSelectFlightsByPreferredClass(): void {
+    const targetClass: FlightSeatClass = this.preferredSeatClass() || 'BASIC';
+
+    const outbounds = this.outboundFlights().filter(f => f.availableSeats > 0);
+    if (outbounds.length > 0) {
+      const firstOutbound = outbounds[0];
+      const outClass = this.resolveAvailableSeatClass(firstOutbound, targetClass);
+      this.selectFlight(firstOutbound, outClass, 'outbound');
+    } else {
+      this.selectedOutbound.set(null);
+    }
+
+    if (this.endDate()) {
+      const returns = this.returnFlights().filter(f => f.availableSeats > 0);
+      if (returns.length > 0) {
+        const firstReturn = returns[0];
+        const retClass = this.resolveAvailableSeatClass(firstReturn, targetClass);
+        this.selectFlight(firstReturn, retClass, 'return');
+      } else {
+        this.selectedReturn.set(null);
+      }
+    } else {
+      this.selectedReturn.set(null);
+    }
   }
 
   getClassName(seatClass: FlightSeatClass): string {
@@ -1372,6 +1490,7 @@ export class FlightSearchComponent implements OnInit {
   }
 
   selectFlight(flight: Flight, seatClass: FlightSeatClass, leg: 'outbound' | 'return'): void {
+    this.preferredSeatClass.set(seatClass);
     const booking: SelectedFlightBooking = {
       flight,
       seatClass,
@@ -1413,5 +1532,59 @@ export class FlightSearchComponent implements OnInit {
       total += this.selectedReturn()!.price;
     }
     return this.formatPrice(total);
+  }
+
+  selectionTotalLabel(): string {
+    if (!this.endDate()) return 'Total da viagem por passageiro';
+    if (this.selectedOutbound() && this.selectedReturn()) return 'Total ida e volta por passageiro';
+    return 'Subtotal dos trechos selecionados por passageiro';
+  }
+
+  proceedToCheckout(): void {
+    if (!this.selectedOutbound()) return;
+    const outbound = this.selectedOutbound()!;
+    const returnSel = this.selectedReturn();
+
+    const destId = Number(this.selectedDestinationId() || outbound.flight.destinationId);
+    const dest = this.destinations().find(d => Number(d.id) === destId);
+    const destName = dest ? `${dest.name}, ${dest.country}` : (outbound.flight.destinationAirportCode ? `Destino (${outbound.flight.destinationAirportCode})` : 'Destino Selecionado');
+    const tripType: TripType = returnSel ? 'ROUND_TRIP' : 'ONE_WAY';
+    const pricePerPax = outbound.price + (returnSel?.price || 0);
+    const paxCount = this.passengers() || 1;
+    const estimatedTotal = pricePerPax * paxCount;
+
+    const draft: CheckoutDraft = {
+      destinationId: destId,
+      destinationName: destName,
+      tripType: tripType,
+      passengersCount: paxCount,
+      outboundFlight: {
+        id: outbound.flight.id,
+        flightNumber: outbound.flight.flightNumber,
+        originAirportCode: outbound.flight.originAirportCode,
+        destinationAirportCode: outbound.flight.destinationAirportCode,
+        flightDate: outbound.flight.flightDate,
+        departureTime: outbound.flight.departureTime,
+        arrivalTime: outbound.flight.arrivalTime,
+        seatClass: outbound.seatClass as SeatClass,
+        price: outbound.price
+      },
+      returnFlight: returnSel ? {
+        id: returnSel.flight.id,
+        flightNumber: returnSel.flight.flightNumber,
+        originAirportCode: returnSel.flight.originAirportCode,
+        destinationAirportCode: returnSel.flight.destinationAirportCode,
+        flightDate: returnSel.flight.flightDate,
+        departureTime: returnSel.flight.departureTime,
+        arrivalTime: returnSel.flight.arrivalTime,
+        seatClass: returnSel.seatClass as SeatClass,
+        price: returnSel.price
+      } : null,
+      totalPricePerPassenger: pricePerPax,
+      estimatedTotal: estimatedTotal
+    };
+
+    this.reservationService.setCheckoutDraft(draft);
+    this.router.navigate(['/checkout']);
   }
 }

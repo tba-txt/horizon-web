@@ -14,8 +14,8 @@ import { AuthService } from '../../../core/auth/services/auth.service';
          [style.transition]="'background-color 0.3s ease'"
          [style.z-index]="1050">
       <div class="container">
-        <a class="navbar-brand d-flex align-items-center" routerLink="/destinations">
-          <img src="assets/LogoH.png" alt="Horizon" class="navbar-logo" />
+        <a class="navbar-brand d-flex align-items-center" routerLink="/destinations" aria-label="Horizon - Ir para página inicial de destinos">
+          <img src="assets/LogoH.png" alt="Horizon Travel" class="navbar-logo" width="130" height="42" />
         </a>
 
         <button 
@@ -24,7 +24,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
           (click)="toggleMenu()"
           aria-controls="navbarNav" 
           [attr.aria-expanded]="isMenuOpen" 
-          aria-label="Toggle navigation"
+          aria-label="Alternar menu de navegação"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -59,6 +59,10 @@ import { AuthService } from '../../../core/auth/services/auth.service';
           </ul>
 
           <div class="d-flex align-items-center gap-2">
+            <a routerLink="/profile" routerLinkActive="btn-primary" class="btn btn-sm px-3 fw-semibold text-white d-flex align-items-center gap-1" style="background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.35);">
+              <i class="bi bi-person-circle"></i>
+              <span>Minha Conta</span>
+            </a>
             <button class="btn btn-outline-light btn-sm px-3 fw-semibold" (click)="logout()">
               Sair
             </button>
@@ -132,6 +136,8 @@ export class NavbarComponent implements OnInit {
                          url.includes('/feed') || 
                          url.includes('/recommendations') || 
                          url.includes('/quiz') || 
+                         url.includes('/profile') || 
+                         url.includes('/checkout') || 
                          url === '/';
   }
 

@@ -1,8 +1,66 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap');
 @import "bootstrap/dist/css/bootstrap.min.css";
 
 /* Global styles for Horizon */
 :root {
   --primary-horizon: #0056b3;
+  --bs-body-font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --bs-font-sans-serif: 'Ubuntu', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* =========================================================
+   STANDARDIZED HERO HEADER BANNERS (ALL INNER PAGES)
+   ========================================================= */
+app-quiz-flow,
+app-feed-main,
+app-recommendations-list,
+app-flight-search,
+app-profile,
+app-common-destinations,
+app-ecotourism-destinations {
+  .hero-container {
+    width: 100%;
+    height: 320px !important;
+    max-height: 320px !important;
+    min-height: 320px !important;
+    background: #0b2545;
+    overflow: hidden;
+    position: relative;
+
+    .hero-image {
+      width: 100% !important;
+      height: 100% !important;
+      max-height: 320px !important;
+      object-fit: cover !important;
+      object-position: center !important;
+      display: block !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero-container {
+      height: 220px !important;
+      max-height: 220px !important;
+      min-height: 220px !important;
+
+      .hero-image {
+        height: 100% !important;
+        max-height: 220px !important;
+      }
+    }
+  }
+}
+
+body {
+  font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+button, input, optgroup, select, textarea {
+  font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
 }
 
 /* Smooth transitions globally */
@@ -74,6 +132,186 @@ app-root > * {
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+/* Accessible focus-visible indicator for keyboard navigation */
+:focus-visible {
+  outline: 2px solid #0056b3 !important;
+  outline-offset: 2px !important;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+.btn:focus:not(:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* WCAG AA text contrast improvements */
+.text-muted {
+  color: #4b5563 !important;
+}
+
+/* Shimmer Skeleton Placeholder for Smooth UX */
+.skeleton-box {
+  background: linear-gradient(90deg, #f0f3f6 25%, #e4e9ee 50%, #f0f3f6 75%);
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s infinite;
+  border-radius: 6px;
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Prefers-reduced-motion: Respect user accessibility settings */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  app-root > * {
+    animation: none !important;
+  }
+
+  .card:hover {
+    transform: none !important;
+  }
+}
+
+/* Prevenção de distorção de imagens com w-100 */
+img.w-100, .w-100 img {
+  height: auto;
+}
+
+
+
+
+/* Custom Modern Scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #f8f9fa; border-left: 1px solid #e9ecef; }
+::-webkit-scrollbar-thumb { background: #5BA4D8; border-radius: 6px; border: 2px solid #f8f9fa; }
+::-webkit-scrollbar-thumb:hover { background: #4895CC; }
+
+/* =========================================================
+   HORIZON AIRPLANE 360 LOADER (AZUL #5BA4D8 - SEM GLOBO)
+   ========================================================= */
+.horizon-plane-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.plane-orbit-ring {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(91, 164, 216, 0.2);
+  border-top-color: #5BA4D8;
+  border-left-color: rgba(91, 164, 216, 0.55);
+  animation: orbitPlane360 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  box-shadow: 0 0 16px rgba(91, 164, 216, 0.12);
+}
+
+.plane-orbit-ring .plane-icon {
+  position: absolute;
+  top: -14px;
+  left: calc(50% - 14px);
+  width: 28px;
+  height: 28px;
+  color: #5BA4D8;
+  transform: rotate(90deg);
+  filter: drop-shadow(0 2px 6px rgba(91, 164, 216, 0.45));
+}
+
+@keyframes orbitPlane360 {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Compatibilidade para qualquer .spinner inline antigo */
+.spinner {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: inline-block;
+  border-radius: 50%;
+  border: 2px solid rgba(91, 164, 216, 0.25);
+  border-top-color: #5BA4D8;
+  animation: orbitPlane360 1s linear infinite;
+}
+.spinner div { display: none; }
+
+
+/* From Uiverse.io by Zain-Muhammad */ 
+.like-unlike-radio {
+  --inactive-color: #515254;
+  --active-color: #1877f2;
+  --hover: #515254;
+  display: flex;
+  align-items: center;
+  column-gap: 24px;
+  flex-shrink: 0;
+}
+.like-unlike-radio .custom-radio-fb {
+  display: none;
+}
+.like-unlike-radio .feedback-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  row-gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--inactive-color);
+  margin: 0;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  -webkit-transition: 0.2s ease-in-out;
+  -moz-transition: 0.2s ease-in-out;
+  -ms-transition: 0.2s ease-in-out;
+  -o-transition: 0.2s ease-in-out;
+}
+.like-unlike-radio .feedback-label:hover {
+  color: var(--hover);
+}
+.icon {
+  transition: 0.2s ease-in-out;
+  -webkit-transition: 0.2s ease-in-out;
+  -moz-transition: 0.2s ease-in-out;
+  -ms-transition: 0.2s ease-in-out;
+  -o-transition: 0.2s ease-in-out;
+}
+.like-unlike-radio .feedback-label:hover .icon {
+  transform: scale(1.3);
+}
+.like-unlike-radio .custom-radio-fb:checked ~ .feedback-label {
+  color: var(--active-color);
+}
+.like-unlike-radio .custom-radio-fb:checked ~ .feedback-label svg {
+  animation: keyframes-fill 0.2s ease-in-out;
+}
+@keyframes keyframes-fill {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(-10deg);
   }
 }
 

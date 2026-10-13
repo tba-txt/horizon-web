@@ -1,0 +1,574 @@
+:host {
+  display: block;
+}
+
+/* =========================================================
+   HERO SECTION
+   ========================================================= */
+.hero-container {
+  width: 100%;
+  height: 320px;
+  background: #0b2545;
+  max-height: 320px;
+  overflow: hidden;
+
+  .hero-image {
+    width: 100%;
+    height: 320px;
+    max-height: 320px;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+}
+
+/* =========================================================
+   MAIN CONTAINER (CENTRALIZADO)
+   ========================================================= */
+.main-content {
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   TOP 3 FEATURED 3D CARDS (LAYOUT ALTERNADO: - 1 1 0 -, - 0 1 1 -, - 1 1 0 -)
+   ========================================================= */
+.featured-3d-section {
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+.featured-3d-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 28px;
+  align-items: stretch;
+
+  /* Linha 2 (- 0 1 1 -): Editorial na esquerda (col 1), Card na direita (cols 2 e 3) */
+  &.row-reverse {
+    grid-template-columns: 1fr 2fr;
+
+    .card-3d-col {
+      order: 2;
+    }
+
+    .editorial-col {
+      order: 1;
+    }
+  }
+
+  /* Responsividade para tablets e celulares: empilha verticalmente */
+  @media (max-width: 991.98px) {
+    grid-template-columns: 1fr !important;
+    gap: 20px;
+
+    &.row-reverse {
+      .card-3d-col {
+        order: 1;
+      }
+      .editorial-col {
+        order: 2;
+      }
+    }
+  }
+}
+
+/* =========================================================
+   CARD 3D (ACETERNITY STYLE COM PERSPECTIVA E CAMADAS Z)
+   ========================================================= */
+.card-3d-col {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+}
+
+.card-3d-container {
+  perspective: 1000px;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+
+  &:hover,
+  &.is-3d-hovered {
+    .card-3d-media-wrapper {
+      box-shadow: 0 22px 48px rgba(11, 37, 69, 0.22);
+    }
+
+    .card-3d-image {
+      transform: scale(1.05);
+    }
+
+    .card-3d-overlay {
+      background: linear-gradient(to top, rgba(11, 37, 69, 0.95) 0%, rgba(11, 37, 69, 0.45) 50%, rgba(0, 0, 0, 0.2) 100%);
+    }
+
+    .btn-3d-action {
+      background-color: #4895CC;
+      color: #ffffff;
+      border-color: #4895CC;
+      box-shadow: 0 8px 20px rgba(72, 149, 204, 0.4);
+    }
+
+    /* Efeito de Profundidade 3D (Pop-out nos eixos Z) */
+    .card-3d-item {
+      &.z-30 { transform: translateZ(30px); }
+      &.z-40 { transform: translateZ(45px); }
+      &.z-60 { transform: translateZ(65px); }
+      &.z-80 { transform: translateZ(90px); }
+    }
+  }
+}
+
+.card-3d-body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  border-radius: 24px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Base de mídia (Imagem recortada com bordas arredondadas) */
+.card-3d-media-wrapper {
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.4s ease;
+  background-color: #0b2545;
+}
+
+.card-3d-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+  transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card-3d-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(11, 37, 69, 0.88) 0%, rgba(11, 37, 69, 0.35) 45%, rgba(0, 0, 0, 0.1) 100%);
+  transition: background 0.4s ease;
+}
+
+/* Camadas flutuantes com preserve-3d */
+.card-3d-item {
+  transform-style: preserve-3d;
+  transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.card-3d-badges {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 3;
+
+  .rank-badge {
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 6px 14px;
+    border-radius: 50rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .score-badge {
+    background: rgba(11, 37, 69, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.82rem;
+    padding: 6px 14px;
+    border-radius: 50rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.card-3d-brand {
+  position: absolute;
+  top: 66px;
+  left: 20px;
+  z-index: 3;
+
+  .brand-logo-tag {
+    height: 32px;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+    pointer-events: none;
+  }
+}
+
+.card-3d-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 26px;
+  z-index: 3;
+  color: #ffffff;
+
+  .destination-country-tag {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    font-weight: 500;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .card-3d-title {
+    font-size: 1.85rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    margin-bottom: 2px;
+  }
+
+  .btn-3d-action {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.88rem;
+    padding: 9px 18px;
+    border-radius: 12px;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+  }
+}
+
+/* =========================================================
+   PAINEL EDITORIAL (COLUNA '0')
+   ========================================================= */
+.editorial-col {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+}
+
+.editorial-card {
+  background: #ffffff;
+  border: 1.5px solid #4895CC;
+  border-radius: 24px;
+  box-shadow: 0 4px 14px rgba(72, 149, 204, 0.25);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  min-height: 420px;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(72, 149, 204, 0.35);
+    border-color: #3b82b6;
+  }
+
+  .editorial-badge {
+    background: rgba(72, 149, 204, 0.12);
+    color: #2874a6;
+    font-weight: 700;
+    border-radius: 50rem;
+    font-size: 0.78rem;
+    letter-spacing: 0.3px;
+  }
+
+  .editorial-title {
+    color: #0b2545;
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+
+  .editorial-body {
+    font-size: 0.94rem;
+    line-height: 1.65;
+    color: #4a5568;
+  }
+
+  .editorial-stat {
+    font-size: 0.85rem;
+  }
+}
+
+/* =========================================================
+   STANDARD CARDS (DEMAIS RECOMENDAÇÕES)
+   ========================================================= */
+.destination-card {
+  border-color: #5BA4D8 !important;
+  border-width: 2px !important;
+  background-color: #f4f7f9;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1) !important;
+  }
+
+  .card-img-wrapper {
+    height: 220px;
+
+    .brand-logo-tag {
+      height: 28px;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+      pointer-events: none;
+    }
+
+    .score-tag-small {
+      background-color: #0b2545;
+      font-size: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-info-badge {
+      bottom: -16px;
+      right: 15px;
+      width: 32px;
+      height: 32px;
+      background-color: #5BA4D8;
+      border: 2px solid white;
+      z-index: 5;
+    }
+  }
+
+  .dest-card-title {
+    color: #5BA4D8;
+  }
+
+  .dest-price-tag {
+    color: #63B921;
+    font-size: 0.88rem;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.pointer-events-none {
+  pointer-events: none;
+}
+
+.object-fit-cover {
+  object-fit: cover;
+}
+
+/* =========================================================
+   ECOTOURISM THEME (CARDS E ELEMENTOS VERDES)
+   ========================================================= */
+
+.editorial-card.is-ecotourism {
+  border: 1.5px solid #8cc63f;
+  box-shadow: 0 4px 14px rgba(140, 198, 63, 0.25);
+
+  &:hover {
+    box-shadow: 0 10px 24px rgba(140, 198, 63, 0.35);
+  }
+
+  .tourism-type-badge {
+    color: #5b8e1f;
+    border-color: #8cc63f !important;
+    background-color: transparent;
+  }
+
+  /* Triangle Rank em Verde */
+  .rank-triangle {
+    border-bottom-color: #8cc63f;
+  }
+
+  /* Botão Ecoturismo em Verde */
+  .CartBtn {
+    background: linear-gradient(135deg, #8cc63f 0%, #6da12d 100%);
+    box-shadow: 0 8px 20px rgba(140, 198, 63, 0.35);
+
+    &:hover:not(:disabled) {
+      background: linear-gradient(135deg, #7db337 0%, #5b8e1f 100%);
+      box-shadow: 0 10px 24px rgba(140, 198, 63, 0.45);
+    }
+  }
+}
+
+/* Triangle Base */
+.rank-triangle {
+  position: absolute;
+  bottom: -1.5px;
+  left: -1.5px;
+  width: 0;
+  height: 0;
+  border-bottom: 70px solid #4A90E2;
+  border-right: 70px solid transparent;
+  border-bottom-left-radius: 20px;
+  z-index: 1;
+
+  .rank-number {
+    position: absolute;
+    bottom: -62px;
+    left: 8px;
+    color: white;
+    font-weight: 900;
+    font-size: 1.4rem;
+  }
+}
+
+/* Tourism Badge Azul (Default) */
+.tourism-type-badge {
+  color: #2b6cb0;
+  border-color: #4A90E2 !important;
+  font-size: 0.78rem;
+  letter-spacing: 0.5px;
+}
+
+
+/* =========================================================
+   BOTÃO HORIZON TAKEOFF (CartBtn)
+   ========================================================= */
+.CartBtn {
+  height: 44px;
+  border-radius: 50rem;
+  background: linear-gradient(135deg, #4A90E2 0%, #2b6cb0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(74, 144, 226, 0.35);
+  position: relative;
+  color: white;
+  padding: 0;
+}
+
+.CartBtn .btn-text-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.CartBtn .btn-text {
+  color: #ffffff;
+}
+
+.CartBtn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.CartBtn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+  transition-duration: 0.2s;
+}
+
+/* =========================================================
+   MATCH RING E MARCA D'ÁGUA (QUOTES)
+   ========================================================= */
+
+.match-ring-container {
+  width: 54px;
+  height: 54px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.circular-chart {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  max-height: 250px;
+}
+
+.circle-bg {
+  fill: none;
+  stroke: #edf2f7;
+  stroke-width: 2.8;
+}
+
+.circle {
+  fill: none;
+  stroke: #4A90E2;
+  stroke-width: 2.8;
+  stroke-linecap: round;
+  animation: progress 1.5s ease-out forwards;
+}
+
+.match-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #2b6cb0;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+@keyframes progress {
+  0% { stroke-dasharray: 0 100; }
+}
+
+.quote-watermark {
+  position: absolute;
+  top: -10px;
+  left: 15px;
+  font-size: 140px;
+  font-family: Georgia, serif;
+  color: rgba(0, 0, 0, 0.035);
+  line-height: 1;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.editorial-quote {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #334155;
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: -0.2px;
+}
+
+.location-icon {
+  color: #4A90E2;
+}
+
+/* Ajustes de cor no tema ECOTOURISM */
+.editorial-card.is-ecotourism {
+  .circle-bg {
+    stroke: rgba(140, 198, 63, 0.2);
+  }
+  .circle {
+    stroke: #8cc63f;
+  }
+  .match-text {
+    color: #5b8e1f;
+  }
+  .location-icon {
+    color: #8cc63f;
+  }
+  .quote-watermark {
+    color: rgba(140, 198, 63, 0.06);
+  }
+}
