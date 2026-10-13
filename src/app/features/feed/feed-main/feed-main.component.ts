@@ -1845,10 +1845,19 @@ export class FeedMainComponent implements OnInit {
   ];
 
   // ==================== INTERLEAVING 40 ITEMS ====================
-  // 25 Posts + 10 Isso ou Aquilo + 5 Trivias = 40 itens misturados
   private clonePost(post: Post): Post {
+    const hasLocalArticleGallery =
+      post.id === 8 ||
+      (post.id >= 17 && post.id <= 20) ||
+      (post.id >= 101 && post.id <= 125);
+
+    const galleryImages = hasLocalArticleGallery
+      ? [1, 2, 3].map(index => `assets/feed/id${post.id}-${index}.webp`)
+      : (post.imageUrl ? [post.imageUrl] : []);
+
     return {
       ...post,
+      galleryImages,
       thisOrThatOptions: post.thisOrThatOptions
         ? post.thisOrThatOptions.map(opt => ({ ...opt }))
         : undefined,
@@ -2061,6 +2070,7 @@ export class FeedMainComponent implements OnInit {
         localStorage.setItem('horizon_this_or_that_community_votes', JSON.stringify(currentComm));
       }
 
+      this.feedService.clearCache();
       this.feedService.interact(postId, 'VOTE', optionId).subscribe({
         next: () => console.log('Voto registrado:', optionId),
         error: () => { /* Ignora 404 para mock posts */ }
@@ -2105,6 +2115,7 @@ export class FeedMainComponent implements OnInit {
         }
       }
       this.removeInteraction(postId);
+      this.feedService.clearCache();
       this.feedService.interact(postId, 'VOTE', currentSelection).subscribe({ error: () => {} });
     }
   }
@@ -2150,6 +2161,9 @@ export class FeedMainComponent implements OnInit {
   }
 
   getPostImages(post: Post): string[] {
+    if (post.galleryImages && post.galleryImages.length > 0) {
+      return post.galleryImages;
+    }
     const hasLocalArticleGallery =
       post.id === 8 ||
       (post.id >= 17 && post.id <= 20) ||
@@ -2304,6 +2318,7 @@ export class FeedMainComponent implements OnInit {
 
     this.recordInteraction(postId);
     this.updatePostState(postId, type, updatedLikes, updatedDislikes);
+    this.feedService.clearCache();
     this.feedService.interact(postId, type).subscribe({
       error: () => { /* Ignora 404 para mock posts */ }
     });

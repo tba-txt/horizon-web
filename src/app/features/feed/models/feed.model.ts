@@ -20,6 +20,7 @@ export interface Post {
   postType?: 'ARTICLE' | 'DEFAULT' | 'THIS_OR_THAT' | 'TRIVIA';
   thisOrThatOptions?: { id: number, image: string, label: string, votes?: number }[];
   triviaData?: { question: string, options: string[], correctIndex: number, explanation: string };
+  galleryImages?: string[];
 }
 
 export interface InteractionRequest {

@@ -12,8 +12,15 @@ export class FeedService {
   private readonly postsUrl = `${environment.apiUrl}/posts`;
   private readonly interactionsUrl = `${environment.apiUrl}/interactions`;
 
-  getPosts(_forceRefresh = false): Observable<Post[]> {
-    return this.http.get<Post[]>(this.postsUrl);
+  private cachedPosts$?: Observable<Post[]>;
+
+  getPosts(forceRefresh = false): Observable<Post[]> {
+    if (!this.cachedPosts$ || forceRefresh) {
+      this.cachedPosts$ = this.http.get<Post[]>(this.postsUrl).pipe(
+        shareReplay({ bufferSize: 1, refCount: false })
+      );
+    }
+    return this.cachedPosts$;
   }
 
   interact(postId: number, interactionType: 'LIKE' | 'DISLIKE' | 'VOTE' | 'UNVOTE' | 'UNLIKE' | 'UNDISLIKE', optionId?: number): Observable<void> {
@@ -27,5 +34,7 @@ export class FeedService {
     return this.http.post<void>(this.interactionsUrl, payload);
   }
 
-  clearCache(): void {}
+  clearCache(): void {
+    this.cachedPosts$ = undefined;
+  }
 }
