@@ -18,7 +18,7 @@ export class ForgotPasswordComponent implements AfterViewInit {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
 
-  mobileHeroImage = signal<string>('assets/maldivas.webp');
+  mobileHeroImage = signal<string>('/assets/maldivas.webp');
 
   forgotPasswordForm = this.fb.group({
     email: ['', [Validators.required, strictEmailValidator()]]
@@ -31,7 +31,7 @@ export class ForgotPasswordComponent implements AfterViewInit {
   onMobileHeroError(event: any): void {
     const target = event?.target as HTMLImageElement;
     if (target && !target.src.includes('santorini.webp')) {
-      target.src = 'assets/santorini.webp';
+      target.src = '/assets/santorini.webp';
     }
   }
 

@@ -52,7 +52,7 @@
                 @if (data.profileImageUrl) {
                   <img [src]="data.profileImageUrl" alt="Foto de perfil" class="w-100 h-100 object-fit-cover rounded-circle">
                 } @else {
-                  <img src="assets/default-avatar.webp" alt="Foto de perfil padrão" class="w-100 h-100 object-fit-cover rounded-circle">
+                  <img src="/assets/default-avatar.webp" alt="Foto de perfil padrão" class="w-100 h-100 object-fit-cover rounded-circle">
                 }
               </div>
             </div>
@@ -66,9 +66,9 @@
           <!-- Card com a Imagem Horizon (Verde para Ecoturismo, Azul para Viagens Comuns) -->
           <div class="archetype-image-card rounded-4 position-relative overflow-hidden mb-0 flex-grow-1 shadow-sm">
             @if (isEcoTheme()) {
-              <img src="assets/horizon-verde.webp" alt="Horizon Ecoturismo" class="w-100 h-100 object-fit-cover rounded-4 d-block">
+              <img src="/assets/horizon-verde.webp" alt="Horizon Ecoturismo" class="w-100 h-100 object-fit-cover rounded-4 d-block">
             } @else {
-              <img src="assets/horizon45.webp" alt="Horizon Viagem Tradicional" class="w-100 h-100 object-fit-cover rounded-4 d-block">
+              <img src="/assets/horizon45.webp" alt="Horizon Viagem Tradicional" class="w-100 h-100 object-fit-cover rounded-4 d-block">
             }
           </div>
         </div>

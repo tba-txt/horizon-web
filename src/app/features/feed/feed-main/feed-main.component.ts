@@ -510,8 +510,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Desbravar a Patagônia Selvagem', image: 'assets/feed/id01-eco.webp', votes: 0 },
-        { id: 2, label: 'Viver as Luzes de Tóquio à Noite', image: 'assets/feed/id01-city.webp', votes: 0 }
+        { id: 1, label: 'Desbravar a Patagônia Selvagem', image: '/assets/feed/id01-eco.webp', votes: 0 },
+        { id: 2, label: 'Viver as Luzes de Tóquio à Noite', image: '/assets/feed/id01-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -522,8 +522,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Mergulho nas Águas de Noronha', image: 'assets/feed/id02-eco.webp', votes: 0 },
-        { id: 2, label: 'Chalé com Lareira na Serra Gaúcha', image: 'assets/feed/id02-city.webp', votes: 0 }
+        { id: 1, label: 'Mergulho nas Águas de Noronha', image: '/assets/feed/id02-eco.webp', votes: 0 },
+        { id: 2, label: 'Chalé com Lareira na Serra Gaúcha', image: '/assets/feed/id02-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -534,8 +534,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Expedição pelos Lençóis Maranhenses', image: 'assets/feed/id03-eco.webp', votes: 0 },
-        { id: 2, label: 'Fim de Semana em Nova York', image: 'assets/feed/id03-city.webp', votes: 0 }
+        { id: 1, label: 'Expedição pelos Lençóis Maranhenses', image: '/assets/feed/id03-eco.webp', votes: 0 },
+        { id: 2, label: 'Fim de Semana em Nova York', image: '/assets/feed/id03-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -546,8 +546,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Trilha na Floresta Amazônica', image: 'assets/feed/id04-eco.webp', votes: 0 },
-        { id: 2, label: 'Tour Histórico e Gastronômico em Roma', image: 'assets/feed/id04-city.webp', votes: 0 }
+        { id: 1, label: 'Trilha na Floresta Amazônica', image: '/assets/feed/id04-eco.webp', votes: 0 },
+        { id: 2, label: 'Tour Histórico e Gastronômico em Roma', image: '/assets/feed/id04-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -558,8 +558,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Acampar sob as Estrelas no Atacama', image: 'assets/feed/id05-eco.webp', votes: 0 },
-        { id: 2, label: 'Jantar Romântico com Luzes de Paris', image: 'assets/feed/id05-city.webp', votes: 0 }
+        { id: 1, label: 'Acampar sob as Estrelas no Atacama', image: '/assets/feed/id05-eco.webp', votes: 0 },
+        { id: 2, label: 'Jantar Romântico com Luzes de Paris', image: '/assets/feed/id05-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -570,8 +570,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Safári Selvagem no Serengeti', image: 'assets/feed/id06-eco.webp', votes: 0 },
-        { id: 2, label: 'Arranha-Céus e Luxo em Dubai', image: 'assets/feed/id06-city.webp', votes: 0 }
+        { id: 1, label: 'Safári Selvagem no Serengeti', image: '/assets/feed/id06-eco.webp', votes: 0 },
+        { id: 2, label: 'Arranha-Céus e Luxo em Dubai', image: '/assets/feed/id06-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -582,8 +582,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Flutuação nas Nascentes de Bonito', image: 'assets/feed/id07-eco.webp', votes: 0 },
-        { id: 2, label: 'Praias e Festas em Cancún', image: 'assets/feed/id07-city.webp', votes: 0 }
+        { id: 1, label: 'Flutuação nas Nascentes de Bonito', image: '/assets/feed/id07-eco.webp', votes: 0 },
+        { id: 2, label: 'Praias e Festas em Cancún', image: '/assets/feed/id07-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -594,8 +594,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Trilhas na Chapada Diamantina', image: 'assets/feed/id08-eco.webp', votes: 0 },
-        { id: 2, label: 'Museus e Pubs Históricos em Londres', image: 'assets/feed/id08-city.webp', votes: 0 }
+        { id: 1, label: 'Trilhas na Chapada Diamantina', image: '/assets/feed/id08-eco.webp', votes: 0 },
+        { id: 2, label: 'Museus e Pubs Históricos em Londres', image: '/assets/feed/id08-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -606,8 +606,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Geleiras e Fiordes em Reykjavík', image: 'assets/feed/id09-eco.webp', votes: 0 },
-        { id: 2, label: 'Calçadão e Pôr do Sol no Rio de Janeiro', image: 'assets/feed/id09-city.webp', votes: 0 }
+        { id: 1, label: 'Geleiras e Fiordes em Reykjavík', image: '/assets/feed/id09-eco.webp', votes: 0 },
+        { id: 2, label: 'Calçadão e Pôr do Sol no Rio de Janeiro', image: '/assets/feed/id09-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -618,8 +618,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Vida Selvagem e Safári no Pantanal', image: 'assets/feed/id10-eco.webp', votes: 0 },
-        { id: 2, label: 'Cassinos e Espetáculos em Las Vegas', image: 'assets/feed/id10-city.webp', votes: 0 }
+        { id: 1, label: 'Vida Selvagem e Safári no Pantanal', image: '/assets/feed/id10-eco.webp', votes: 0 },
+        { id: 2, label: 'Cassinos e Espetáculos em Las Vegas', image: '/assets/feed/id10-city.webp', votes: 0 }
       ],
       likesCount: 0,
       dislikesCount: 0
@@ -706,7 +706,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 101,
       title: 'Pequenos gigantes do gelo',
       caption: 'Desembarcar na Península Antártica desafia qualquer escala humana de proporção. O silêncio absoluto só é rompido pelo som cavernoso do gelo que estala à distância e pelo bater ritmado das asas dos cormorões.\n\nNas colônias de pinguins-gentoo e pinguins-de-adélia, a rotina é frenética e comovente: centenas de indivíduos transitam pelas chamadas \'rodovias de pinguins\' cavadas na neve compacta, revezando-se entre a caça voraz de krill nas águas glaciais e o cuidado meticuloso com seus ninhos de seixos.\n\nEstar ali nos ensina sobre resiliência ecológica e respeito absoluto aos limites da natureza. Não há pressa que resista ao vento gelado do Estreito de Gerlache e à visão de um colosso de gelo milenar esculpido em tons de azul elétrico.',
-      imageUrl: 'assets/feed/id101-1.webp',
+      imageUrl: '/assets/feed/id101-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -715,7 +715,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 102,
       title: 'O encanto das águas cristalinas de Noronha',
       caption: 'Há poucos lugares no globo onde a comunhão entre terra e oceano seja tão intacta quanto em Fernando de Noronha. Do alto da escadaria cravada na fenda rochosa que dá acesso à Baía do Sancho, o tom esmeralda do mar parece quase surreal sob a luz do meio-dia.\n\nAo mergulhar com snorkel na Baía dos Porcos ou no Sueste, você não precisa procurar pela vida: são as tartarugas-verdes, raias-chita e cardumes multicoloridos que cruzam seu caminho com naturalidade desarmante. Ao longe, o Morro do Pico vigia o arquipélago como um farol milenar de origem vulcânica.\n\nA verdadeira magia de Noronha mora no ritmo do arquipélago: acordar antes da alvorada para contemplar os golfinhos-rotadores na Baía dos Golfinhos e terminar a tarde assistindo ao pôr do sol no Mirante do Boldró, com os pés na areia e a sensação rara de desaceleração profunda.',
-      imageUrl: 'assets/feed/id102-1.webp',
+      imageUrl: '/assets/feed/id102-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -724,7 +724,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 103,
       title: 'Segredos da Chapada Diamantina: O lendário Vale do Pati',
       caption: 'Cruzar o Vale do Pati a pé é considerado por muitos viajantes experientes a travessia mais fascinante e transformadora do Brasil. São dias inteiros de caminhada desconectado de redes telefônicas e cercado pelas imponentes serras tabulares do Parque Nacional da Chapada Diamantina.\n\nO trajeto revela paisagens arrebatadoras: o abismo vertiginoso do Mirante do Cachoeirão, com suas múltiplas quedas d\'água após as chuvas, as águas de cor conhaque do Rio Preto e a vastidão silenciosa dos Gerais dos Vieira.\n\nMas o que realmente marca a memória são as noites nas casas dos nativos patizeiros, como a Dona Raquel ou o Seu Wilson. À luz de velas, com refeições caseiras feitas no fogão a lenha e causos contados sob um céu apinhado de estrelas, descobre-se que a simplicidade do sertão baiano é a forma mais refinada de riqueza.',
-      imageUrl: 'assets/feed/id103-1.webp',
+      imageUrl: '/assets/feed/id103-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -733,7 +733,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 104,
       title: 'Sob o céu mais limpo do planeta no Deserto do Atacama',
       caption: 'A mais de 2.400 metros de altitude, onde o ar é rarefeito e a umidade praticamente inexiste, o Deserto do Atacama ostenta uma das janelas mais límpidas para o cosmos em nosso planeta. Quando a noite cai em San Pedro de Atacama e as luzes da vila se apagam, o firmamento ganha contornos tridimensionais.\n\nOs braços espirais da Via Láctea, as Nuvens de Magalhães e constelações indígenas ancestrais brilham com uma nitidez que hipnotiza astrônomos e viajantes. De dia, a paisagem é igualmente surreal: salares que abrigam bandos de flamingos andinos, lagoas altiplânicas de azul hipnótico a 4.000 metros e os gêiseres de El Tatio fumegando sob o gelo da manhã.\n\nO Atacama exige hidratação constante e passo cadenciado, recompensando cada esforço com a impressão inesquecível de caminhar em outro planeta sem sair da América do Sul.',
-      imageUrl: 'assets/feed/id104-1.webp',
+      imageUrl: '/assets/feed/id104-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -742,7 +742,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 105,
       title: 'Cores, aromas e histórias nos labirintos de Marrakech',
       caption: 'Entrar na medina murada de Marrakech é atravessar uma fronteira sensorial absoluta. Os souks são labirintos vivos de ruelas cobertas por esteiras de junco, onde a luz do sol filtra em feixes dourados sobre barris de açafrão, cominho, gengibre e pilhas de tâmaras frescas.\n\nEntre artesãos moldando luminárias de latão martelado e mestres tecelões trabalhando a lã tingida nos históricos curtumes, o tempo parece obedecer a códigos medievais. Nos pátios secretos dos riads, fontes de água murmuram cercadas por mosaicos zellij e laranjeiras aromáticas, oferecendo refúgios de frescor inestimáveis.\n\nAo entardecer, todos os caminhos convergem para a lendária praça Jemaa el-Fna: encantadores de serpentes, músicos gnawa e dezenas de bancas de comida fumegantes de tagines e espetos temperados criam o maior teatro a céu aberto do norte da África.',
-      imageUrl: 'assets/feed/id105-1.webp',
+      imageUrl: '/assets/feed/id105-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -751,7 +751,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 106,
       title: 'Amanhecer em Kyoto: Jardins zen e bambuzais milenares',
       caption: 'Se Tóquio representa o pulso elétrico do amanhã, Kyoto é o guardião sereno da alma milenar japonesa. O segredo para vivenciar sua atmosfera mais genuína é madrugar: caminhar pela floresta de bambu de Arashiyama antes das sete da manhã é ouvir apenas o estalar oco dos colmos gigantes oscilando com a brisa matinal.\n\nNos templos históricos como Ryoan-ji e Tenryu-ji, os jardins secos de pedra (karesansui) convidam à introspecção e ensinam sobre a estética do ma — o espaço vazio que dá sentido a todas as coisas. Cada rocha cuidadosamente posicionada sobre o cascalho ancinhado conta uma narrativa cósmica.\n\nCruzar as vielas de paralelepípedo de Gion ao crepúsculo, com lanternas de papel iluminando fachadas de cedro escuro e pontes de madeira sobre o canal Shirakawa, transforma a viagem em uma imersão poética na cultura da contemplação.',
-      imageUrl: 'assets/feed/id106-1.webp',
+      imageUrl: '/assets/feed/id106-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -760,7 +760,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 107,
       title: 'Lagoas de água doce entre o mar de dunas dos Lençóis',
       caption: 'Imagine um deserto imenso de areia alvíssima cortado por centenas de lagoas cristalinas de água doce, formadas exclusivamente pelas chuvas do primeiro semestre. Os Lençóis Maranhenses compõem um ecossistema único no planeta, onde a dinâmica dos ventos redesenha o relevo diariamente.\n\nNadar nas águas mornas da Lagoa Bonita ou da Lagoa Azul após subir as dunas a pé é uma das sensações de alívio e deslumbramento mais marcantes do Nordeste brasileiro. A transição entre o verde-esmeralda da água e o branco puro do quartzo cria um contraste visual desconcertante.\n\nPara os mais aventureiros, a travessia a pé pelo Parque Nacional até o oásis de Queimada dos Britos oferece um mergulho na vida dos moradores locais que vivem em harmonia com as marés de areia, pescando traíras que hibernam sob a lama e celebrando noites de luar inesquecíveis.',
-      imageUrl: 'assets/feed/id107-1.webp',
+      imageUrl: '/assets/feed/id107-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -769,7 +769,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 108,
       title: 'A força estrondosa das Cataratas do Iguaçu',
       caption: 'Nenhuma fotografia consegue antecipar o impacto físico de se aproximar da Garganta do Diabo. O rugido de mais de 270 quedas d\'água despejando milhões de litros por segundo vibra no peito antes mesmo de o viajante avistar o abismo encoberto por uma névoa permanente de arco-íris.\n\nCaminhar pelas passarelas que avançam sobre o Rio Iguaçu, cercado pela exuberância da Mata Atlântica e por centenas de borboletas de asas iridescentes, é uma lição de imponência natural. A água salpica no rosto e renova as energias em questão de segundos.\n\nTanto pelo lado brasileiro, com sua vista panorâmica cinematográfica, quanto pelo lado argentino, com passarelas que colocam você na beira exata do abismo d\'água, Foz do Iguaçu permanece como um dos maiores espetáculos geológicos que a Terra tem a oferecer.',
-      imageUrl: 'assets/feed/id108-1.webp',
+      imageUrl: '/assets/feed/id108-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -778,7 +778,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 109,
       title: 'Expedição pelo Jalapão: Onde a terra brota água pura',
       caption: 'O Jalapão, no coração do cerrado tocantinense, é terra de contrastes dramáticos: chapadões de arenito avermelhado, veredas de buritis reluzentes e estradas de terra batida que desafiam até mesmo os veículos 4x4 mais preparados.\n\nA recompensa máxima da viagem mora nos famosos fervedouros, como o do Ceiça e o Bela Vista. Nessas nascentes subterrâneas de água termal azul-turquesa, o fenômeno da ressurgência cria uma pressão que impede qualquer pessoa de afundar, proporcionando uma sensação deliciosa e quase infantil de flutuação absoluta.\n\nSubir as dunas douradas no fim da tarde para ver o pôr do sol iluminar a Serra do Espírito Santo é o momento culminante da expedição, quando a terra parece pegar fogo em tons de ocre, dourado e lilás.',
-      imageUrl: 'assets/feed/id109-1.webp',
+      imageUrl: '/assets/feed/id109-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -787,7 +787,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 110,
       title: 'Glaciares milenares e ventos bravos da Patagônia',
       caption: 'Nas franjas do Campo de Gelo Sul, a Patagônia austral impõe seu temperamento indomável. Diante do colossal glaciar Perito Moreno, em El Calafate, os viajantes permanecem em silêncio absoluto esperando o espetáculo dos desprendimentos: blocos de gelo do tamanho de edifícios despencam nas águas do Lago Argentino com um estrondo que ecoa como um trovão pelos vales.\n\nMais ao norte, nos arredores de El Chaltén, a capital nacional do trekking, trilhas batidas pelo vento patagônico levam à base do Monte Fitz Roy e da Laguna de los Tres, onde agulhas de granito furam as nuvens com uma dramaticidade quase mítica.\n\nViajar pela Patagônia exige roupas técnicas em camadas e disposição para encarar as quatro estações em um único dia. Mas a recompensa de saborear um cordeiro patagônico na brasa e uma taça de vinho Malbec após horas de caminhada no vento gelado não tem preço.',
-      imageUrl: 'assets/feed/id110-1.webp',
+      imageUrl: '/assets/feed/id110-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -796,7 +796,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 111,
       title: 'O silêncio vivo da Floresta Amazônica ao entardecer',
       caption: 'A Floresta Amazônica não dorme: ela apenas troca de turno. Quando o sol desce no horizonte sobre o espelho negro do Rio Urubu e a névoa começa a subir das copas das samaúmas, os pássaros diurnos silenciam para dar lugar ao coro orquestrado de sapos, insetos e o sopro misterioso dos botos-cor-de-rosa emergindo para respirar.\n\nNavegar em canoas silenciosas pelos igapós inundados permite avistar preguiças camufladas nas folhas altas, macacos-de-cheiro saltando entre galhos e orquídeas selvagens que exalam perfumes adocicados no ar úmido.\n\nFicar hospedado em um hotel de selva sustentável e subir a uma torre de observação acima do dossel florestal no alvorecer é compreender a imensidão orgânica que regula o clima de todo o nosso continente. É uma experiência de humildade profunda diante da força biológica da Terra.',
-      imageUrl: 'assets/feed/id111-1.webp',
+      imageUrl: '/assets/feed/id111-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -805,7 +805,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 112,
       title: 'Neblina de serra, fondues e araucárias em Gramado',
       caption: 'A Serra Gaúcha possui um charme outonal que desacelera os ponteiros do relógio. Em Gramado, o aroma de chocolate artesanal flutua no ar fresco das manhãs, enquanto a neblina rasteira abraça os pinheiros de araucária ao redor do bucólico Lago Negro.\n\nA arquitetura enxaimel, herdada dos imigrantes europeus, emoldura cafeterias aconchegantes e empórios onde queijos coloniais, salames curados e vinhos de altitude convidam a pausas sem hora para terminar.\n\nNas noites frias de inverno, nada se compara a reunir amigos ou a pessoa amada ao redor de uma tradicional sequência de fondue na lareira. É o refúgio perfeito para quem busca sofisticação sem ostentação, conforto acolhedor e a tranquilidade revigorante do clima montanhês.',
-      imageUrl: 'assets/feed/id112-1.webp',
+      imageUrl: '/assets/feed/id112-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -814,7 +814,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 113,
       title: 'Flutuação surreal nos rios transparentes de Bonito',
       caption: 'A transparência inacreditável dos rios de Bonito, no Mato Grosso do Sul, não é fruto de mágica, mas de pura geologia: a água da chuva é filtrada pelo solo calcário, que decanta todas as impurezas e transforma os leitos fluviais em verdadeiros aquários naturais gigantescos.\n\nAo colocar a máscara e o snorkel no Rio Sucuri ou no Recanto Ecológico Rio da Prata, você simplesmente deixa a correnteza suave te guiar sem bater pernas. Dourados reluzentes, piraputangas curiosas e plantas aquáticas de verde brilhante passam a centímetros do seu rosto em perfeita harmonia.\n\nO modelo de turismo de Bonito é referência mundial: cada atrativo possui limite rigoroso de visitantes diários e controle ambiental por voucher digital, garantindo que o ecossistema permaneça intocado para as próximas gerações.',
-      imageUrl: 'assets/feed/id113-1.webp',
+      imageUrl: '/assets/feed/id113-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -823,7 +823,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 114,
       title: 'Cânions e águas verdes do Rio São Francisco em Xingó',
       caption: 'No sertão sergipano e alagoano, o majestoso Rio São Francisco esculpe um dos cenários mais surpreendentes do Brasil profundo: os Cânions de Xingó. Paredões de arenito avermelhado erguem-se a mais de cinquenta metros de altura, contrastando com o verde-esmeralda intenso das águas plácidas represadas.\n\nO passeio de catamarã pelo leito do rio leva até a Gruta do Talhado, uma fenda estreita onde apenas pequenos botes de madeira conseguem navegar. Ali dentro, o silêncio é sagrado e a temperatura cai bruscamente sob a sombra dos gigantes de rocha.\n\nAlém da beleza cenográfica monumental, a região respira história e cultura nordestina: das lembranças do cangaço de Lampião e Maria Bonita à gastronomia sertaneja farta, com peixes de água doce grelhados, queijo coalho e pirão de mocotó.',
-      imageUrl: 'assets/feed/id114-1.webp',
+      imageUrl: '/assets/feed/id114-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -832,7 +832,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 115,
       title: 'Trilhas sagradas no Vale Sagrado dos Incas',
       caption: 'Caminhar pelas cidades e fortalezas do Vale Sagrado dos Incas, como Pisac, Ollantaytambo e Moray, é mergulhar em uma civilização cuja engenharia agrícola e conhecimento astronômico dialogavam perfeitamente com as montanhas sagradas (Apus).\n\nAo chegar a Machu Picchu, seja de trem panorâmico margeando o agitado Rio Urubamba ou pela clássica Trilha Inca a pé, a sensação de reverência é instantânea. As ruínas de pedra finamente talhada parecem brotar das encostas verdejantes como uma extensão natural da serra.\n\nSubir as escadarias íngremes de Huayna Picchu sob a névoa matinal e observar a cidadela se revelando lá embaixo é um rito de passagem para qualquer amante da história e da espiritualidade andina.',
-      imageUrl: 'assets/feed/id115-1.webp',
+      imageUrl: '/assets/feed/id115-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -841,7 +841,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 116,
       title: 'Colinas douradas e vinhedos seculares na Toscana',
       caption: 'As colinas do Val d\'Orcia representam a quintessência da paisagem campestre italiana. Estradas sinuosas ladeadas por ciprestes pontiagudos cortam campos dourados de trigo e vinhedos perfeitamente alinhados que produzem alguns dos vinhos mais reverenciados do mundo, como o Brunello di Montalcino e o Chianti Classico.\n\nVilarejos medievais encarapitados no alto dos morros, como Pienza, Montepulciano e San Gimignano, convidam a caminhar sem destino por vielas de pedra, descobrindo adegas subterrâneas, queijarias que maturam pecorino artesanal e pequenas trattorias com massas frescas ao molho de javali.\n\nA Toscana não é uma viagem para se fazer correndo de ponto turístico em ponto turístico; é um convite aberto para desacelerar o passo, abrir um bom vinho e contemplar o pôr do sol tingindo as colinas de terracota.',
-      imageUrl: 'assets/feed/id116-1.webp',
+      imageUrl: '/assets/feed/id116-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -850,7 +850,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 117,
       title: 'O santuário de evolução e vida marinha em Galápagos',
       caption: 'Localizado a mil quilômetros da costa do Equador, o arquipélago vulcânico de Galápagos opera sob regras próprias da natureza. Como os animais nunca aprenderam a temer a presença humana por predadores terrestres, o visitante vivencia encontros comoventes de proximidade e respeito.\n\nNas praias de areia escura, leões-marinhos brincalhões cochilam lado a lado com iguanas marinhas pré-históricas que espirram sal das narinas após mergulharem em busca de algas. Nos planaltos úmidos de Santa Cruz, tartarugas gigantes com mais de um século de vida pastam vagarosamente entre as samambaias.\n\nMergulhar nas águas de Kicker Rock ou Los Túneles revela tubarões-de-galápagos, tartarugas-marinhas e os ágeis pinguins-de-galápagos voando sob a água. É o museu vivo da teoria de Darwin em sua manifestação mais pura.',
-      imageUrl: 'assets/feed/id117-1.webp',
+      imageUrl: '/assets/feed/id117-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -859,7 +859,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 118,
       title: 'O ritmo da vida selvagem no coração do Pantanal',
       caption: 'Maior planície alagável contínua do mundo, o Pantanal é a meca absoluta da observação de fauna na América do Sul. Ao percorrer a Rodovia Transpantaneira ou navegar pelos meandros dos rios Cuiabá e Piquiri em Porto Jofre, a densidade animal impressiona até os biólogos mais calejados.\n\nBandos de tuiuiús pousam em ninhos gigantescos no topo dos manduviers, enquanto capivaras e jacarés-do-pantanal dividem barrancos sob a vigilância atenta de lontras brincalhonas. Mas o ápice incontestável de qualquer expedição é o encontro com a onça-pintada: avistar o maior felino das Américas caçando silenciosamente na beira d\'água é uma imagem que fica gravada na retina para sempre.\n\nO Pantanal exige guias experientes e paciência, retribuindo cada instante de vigília com espetáculos diários de sobrevivência e beleza bruta.',
-      imageUrl: 'assets/feed/id118-1.webp',
+      imageUrl: '/assets/feed/id118-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -868,7 +868,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 119,
       title: 'Aurora Boreal: As luzes do norte dançando em Tromsø',
       caption: 'Situada bem acima do Círculo Polar Ártico, na Noruega, a cidade de Tromsø é a capital mundial da caçada à Aurora Boreal. Durante a longa noite polar de inverno, quando o sol nem chega a nascer no horizonte, a atmosfera ártica ganha uma tonalidade azulada de mistério e fascínio.\n\nAguardar em meio à neve espessa, ao redor de uma fogueira estalando e saboreando chá quente de frutas silvestres, até que a primeira fita esverdeada comece a serpentear pelo céu estrelado é uma das esperas mais emocionantes da vida.\n\nDe repente, o firmamento explode em cortinas dançantes de verde, violeta e magenta em questão de segundos. A força geomagnética do vento solar interagindo com a atmosfera é pura poesia cósmica em movimento sobre fiordes congelados.',
-      imageUrl: 'assets/feed/id119-1.webp',
+      imageUrl: '/assets/feed/id119-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -877,7 +877,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 120,
       title: 'Praias rústicas e falésias da Costa do Descobrimento',
       caption: 'O trecho litorâneo do sul da Bahia que abriga Trancoso, Caraíva e Arraial d\'Ajuda é um manifesto à vida desacelerada e à comunhão com a natureza litorânea. Em Caraíva, onde não entram carros e as ruas continuam sendo de areia fofa, o tempo passa no compasso do encontro entre o rio de águas calmas e o mar aberto.\n\nCaminhar até a Praia do Espelho na maré baixa revela falésias monumentais em tons de ocre e branco debruçadas sobre piscinas naturais de cor turquesa límpida, onde corais formam refúgios de vida submarina.\n\nNo Quadrado de Trancoso, o gramado histórico diante da igrejinha de São João Batista ganha vida ao anoitecer com mesas à luz de velas sob amendoeiras frondosas, combinando o tempero inconfundível da moqueca baiana com uma hospitalidade calorosa e autêntica.',
-      imageUrl: 'assets/feed/id120-1.webp',
+      imageUrl: '/assets/feed/id120-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -886,7 +886,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 121,
       title: 'A imponência vertical das Dolomitas no norte da Itália',
       caption: 'Erguendo-se dramaticamente no norte da Itália, as Dolomitas formam uma das cordilheiras mais impressionantes do continente europeu. Suas paredes verticais de rocha calcária possuem uma composição mineral única que produz o fenômeno da Enrosadira: ao nascer e ao pôr do sol, as montanhas brilham em tons incandescentes de rosa e dourado.\n\nTrilhas lendárias como o circuito ao redor das Três Cimes de Lavaredo ou a passagem pelo refúgio de montanha em Seceda revelam platôs verdes pontilhados por chalés de madeira e rebanhos de vacas alpinas pastando em paz.\n\nA cultura da região mistura com elegância influências austríacas e italianas, refletidas em pratos substanciais como canederli servidos com manteiga de sálvia e apfelstrudel quentinho após dias intensos de trekking e ar puro.',
-      imageUrl: 'assets/feed/id121-1.webp',
+      imageUrl: '/assets/feed/id121-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -895,7 +895,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 122,
       title: 'Caminhos coloniais de pedra e casarios em Paraty',
       caption: 'Caminhar pelas ruas de pedras \'pé-de-moleque\' do Centro Histórico de Paraty é fazer uma viagem no tempo diretamente para o século XVIII. Os casarões coloniais de paredes caiadas de branco, com portas e janelas pintadas em cores vibrantes, contam histórias da rota do ouro e do café da Estrada Real.\n\nNas luas cheias, a maré sobe e invade delicadamente as ruas mais próximas ao cais, transformando a vila em um espelho d\'água cinematográfico que reflete as fachadas históricas e as montanhas cobertas pela Mata Atlântica ao fundo.\n\nPasseios de traineira ou escuna pelas águas calmas da Baía de Paraty levam a praias secretas como a do Sono e ilhas isoladas de mar calmo e transparente, perfeitas para nadar entre peixes e desfrutar do frescor da serra que encontra o mar.',
-      imageUrl: 'assets/feed/id122-1.webp',
+      imageUrl: '/assets/feed/id122-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -904,7 +904,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 123,
       title: 'Lagos turquesa e picos nevados no Parque de Banff',
       caption: 'O Parque Nacional de Banff, nas Montanhas Rochosas de Alberta, parece ter sido desenhado por um pintor apaixonado pela natureza selvagem. O icônico Lake Louise, alimentado pelo derretimento do Glaciar Victoria, exibe um tom azul-turquesa leitoso tão intenso que parece retocado por filtros digitais.\n\nSubir pelas trilhas que levam ao Lake Agnes Tea House oferece vistas panorâmicas de florestas densas de coníferas e vales glaciares profundos, com paradas para degustar chás fumegantes em cabanas de madeira construídas no início do século passado.\n\nA vida selvagem no parque é abundante e protegida com rigor exemplar: é comum avistar alces pastando em campos abertos, bodes-das-rochosas escalando encostas íngremes e, com sorte e distância respeitosa, ursos-grizzly forrageando frutas silvestres no verão.',
-      imageUrl: 'assets/feed/id123-1.webp',
+      imageUrl: '/assets/feed/id123-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -913,7 +913,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 124,
       title: 'Aromas da cozinha mineira e serras de Monte Verde',
       caption: 'Encravada no alto da Serra da Mantiqueira, a charmosa vila de Monte Verde combina o melhor da hospitalidade mineira com o clima europeu de montanha. A mais de 1.500 metros de altitude, o ar é perfumado pelo aroma de pinheiros e pelo aroma tentador de pão de queijo quentinho saindo do forno.\n\nAs trilhas da região, como a subida à Pedra Redonda e ao Chapéu do Bispo, oferecem caminhadas acessíveis que terminam em mirantes espetaculares de 360 graus sobre o mar de morros que divide Minas Gerais e São Paulo.\n\nÀ noite, o centrinho iluminado convida a passear sem pressa entre ateliês de cerâmica, empórios de queijo da canastra curado, cachaças artesanais e restaurantes que servem trutas frescas grelhadas acompanhadas de vinhos locais.',
-      imageUrl: 'assets/feed/id124-1.webp',
+      imageUrl: '/assets/feed/id124-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -922,7 +922,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       id: 125,
       title: 'O espetáculo do céu ao amanhecer na Capadócia',
       caption: 'Poucas experiências de viagem no mundo conseguem rivalizar com a poesia visual de acordar antes do sol nascer na Capadócia. No vale de Göreme, o horizonte lentamente se preenche com mais de uma centena de balões de ar quente inflando em uníssono, subindo suavemente ao céu enquanto os primeiros raios solares douram as formações rochosas esculpidas pela erosão e pela cinza vulcânica milenar.\n\nLá de cima, a sensação é de flutuar em silêncio sobre chaminés de fadas, mosteiros escavados na rocha e cidades subterrâneas como Derinkuyu, onde civilizações antigas encontraram refúgio contra invasões.\n\nFicar hospedado em um autêntico hotel-caverna esculpido na encosta da montanha e tomar café da manhã no terraço observando o balé multicolorido dos balões no céu é um daqueles momentos que justificam qualquer viagem.',
-      imageUrl: 'assets/feed/id125-1.webp',
+      imageUrl: '/assets/feed/id125-1.webp',
       likesCount: 0,
       dislikesCount: 0,
       postType: 'ARTICLE'
@@ -937,7 +937,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       (post.id >= 101 && post.id <= 125);
 
     const galleryImages = hasLocalArticleGallery
-      ? [1, 2, 3].map(index => `assets/feed/id${post.id}-${index}.webp`)
+      ? [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`)
       : (post.imageUrl ? [post.imageUrl] : []);
 
     return {
@@ -1289,7 +1289,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       (post.id >= 101 && post.id <= 125);
 
     if (hasLocalArticleGallery) {
-      return [1, 2, 3].map(index => `assets/feed/id${post.id}-${index}.webp`);
+      return [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`);
     }
 
     return post.imageUrl ? [post.imageUrl] : [];

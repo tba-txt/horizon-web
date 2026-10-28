@@ -240,187 +240,187 @@ export class QuizFlowComponent implements OnInit {
   // Visual das Opções
   visualMap: Record<string, OptionVisual> = {
     'ecoturismo': {
-      image: 'assets/ecoturismo.webp',
+      image: '/assets/ecoturismo.webp',
       icon: '🌿',
       subtitle: 'Florestas, trilhas, cachoeiras e conexão pura com a natureza.',
       tag: 'Biofilia e Aventura'
     },
     'viagem tradicional': {
-      image: 'assets/urban.webp',
+      image: '/assets/urban.webp',
       icon: '🏙️',
       subtitle: 'Grandes metrópoles, compras, museus e arquitetura mundial.',
       tag: 'Urbano e Metrópoles'
     },
     'sol e calor': {
-      image: 'assets/sol.webp',
+      image: '/assets/sol.webp',
       icon: '☀️',
       subtitle: 'Praias paradisíacas, piscinas naturais e clima tropical radiante.',
       tag: 'Verão Tropical'
     },
     'sol': {
-      image: 'assets/sol.webp',
+      image: '/assets/sol.webp',
       icon: '☀️',
       subtitle: 'Praias paradisíacas, piscinas naturais e clima tropical radiante.',
       tag: 'Verão Tropical'
     },
     'neve e frio': {
-      image: 'assets/cold.webp',
+      image: '/assets/cold.webp',
       icon: '❄️',
       subtitle: 'Picos nevados, estações de esqui, chalés e aconchego alpino.',
       tag: 'Inverno Alpino'
     },
     'neve': {
-      image: 'assets/cold.webp',
+      image: '/assets/cold.webp',
       icon: '❄️',
       subtitle: 'Picos nevados, estações de esqui, chalés e aconchego alpino.',
       tag: 'Inverno Alpino'
     },
     'clima ameno e fresco': {
-      image: 'assets/ameno.webp',
+      image: '/assets/ameno.webp',
       icon: '🍂',
       subtitle: 'Névoa suave, bosques outonais e caminhadas confortáveis.',
       tag: 'Ameno e Equilibrado'
     },
     'ameno': {
-      image: 'assets/ameno.webp',
+      image: '/assets/ameno.webp',
       icon: '🍂',
       subtitle: 'Névoa suave, bosques outonais e caminhadas confortáveis.',
       tag: 'Ameno e Equilibrado'
     },
     'qualquer clima': {
-      image: 'assets/random.webp',
+      image: '/assets/random.webp',
       icon: '🌍',
       subtitle: 'Espírito livre: para quem viaja pela experiência e cultura.',
       tag: 'Aberto ao Mundo'
     },
     'qualquer': {
-      image: 'assets/random.webp',
+      image: '/assets/random.webp',
       icon: '🌍',
       subtitle: 'Espírito livre: para quem viaja pela experiência e cultura.',
       tag: 'Aberto ao Mundo'
     },
     'natureza e vida selvagem': {
-      image: 'assets/pantanal.webp',
+      image: '/assets/pantanal.webp',
       icon: '🦁',
       subtitle: 'Safáris, observação de animais e santuários ecológicos.',
       tag: 'Vida Selvagem'
     },
     'vida selvagem': {
-      image: 'assets/pantanal.webp',
+      image: '/assets/pantanal.webp',
       icon: '🦁',
       subtitle: 'Safáris, observação de animais e santuários ecológicos.',
       tag: 'Vida Selvagem'
     },
     'cultura e história': {
-      image: 'assets/machu-picchu.webp',
+      image: '/assets/machu-picchu.webp',
       icon: '🏛️',
       subtitle: 'Ruínas ancestrais, cidades históricas, castelos e tradições.',
       tag: 'Patrimônio Histórico'
     },
     'cultura': {
-      image: 'assets/machu-picchu.webp',
+      image: '/assets/machu-picchu.webp',
       icon: '🏛️',
       subtitle: 'Ruínas ancestrais, cidades históricas, castelos e tradições.',
       tag: 'Patrimônio Histórico'
     },
     'gastronomia e vida urbana': {
-      image: 'assets/food.webp',
+      image: '/assets/food.webp',
       icon: '🍷',
       subtitle: 'Bistrôs conceituados, mercados locais e alta gastronomia.',
       tag: 'Alta Gastronomia'
     },
     'gastronomia': {
-      image: 'assets/food.webp',
+      image: '/assets/food.webp',
       icon: '🍷',
       subtitle: 'Bistrôs conceituados, mercados locais e alta gastronomia.',
       tag: 'Alta Gastronomia'
     },
     'aventura': {
-      image: 'assets/chapada-diamantina.webp',
+      image: '/assets/chapada-diamantina.webp',
       icon: '🧗',
       subtitle: 'Trilhas íngremes, montanhismo e adrenalina em paisagens épicas.',
       tag: 'Adrenalina Pura'
     },
     'desconexão e descanso': {
-      image: 'assets/maldivas.webp',
+      image: '/assets/maldivas.webp',
       icon: '🏖️',
       subtitle: 'Paz absoluta, praias calmas, resorts e momentos de descanso pleno.',
       tag: 'Descanso e Praia'
     },
     'desconexão': {
-      image: 'assets/maldivas.webp',
+      image: '/assets/maldivas.webp',
       icon: '🏖️',
       subtitle: 'Paz absoluta, praias calmas, resorts e momentos de descanso pleno.',
       tag: 'Descanso e Praia'
     },
     'explorador de atrações': {
-      image: 'assets/roma.webp',
+      image: '/assets/roma.webp',
       icon: '🏛️',
       subtitle: 'Explorar cada esquina, monumentos históricos, museus e bairros icônicos.',
       tag: 'História e Cidade'
     },
     'explorador': {
-      image: 'assets/roma.webp',
+      image: '/assets/roma.webp',
       icon: '🏛️',
       subtitle: 'Explorar cada esquina, monumentos históricos, museus e bairros icônicos.',
       tag: 'História e Cidade'
     },
     'vida noturna e agito': {
-      image: 'assets/las-vegas.webp',
+      image: '/assets/las-vegas.webp',
       icon: '🌃',
       subtitle: 'Bares vibrantes, rooftops, eventos culturais e a energia da noite.',
       tag: 'Noite e Agito Urbano'
     },
     'vida noturna': {
-      image: 'assets/las-vegas.webp',
+      image: '/assets/las-vegas.webp',
       icon: '🌃',
       subtitle: 'Bares vibrantes, rooftops, eventos culturais e a energia da noite.',
       tag: 'Noite e Agito Urbano'
     },
     'mergulho e vida marinha': {
-      image: 'assets/noronha.webp',
+      image: '/assets/noronha.webp',
       icon: '🤿',
       subtitle: 'Mergulho em águas cristalinas, corais protegidos e vida marinha pura.',
       tag: 'Mergulho e Mar'
     },
     'mergulho': {
-      image: 'assets/noronha.webp',
+      image: '/assets/noronha.webp',
       icon: '🤿',
       subtitle: 'Mergulho em águas cristalinas, corais protegidos e vida marinha pura.',
       tag: 'Mergulho e Mar'
     },
     'romântica a dois': {
-      image: 'assets/paris.webp',
+      image: '/assets/paris.webp',
       icon: '✨',
       subtitle: 'Cenários inesquecíveis, jantares à luz de velas e clima romântico.',
       tag: 'Romance e Charme'
     },
     'romântica': {
-      image: 'assets/paris.webp',
+      image: '/assets/paris.webp',
       icon: '✨',
       subtitle: 'Cenários inesquecíveis, jantares à luz de velas e clima romântico.',
       tag: 'Romance e Charme'
     },
     'exclusiva e sofisticada': {
-      image: 'assets/dubai.webp',
+      image: '/assets/dubai.webp',
       icon: '👑',
       subtitle: 'Hospitalidade de alto nível, conforto extremo e experiências exclusivas.',
       tag: 'Luxo e Conforto'
     },
     'exclusiva': {
-      image: 'assets/dubai.webp',
+      image: '/assets/dubai.webp',
       icon: '👑',
       subtitle: 'Hospitalidade de alto nível, conforto extremo e experiências exclusivas.',
       tag: 'Luxo e Conforto'
     },
     'natureza autêntica': {
-      image: 'assets/amazonia.webp',
+      image: '/assets/amazonia.webp',
       icon: '🌿',
       subtitle: 'Imersão profunda na floresta, fauna nativa e ecossistemas intocados.',
       tag: 'Ecoturismo Raiz'
     },
     'grandes metrópoles': {
-      image: 'assets/nova-york.webp',
+      image: '/assets/nova-york.webp',
       icon: '🏙️',
       subtitle: 'Arranha-céus imponentes, compras, gastronomia global e vida moderna.',
       tag: 'Grandes Metrópoles'
@@ -1054,7 +1054,7 @@ export class QuizFlowComponent implements OnInit {
       }
     }
     return {
-      image: 'assets/eco.webp',
+      image: '/assets/eco.webp',
       icon: '✈️',
       subtitle: 'Uma jornada única personalizada ao seu perfil de exploração.',
       tag: 'Experiência Horizon'
@@ -1212,7 +1212,7 @@ export class QuizFlowComponent implements OnInit {
   handleHeroError(event: Event): void {
     const target = event.target as HTMLImageElement;
     if (target) {
-      target.src = 'assets/trivia-bg.webp';
+      target.src = '/assets/trivia-bg.webp';
     }
   }
 

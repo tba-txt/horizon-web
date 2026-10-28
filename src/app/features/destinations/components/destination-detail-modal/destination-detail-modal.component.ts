@@ -139,7 +139,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     bestTimeMonths: ['NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'GOOD', 'GOOD', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Acrópole de Atenas', 'Templo do Partenon', 'Bairro de Plaka', 'Museu da Acrópole', 'Templo de Zeus Olímpico', 'Monte Licabeto'],
     gallery: [
-      { url: 'assets/atenas.webp', title: 'Acrópole de Atenas' },
+      { url: '/assets/atenas.webp', title: 'Acrópole de Atenas' },
       { url: 'https://images.unsplash.com/photo-1555993539-1732b0258235?q=80&w=800&auto=format&fit=crop', title: 'Partenon e Templo de Atena' },
       { url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=800&auto=format&fit=crop', title: 'Ruas Tradicionais de Plaka' },
       { url: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=800&auto=format&fit=crop', title: 'Vista do Monte Licabeto' }
@@ -152,7 +152,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     bestTimeMonths: ['NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'GOOD', 'GOOD', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Acrópole de Atenas', 'Templo do Partenon', 'Bairro de Plaka', 'Museu da Acrópole', 'Templo de Zeus Olímpico', 'Monte Licabeto'],
     gallery: [
-      { url: 'assets/atenas.webp', title: 'Acrópole de Atenas' },
+      { url: '/assets/atenas.webp', title: 'Acrópole de Atenas' },
       { url: 'https://images.unsplash.com/photo-1555993539-1732b0258235?q=80&w=800&auto=format&fit=crop', title: 'Partenon e Templo de Atena' },
       { url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?q=80&w=800&auto=format&fit=crop', title: 'Ruas Tradicionais de Plaka' },
       { url: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=800&auto=format&fit=crop', title: 'Vista do Monte Licabeto' }

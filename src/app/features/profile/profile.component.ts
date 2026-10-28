@@ -436,7 +436,7 @@ export class ProfileComponent implements OnInit {
       const local = findLocalImage(destinationName, destinationName);
       if (local) return local;
     }
-    return 'assets/Horizon 1.webp';
+    return '/assets/Horizon 1.webp';
   }
 
   setActiveView(view: 'dashboard' | 'personal-info' | 'trips' | 'payments' | 'privacy' | 'support'): void {

@@ -3,7 +3,7 @@
 <!-- Hero Section -->
 <header class="hero-container position-relative overflow-hidden">
   <img 
-    src="assets/quiz.webp" 
+    src="/assets/quiz.webp" 
     alt="Quiz Hero" 
     class="w-100 hero-image"
     fetchpriority="high"
@@ -130,7 +130,7 @@
         <!-- Imagem Horizon do Figma na parte inferior do card -->
         <div class="flex-grow-1 overflow-hidden position-relative" style="min-height: 590px;">
           <img 
-            src="assets/horizon-fgm1.webp" 
+            src="/assets/horizon-fgm1.webp" 
             alt="Horizon" 
             class="w-100 h-100 object-fit-cover d-block" 
             loading="lazy"
@@ -227,7 +227,7 @@
                 @if (identityData()?.profileImageUrl) {
                   <img [src]="identityData()!.profileImageUrl" alt="Foto de perfil" class="w-100 h-100 object-fit-cover rounded-circle" />
                 } @else {
-                  <img src="assets/default-avatar.webp" alt="Foto de perfil padrão" class="w-100 h-100 object-fit-cover rounded-circle" />
+                  <img src="/assets/default-avatar.webp" alt="Foto de perfil padrão" class="w-100 h-100 object-fit-cover rounded-circle" />
                 }
               </div>
               <div>
@@ -245,9 +245,9 @@
 
             <div class="rounded-3 overflow-hidden shadow-sm flex-shrink-0" style="width: 84px; height: 112px;">
               @if (isEcoQuizChoice()) {
-                <img src="assets/horizon-verde.webp" alt="Horizon Ecoturismo" class="w-100 h-100 object-fit-cover d-block" />
+                <img src="/assets/horizon-verde.webp" alt="Horizon Ecoturismo" class="w-100 h-100 object-fit-cover d-block" />
               } @else {
-                <img src="assets/horizon45.webp" alt="Horizon Viagem" class="w-100 h-100 object-fit-cover d-block" />
+                <img src="/assets/horizon45.webp" alt="Horizon Viagem" class="w-100 h-100 object-fit-cover d-block" />
               }
             </div>
           </div>
@@ -959,7 +959,7 @@
         
         <!-- Topo: Imagem Banner Horizon em tamanho natural -->
         <img 
-          src="assets/Group14.png" 
+          src="/assets/Group14.png" 
           alt="Horizon" 
           class="w-100 d-block h-auto" 
           style="border-radius: 1rem 1rem 0 0;"

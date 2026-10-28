@@ -84,14 +84,14 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
   readonly quizPreviewCards = [
     {
       label: 'Ecoturismo',
-      image: 'assets/ecoturismo.webp',
+      image: '/assets/ecoturismo.webp',
       stepIndex: 0,
       stepName: 'Estilo',
       questionTitle: 'Qual é o seu estilo de viagem?',
       optionBadge: 'Opção 1 de 6',
       archetype: 'Explorador da Natureza',
       isEco: true,
-      cardImg: 'assets/horizon-verde.webp',
+      cardImg: '/assets/horizon-verde.webp',
       heartTitle: 'Ecoturismo e Natureza Viva',
       heartDesc: 'Identificamos que seu perfil busca contato genuíno com biomas preservados, cachoeiras e trilhas longe do turismo de massa.',
       radarValues: { praia: 0.65, natureza: 0.96, aventura: 0.88, cidade: 0.28, cultura: 0.62, relaxamento: 0.78 },
@@ -103,14 +103,14 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
     },
     {
       label: 'Sol e Calor',
-      image: 'assets/sol.webp',
+      image: '/assets/sol.webp',
       stepIndex: 1,
       stepName: 'Clima',
       questionTitle: 'Qual clima te faz mais feliz?',
       optionBadge: 'Opção 2 de 6',
       archetype: 'Amante do Litoral',
       isEco: false,
-      cardImg: 'assets/horizon45.webp',
+      cardImg: '/assets/horizon45.webp',
       heartTitle: 'Sol, Brisa e Águas Cristalinas',
       heartDesc: 'Sua energia recarrega em praias paradisíacas, piscinas naturais e destinos ensolarados à beira-mar.',
       radarValues: { praia: 0.98, natureza: 0.80, aventura: 0.64, cidade: 0.45, cultura: 0.58, relaxamento: 0.92 },
@@ -122,14 +122,14 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
     },
     {
       label: 'Natureza e Vida Selvagem',
-      image: 'assets/pantanal.webp',
+      image: '/assets/pantanal.webp',
       stepIndex: 2,
       stepName: 'Experiência',
       questionTitle: 'O que você procura viver nessa viagem?',
       optionBadge: 'Opção 3 de 6',
       archetype: 'Observador da Vida Selvagem',
       isEco: true,
-      cardImg: 'assets/horizon-verde.webp',
+      cardImg: '/assets/horizon-verde.webp',
       heartTitle: 'Santuários e Vida Selvagem',
       heartDesc: 'Você vibra com reservas ambientais, observação de fauna nativa e imersão em ecossistemas únicos.',
       radarValues: { praia: 0.54, natureza: 0.98, aventura: 0.90, cidade: 0.22, cultura: 0.60, relaxamento: 0.74 },
@@ -141,14 +141,14 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
     },
     {
       label: 'Cultura e História',
-      image: 'assets/machu-picchu.webp',
+      image: '/assets/machu-picchu.webp',
       stepIndex: 2,
       stepName: 'Experiência',
       questionTitle: 'O que você procura viver nessa viagem?',
       optionBadge: 'Opção 4 de 6',
       archetype: 'Viajante Cultural',
       isEco: false,
-      cardImg: 'assets/horizon45.webp',
+      cardImg: '/assets/horizon45.webp',
       heartTitle: 'Cultura, História e Patrimônio',
       heartDesc: 'Seu coração bate mais forte diante de ruínas ancestrais, arquitetura histórica, museus e gastronomia local.',
       radarValues: { praia: 0.42, natureza: 0.72, aventura: 0.76, cidade: 0.84, cultura: 0.98, relaxamento: 0.64 },
@@ -160,14 +160,14 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
     },
     {
       label: 'Aventura',
-      image: 'assets/chapada-diamantina.webp',
+      image: '/assets/chapada-diamantina.webp',
       stepIndex: 3,
       stepName: 'Ritmo',
       questionTitle: 'Qual é o ritmo ideal dos seus dias?',
       optionBadge: 'Opção 5 de 6',
       archetype: 'Buscador de Aventura',
       isEco: true,
-      cardImg: 'assets/horizon-verde.webp',
+      cardImg: '/assets/horizon-verde.webp',
       heartTitle: 'Aventura e Paisagens Épicas',
       heartDesc: 'Dias intensos explorando cânions, serras tabulares, mirantes e expedições de tirar o fôlego.',
       radarValues: { praia: 0.58, natureza: 0.94, aventura: 0.98, cidade: 0.30, cultura: 0.66, relaxamento: 0.52 },
@@ -179,14 +179,14 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
     },
     {
       label: 'Desconexão e Descanso',
-      image: 'assets/maldivas.webp',
+      image: '/assets/maldivas.webp',
       stepIndex: 4,
       stepName: 'Atmosfera',
       questionTitle: 'Qual atmosfera combina com seu momento?',
       optionBadge: 'Opção 6 de 6',
       archetype: 'Mente Zen e Descanso',
       isEco: false,
-      cardImg: 'assets/horizon45.webp',
+      cardImg: '/assets/horizon45.webp',
       heartTitle: 'Desconexão e Refúgio Absoluto',
       heartDesc: 'O seu momento pede paz absoluta, águas calmas, conforto exclusivo e dias sem pressa.',
       radarValues: { praia: 0.95, natureza: 0.76, aventura: 0.38, cidade: 0.35, cultura: 0.56, relaxamento: 0.98 },
@@ -1651,7 +1651,7 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         id: 102,
         title: 'O encanto das águas cristalinas de Noronha',
         caption: 'Mergulho na Baía dos Porcos e no Sancho com tartarugas marinhas e raias em um dos cenários mais preservados do planeta.',
-        imageUrl: 'assets/feed/id102-1.webp',
+        imageUrl: '/assets/feed/id102-1.webp',
         likesCount: 2418,
         dislikesCount: 24,
         postType: 'ARTICLE'
@@ -1660,7 +1660,7 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         id: 103,
         title: 'Segredos da Chapada: O lendário Vale do Pati',
         caption: 'Serras tabulares, quedas d\'água misteriosas e a hospitalidade inesquecível dos nativos sob um céu apinhado de estrelas.',
-        imageUrl: 'assets/feed/id103-1.webp',
+        imageUrl: '/assets/feed/id103-1.webp',
         likesCount: 1842,
         dislikesCount: 15,
         postType: 'ARTICLE'
@@ -1669,7 +1669,7 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         id: 105,
         title: 'Cores, aromas e histórias nos labirintos de Marrakech',
         caption: 'Mosaicos geométricos zellij, aromas adocicados de especiarias e a atmosfera fascinante da lendária praça Jemaa el-Fna.',
-        imageUrl: 'assets/feed/id105-1.webp',
+        imageUrl: '/assets/feed/id105-1.webp',
         likesCount: 3150,
         dislikesCount: 36,
         postType: 'ARTICLE'
@@ -1678,7 +1678,7 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         id: 107,
         title: 'Lagoas de água doce entre o mar de dunas dos Lençóis',
         caption: 'Um deserto imenso de areia alvíssima pontilhado por lagoas cristalinas de água doce sob o sol do Maranhão.',
-        imageUrl: 'assets/feed/id107-1.webp',
+        imageUrl: '/assets/feed/id107-1.webp',
         likesCount: 1980,
         dislikesCount: 18,
         postType: 'ARTICLE'
@@ -1687,7 +1687,7 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         id: 110,
         title: 'Glaciares milenares e ventos bravos da Patagônia',
         caption: 'Diante do colossal Perito Moreno, o estrondo do gelo caindo nas águas do Lago Argentino é pura poesia selvagem.',
-        imageUrl: 'assets/feed/id110-1.webp',
+        imageUrl: '/assets/feed/id110-1.webp',
         likesCount: 2740,
         dislikesCount: 29,
         postType: 'ARTICLE'
@@ -1696,7 +1696,7 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         id: 116,
         title: 'Colinas douradas e vinhedos seculares na Toscana',
         caption: 'Vilarejos medievais de pedra, estradinhas cercadas de ciprestes e pores do sol inesquecíveis que tingem os campos de terracota.',
-        imageUrl: 'assets/feed/id116-1.webp',
+        imageUrl: '/assets/feed/id116-1.webp',
         likesCount: 2210,
         dislikesCount: 12,
         postType: 'ARTICLE'
@@ -1712,7 +1712,7 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         ...post,
         likesCount: post.likesCount ?? 0,
         dislikesCount: post.dislikesCount ?? 0,
-        imageUrl: post.imageUrl || `assets/feed/id${post.id}-1.webp`
+        imageUrl: post.imageUrl || `/assets/feed/id${post.id}-1.webp`
       });
       usedIds.add(post.id);
     }
@@ -1782,10 +1782,10 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
       (post.id >= 101 && post.id <= 125);
 
     if (hasLocalArticleGallery) {
-      return [1, 2, 3].map(index => `assets/feed/id${post.id}-${index}.webp`);
+      return [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`);
     }
 
-    return post.imageUrl ? [post.imageUrl] : ['assets/Horizon 1.webp'];
+    return post.imageUrl ? [post.imageUrl] : ['/assets/Horizon 1.webp'];
   }
 
   onFeedMouseDown(event: MouseEvent, postId: number, trackEl: HTMLElement): void {
@@ -1856,17 +1856,17 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
       return post.imageUrl;
     }
     if (post.id) {
-      return `assets/feed/id${post.id}-1.webp`;
+      return `/assets/feed/id${post.id}-1.webp`;
     }
-    return 'assets/Horizon 1.webp';
+    return '/assets/Horizon 1.webp';
   }
 
   handleFeedImageError(event: any, post: Post): void {
     if (event?.target) {
       if (post.id && !event.target.src.includes(`id${post.id}-1.webp`)) {
-        event.target.src = `assets/feed/id${post.id}-1.webp`;
+        event.target.src = `/assets/feed/id${post.id}-1.webp`;
       } else {
-        event.target.src = 'assets/Horizon 1.webp';
+        event.target.src = '/assets/Horizon 1.webp';
       }
     }
   }

@@ -765,11 +765,11 @@ export class CheckoutComponent implements OnInit {
   getDestinationImageUrl(): string {
     const raw = this.getDestinationName();
     const cityOnly = raw.split(/[,\(]/)[0].trim();
-    return findLocalImage(cityOnly, raw) || 'assets/paymentt.webp';
+    return findLocalImage(cityOnly, raw) || '/assets/paymentt.webp';
   }
 
   onDestinationImgError(event: Event): void {
-    (event.target as HTMLImageElement).src = 'assets/paymentt.webp';
+    (event.target as HTMLImageElement).src = '/assets/paymentt.webp';
   }
 
   getOutboundFlight(): any {

@@ -3,7 +3,7 @@
 <!-- Hero Section -->
 <header class="hero-container position-relative overflow-hidden">
   <img 
-    src="assets/comum.webp" 
+    src="/assets/comum.webp" 
     alt="Destinos Comuns Hero" 
     class="w-100 hero-image"
     (error)="handleHeroError($event)"
@@ -62,13 +62,13 @@
               
               <!-- Horizon Tag (Top Left) -->
               <div class="position-absolute top-0 start-0 p-2 pointer-events-none">
-                <img src="assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
+                <img src="/assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
               </div>
 
               <!-- Botão Info (Bottom Right overlapping) -->
               <button class="btn position-absolute rounded-3 p-1 d-flex align-items-center justify-content-center shadow-sm btn-info-badge"
                       [routerLink]="['/flights']" [queryParams]="{ destinationId: dest.id }">
-                <img src="assets/info-icon.png" alt="Info" class="w-100 h-100 object-fit-contain">
+                <img src="/assets/info-icon.png" alt="Info" class="w-100 h-100 object-fit-contain">
               </button>
             </div>
 

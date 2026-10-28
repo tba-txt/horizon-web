@@ -16,7 +16,7 @@ export class DestinationCardComponent {
   @Output() discover = new EventEmitter<Destination>();
   @Output() embark = new EventEmitter<Destination>();
 
-  placeholderImage = 'assets/placeholder-dest.jpg';
+  placeholderImage = '/assets/placeholder-dest.jpg';
   isTakingOff = signal(false);
 
   onDiscover(event: Event) {

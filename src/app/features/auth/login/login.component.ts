@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  mobileHeroImage = signal<string>('assets/santorini.webp');
+  mobileHeroImage = signal<string>('/assets/santorini.webp');
 
   loginForm = this.fb.group({
     email: ['', [Validators.required, strictEmailValidator()]],
@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
   onMobileHeroError(event: any): void {
     const target = event?.target as HTMLImageElement;
     if (target && !target.src.includes('maldivas.webp')) {
-      target.src = 'assets/maldivas.webp';
+      target.src = '/assets/maldivas.webp';
     }
   }
 

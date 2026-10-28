@@ -3,7 +3,7 @@
 <!-- Hero Section -->
 <header class="hero-container position-relative overflow-hidden">
   <img 
-    src="assets/recommend.webp" 
+    src="/assets/recommend.webp" 
     alt="Recomendações de Destinos Horizon" 
     class="w-100 hero-image"
     fetchpriority="high"
@@ -103,7 +103,7 @@
                     <!-- Camada Flutuante: Header do Card (Horizon à esquerda, Rank badge à direita) -->
                     <div class="card-3d-header card-3d-item z-40">
                       <div class="card-3d-brand">
-                        <img src="assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
+                        <img src="/assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
                       </div>
                       <span class="rank-badge">
                         {{ i + 1 }}º {{ getRankLabel(i) }}
@@ -237,7 +237,7 @@
                   
                   <!-- Horizon Tag (Top Left) -->
                   <div class="position-absolute top-0 start-0 p-2 pointer-events-none">
-                    <img src="assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
+                    <img src="/assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
                   </div>
 
                   <!-- Score Pill (Top Right) -->
@@ -253,7 +253,7 @@
                   <button class="btn position-absolute rounded-3 p-1 d-flex align-items-center justify-content-center shadow-sm btn-info-badge"
                           [attr.aria-label]="'Ver voos disponíveis para ' + rec.destinationName"
                           [routerLink]="['/flights']" [queryParams]="{ destinationId: rec.destinationId }">
-                    <img src="assets/info-icon.png" alt="Informações" class="w-100 h-100 object-fit-contain">
+                    <img src="/assets/info-icon.png" alt="Informações" class="w-100 h-100 object-fit-contain">
                   </button>
                 </div>
 

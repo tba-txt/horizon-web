@@ -54,7 +54,7 @@
                 [disabled]="isLoadingWeather || forecastPage() === 0"
                 aria-label="Previsão anterior"
               >
-                <img src="assets/seta.png" alt="Anterior" class="weather-arrow-icon arrow-left" />
+                <img src="/assets/seta.png" alt="Anterior" class="weather-arrow-icon arrow-left" />
               </button>
               
               <div class="d-flex align-items-center gap-2 text-center">
@@ -71,7 +71,7 @@
                 [disabled]="isLoadingWeather || forecastPage() === 3"
                 aria-label="Próxima previsão"
               >
-                <img src="assets/seta.png" alt="Próximo" class="weather-arrow-icon arrow-right" />
+                <img src="/assets/seta.png" alt="Próximo" class="weather-arrow-icon arrow-right" />
               </button>
             </div>
 
@@ -273,7 +273,7 @@
         <span class="text-secondary small d-block mb-1 lh-1">Voo saindo de</span>
         <div class="d-flex align-items-center gap-2">
           <div class="flight-route-icon" title="Origem: São Paulo (SAO)">
-            <img src="assets/spImage.avif" alt="São Paulo" class="flight-route-img" />
+            <img src="/assets/spImage.avif" alt="São Paulo" class="flight-route-img" />
           </div>
           <strong class="text-dark fs-6">São Paulo (SAO) • {{ destination.name }}</strong>
           <div class="flight-route-icon" [title]="'Destino: ' + destination.name">

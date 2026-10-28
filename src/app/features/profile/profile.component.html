@@ -3,7 +3,7 @@
     <!-- Top Hero Banner (cima-usuario.png - igual nas outras páginas) -->
     <header class="hero-container position-relative overflow-hidden">
       <img 
-        src="assets/cima-usuario.png" 
+        src="/assets/cima-usuario.png" 
         alt="Horizon Usuário" 
         class="w-100 hero-image"
         fetchpriority="high"
@@ -49,7 +49,7 @@
                     @if (user()?.profileImageUrl) {
                       <img [src]="user()!.profileImageUrl!" [alt]="user()!.name" />
                     } @else {
-                      <img src="assets/default-avatar.webp" [alt]="user()?.name || 'Usuário'" />
+                      <img src="/assets/default-avatar.webp" [alt]="user()?.name || 'Usuário'" />
                     }
                     @if (isUploadingImage()) {
                       <div class="avatar-loading-overlay">
@@ -65,7 +65,7 @@
                     [disabled]="isUploadingImage()"
                     title="Alterar foto de perfil"
                   >
-                    <img src="assets/avatar-badge.webp?v=2" alt="Alterar foto" class="avatar-badge-icon" />
+                    <img src="/assets/avatar-badge.webp?v=2" alt="Alterar foto" class="avatar-badge-icon" />
                   </button>
                   <input #heroFileInput type="file" class="d-none" accept="image/*" (change)="onFileSelected($event)" />
                 </div>
@@ -227,7 +227,7 @@
 
                 <!-- BANNER DO MEIO (meio-usuarios.png) -->
                 <img 
-                  src="assets/meio-usuarios.png" 
+                  src="/assets/meio-usuarios.png" 
                   alt="Horizon Painel" 
                   class="dashboard-main-banner mb-2 d-block" 
                 />
@@ -374,7 +374,7 @@
                         @if (user()?.profileImageUrl) {
                           <img [src]="user()!.profileImageUrl!" [alt]="user()!.name" />
                         } @else {
-                          <img src="assets/default-avatar.webp" [alt]="user()?.name || 'Usuário'" />
+                          <img src="/assets/default-avatar.webp" [alt]="user()?.name || 'Usuário'" />
                         }
                       </div>
                       <div class="flex-grow-1">
