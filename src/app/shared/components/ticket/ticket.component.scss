@@ -1,4 +1,4 @@
-/* From Uiverse.io by Cobp - Modified for Horizon Travel */ 
+/* Cartão de Embarque Oficial Horizon */ 
 .container-cards-ticket {
   perspective: 1000px;
 }
@@ -8,18 +8,21 @@
   height: 150px;
   width: 320px;
   display: flex;
-  color: #2d2d2d;
+  color: #1e293b;
   background-color: #ffffff;
   border-radius: 1rem;
+  border: 1.5px solid rgba(91, 164, 216, 0.35);
+  border-left: 5px solid #5BA4D8;
+  box-shadow: 0 8px 20px rgba(91, 164, 216, 0.14);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25);
   z-index: 10;
-  gap: 1rem;
+  gap: 0.75rem;
   animation: animation-card 10s infinite;
   overflow: hidden;
 
   &:hover {
     animation-play-state: paused;
-    transform: translateY(-5px);
+    transform: translateY(-4px);
 
     & .content-ticket::after,
     & .content-ticket::before,
@@ -45,7 +48,7 @@
     position: relative;
     display: flex;
     height: 100%;
-    border-left: 2px dashed #e8e8e8;
+    border-left: 2px dashed rgba(91, 164, 216, 0.35);
 
     &::after {
       content: "";
@@ -56,7 +59,7 @@
       width: 16px;
       height: 16px;
       border-radius: 16px;
-      background-color: #e8e8e8;
+      background-color: #5BA4D8;
     }
 
     &::before {
@@ -68,7 +71,7 @@
       width: 16px;
       height: 16px;
       border-radius: 1rem;
-      background-color: #e8e8e8;
+      background-color: #5BA4D8;
     }
   }
 }
@@ -86,14 +89,15 @@
     right: 0;
     background-image: linear-gradient(
       90deg,
-      rgba(0, 0, 0, 0),
-      rgba(0, 0, 0, 0.4)
+      rgba(91, 164, 216, 0),
+      rgba(91, 164, 216, 0.12)
     );
     transform: translateX(200px) scale(1.5);
     filter: blur(10px);
     width: 200px;
     height: 100%;
     animation: shadow-card 10s infinite;
+    pointer-events: none;
   }
 
   &::before {
@@ -111,6 +115,7 @@
     width: 80px;
     height: 100%;
     animation: light-card 10s infinite;
+    pointer-events: none;
   }
 }
 
@@ -142,14 +147,23 @@
   line-height: 12px;
 
   & .title {
-    color: #aeaeae;
+    color: #64748b;
+    font-weight: 700;
     margin-bottom: 2px;
   }
 
   & .subtitle {
-    font-weight: 500;
-    color: #212121;
+    font-weight: 700;
+    color: #1e293b;
     margin-bottom: 0;
+  }
+
+  & .subtitle-blue {
+    color: #5BA4D8;
+  }
+
+  & .subtitle-green {
+    color: #5BA4D8;
   }
 }
 
@@ -158,6 +172,18 @@
   align-items: center;
   justify-content: space-between;
 
+  & .route-plane-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    background-color: #f0f7fc;
+    border: 1px solid rgba(91, 164, 216, 0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
   & .dest {
     display: flex;
     flex-direction: column;
@@ -165,13 +191,15 @@
     & .country {
       font-size: 10px;
       line-height: 1;
-      color: #aeaeae;
+      color: #64748b;
+      font-weight: 600;
       margin-bottom: 2px;
     }
 
     & .acronym {
-      font-weight: 700;
-      color: #2d2d2d;
+      font-weight: 800;
+      font-size: 15px;
+      color: #5BA4D8;
       margin-bottom: 2px;
     }
 
@@ -181,24 +209,32 @@
       display: flex;
       align-items: center;
       gap: 4px;
-      color: #2d2d2d;
+      color: #5BA4D8;
+      font-weight: 700;
       margin-bottom: 0;
     }
   }
 }
 
 .container-icons {
-  width: fit-content;
-  padding: 0.625rem;
+  width: 42px;
+  flex-shrink: 0;
+  padding: 0.625rem 0.5rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  animation: color-card 10s infinite;
-  z-index: -1;
+  background: #5BA4D8;
+  z-index: 1;
 
   & .icon {
     color: #ffffff;
+  }
+
+  & .brand-mark {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
   }
 }
 
@@ -217,10 +253,4 @@
 @keyframes shadow-card {
   35% { transform: translateX(200px) scale(1.5); }
   75% { transform: translateX(0px) scale(1.5); }
-}
-
-@keyframes color-card {
-  0% { background-color: #5BA4D8; }
-  50% { background-color: #65A30D; }
-  100% { background-color: #5BA4D8; }
 }

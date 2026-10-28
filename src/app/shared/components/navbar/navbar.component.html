@@ -1,0 +1,100 @@
+<nav class="navbar navbar-expand-lg navbar-dark" 
+         [ngClass]="isTransparent ? 'position-absolute top-0 mt-4 pt-1 start-0 w-100 shadow-none navbar-glass-home' : 'sticky-top shadow-sm navbar-glass-other'"
+         [style.transition]="'background-color 0.3s ease'"
+         [style.z-index]="1050">
+      <div class="container">
+        <a class="navbar-brand d-flex align-items-center" routerLink="/destinations" aria-label="Horizon - Ir para página inicial de destinos">
+          <img src="assets/LogoH.png" alt="Horizon" class="navbar-logo" width="130" height="42" />
+        </a>
+
+        <button 
+          class="navbar-toggler" 
+          type="button" 
+          (click)="toggleMenu()"
+          aria-controls="navbarNav" 
+          [attr.aria-expanded]="isMenuOpen" 
+          aria-label="Alternar menu de navegação"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" [class.show]="isMenuOpen" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/destinations" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }">
+                Destinos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/quiz" routerLinkActive="active">
+                Quiz
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/feed" routerLinkActive="active">
+                Feed
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/recommendations" routerLinkActive="active">
+                Recomendações
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/flights" routerLinkActive="active">
+                Voos
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" routerLink="/faq" routerLinkActive="active">
+                FAQ
+              </a>
+            </li>
+          </ul>
+
+          <div class="nav-auth-container">
+            @if (isLoggedIn()) {
+              <!-- Mobile Profile Card (visual elegante de card + texto suave de logout) -->
+              <div class="nav-mobile-profile d-lg-none">
+                <a routerLink="/profile" (click)="closeMenu()" class="nav-user-mobile-card">
+                  <div class="nav-user-avatar">
+                    <i class="bi bi-person-fill"></i>
+                  </div>
+                  <div class="nav-user-details">
+                    <span class="nav-user-name">Minha Conta</span>
+                    <span class="nav-user-hint">Minhas viagens e reservas</span>
+                  </div>
+                  
+                </a>
+                <button type="button" class="btn-nav-logout-text" (click)="logout(); closeMenu()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sair da conta</span>
+                </button>
+              </div>
+
+              <!-- Desktop Profile Buttons (botões elegantes em telas grandes) -->
+              <div class="d-none d-lg-flex align-items-center gap-2">
+                <a routerLink="/profile" class="btn-nav-desktop-account">
+                  <i class="bi bi-person-circle"></i>
+                  <span>Minha Conta</span>
+                </a>
+                <button type="button" class="btn-nav-desktop-logout" (click)="logout()">
+                  <i class="bi bi-box-arrow-right"></i>
+                  <span>Sair</span>
+                </button>
+              </div>
+            } @else {
+              <!-- Usuário deslogado -->
+              <div class="nav-guest-actions">
+                <a routerLink="/login" (click)="closeMenu()" class="btn-nav-login">
+                  Entrar
+                </a>
+                <a routerLink="/register" (click)="closeMenu()" class="btn-nav-register">
+                  Cadastre-se
+                </a>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </nav>

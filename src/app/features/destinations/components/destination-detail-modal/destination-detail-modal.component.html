@@ -42,7 +42,7 @@
         
         <!-- Coluna 1: Card de Clima em Tempo Real com Barras Animadas (Open-Meteo) -->
         <div class="col-12 col-lg-6 d-flex">
-          <div class="glass-card p-4 h-100 w-100 d-flex flex-column justify-content-between">
+          <div class="glass-card p-3 p-xl-4 h-100 w-100 d-flex flex-column justify-content-between">
             
             <div class="d-flex justify-content-between align-items-center mb-3">
               <button 
@@ -87,7 +87,7 @@
               </div>
             } @else {
               <!-- Gráfico com Colunas Animadas (Moving Bars) -->
-              <div class="weather-chart-wrapper my-auto">
+              <div class="weather-chart-wrapper">
                 <div class="weather-columns-grid">
                   @for (day of forecastDays(); track day.label; let idx = $index) {
                     <div class="weather-col" [style.--bar-index]="idx">
@@ -107,7 +107,6 @@
 
                       <!-- Detalhes Climáticos do Dia -->
                       <div class="day-metrics">
-                        <i class="bi {{ day.icon }}" [class.text-warning]="day.isSunny" [class.text-primary]="!day.isSunny && !day.isRainy" [class.text-info]="day.isRainy"></i>
                         <span class="hum-text"><i class="bi bi-droplet-fill"></i> {{ day.humidity }}%</span>
                       </div>
                     </div>
@@ -115,19 +114,51 @@
                 </div>
               </div>
 
+              <!-- Dica de Planejamento e Reserva Recomendada (Largura Total, Sem Corte de Texto) -->
+              <div class="planning-tip-block mt-3">
+                <h4 class="section-heading mb-2">Planejamento recomendado</h4>
+                <div class="planning-tip-card" [class.eco-planning-card]="isEcoDestination()">
+                  <div class="planning-icon-box" [style.background-color]="destinationAccent()">
+                    <i class="bi bi-wallet2 text-white"></i>
+                  </div>
+                  <div class="planning-content">
+                    <div class="planning-badges-row">
+                      <span class="planning-tag" [style.background-color]="destinationAccent()">
+                        <i class="bi bi-calendar3 me-1"></i>{{ travelPlanningTip().daysLabel }}
+                      </span>
+                      <span class="planning-amount">
+                        Média sugerida: <strong>{{ travelPlanningTip().suggestedBudget }}</strong>
+                      </span>
+                    </div>
+                    <p class="planning-desc mb-0">
+                      Valor recomendado por pessoa para curtir <strong>{{ destination.name }}</strong> por {{ travelPlanningTip().daysLabel }} considerando passagem, hospedagem e passeios.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
               <!-- Faixa de Dados Extras do Clima Open-Meteo -->
-              <div class="weather-extra-strip mt-3 pt-2">
+              <div class="weather-extra-strip mt-3 pt-1">
                 <div class="extra-item">
                   <i class="bi bi-thermometer-half text-danger"></i>
-                  <span>Sensação: <strong>{{ apparentTemp() }}°C</strong></span>
+                  <div class="extra-item-texts">
+                    <span class="extra-label">Sensação</span>
+                    <strong class="extra-val">{{ apparentTemp() }}°C</strong>
+                  </div>
                 </div>
                 <div class="extra-item">
                   <i class="bi bi-wind text-primary"></i>
-                  <span>Vento: <strong>{{ windSpeed() }} km/h</strong></span>
+                  <div class="extra-item-texts">
+                    <span class="extra-label">Vento</span>
+                    <strong class="extra-val">{{ windSpeed() }} km/h</strong>
+                  </div>
                 </div>
-                <div class="extra-item">
+                <div class="extra-item extra-item-condition">
                   <i class="bi bi-info-circle text-secondary"></i>
-                  <span><strong>{{ weatherCondition() }}</strong></span>
+                  <div class="extra-item-texts">
+                    <span class="extra-label">Condição</span>
+                    <strong class="extra-val condition-val" [attr.title]="weatherCondition()">{{ weatherCondition() }}</strong>
+                  </div>
                 </div>
               </div>
             }
@@ -137,22 +168,50 @@
 
         <!-- Coluna 2: Informações Ricas do Destino (Não Genéricas) -->
         <div class="col-12 col-lg-6 d-flex">
-          <div class="glass-card p-4 h-100 w-100 d-flex flex-column justify-content-between">
+          <div class="glass-card p-3 p-xl-4 h-100 w-100 d-flex flex-column justify-content-between">
             <div>
               <h3 class="destination-headline mb-2">{{ curated().headline }}</h3>
               <p class="destination-text mb-3">
                 {{ curated().description }}
               </p>
 
-              <!-- Melhor época -->
+              <!-- Melhor época para visitar (Visual Editorial por Meses) -->
               <div class="mb-3">
-                <h4 class="section-heading">Melhor época para viajar</h4>
-                <div class="best-time-box mt-1"
+                <h4 class="section-heading mb-2">Melhor época para visitar</h4>
+                
+                <!-- Barra com o texto completo (Azul para viagem comum e Verde para ecoturismo) -->
+                <div class="best-time-bar mb-2 px-3 py-2 rounded-3 text-white d-flex align-items-center"
                      [style.background-color]="destinationAccent()"
-                     [style.border-color]="destinationAccentBorder()"
-                     [style.color]="'#ffffff'">
-                  <i class="bi bi-calendar2-week me-2" [style.color]="'#ffffff'"></i>
-                  <span [style.color]="'#ffffff'">{{ curated().bestTime }}</span>
+                     [style.border]="'1px solid ' + destinationAccentBorder()">
+                  <i class="bi bi-calendar2-week me-2 flex-shrink-0 fs-6"></i>
+                  <span class="small fw-semibold lh-base">{{ curated().bestTime }}</span>
+                </div>
+                
+                <div class="best-time-calendar-card p-3 rounded-4">
+                  <!-- 12 Meses Bar Columns (J F M A M J J A S O N D) -->
+                  <div class="months-bar-grid">
+                    @for (m of bestTimeCalendar(); track $index) {
+                      <div class="month-pill-col" 
+                           [class.month-best]="m.rating === 'BEST'"
+                           [class.month-good]="m.rating === 'GOOD'"
+                           [class.month-normal]="m.rating === 'NORMAL'"
+                           [attr.title]="m.fullName + ': ' + (m.rating === 'BEST' ? 'Melhor época' : (m.rating === 'GOOD' ? 'Boa época' : 'Época comum'))">
+                        <span class="month-letter">{{ m.letter }}</span>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Legenda: Melhor (Verde) e Bom (Dourado/Amarelo suave) -->
+                  <div class="months-legend-row d-flex align-items-center gap-4 mt-3 pt-1">
+                    <div class="legend-item d-flex align-items-center gap-2">
+                      <span class="legend-color-dot dot-best"></span>
+                      <span class="legend-label">Melhor</span>
+                    </div>
+                    <div class="legend-item d-flex align-items-center gap-2">
+                      <span class="legend-color-dot dot-good"></span>
+                      <span class="legend-label">Bom</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -210,13 +269,21 @@
 
     <!-- Barra Inferior Sticky com Efeito Vidro e Ação de Reserva -->
     <div class="modal-glass-footer">
-      <div class="d-flex align-items-center gap-2">
-        <div class="flight-route-icon">
-          <img src="assets/spImage.avif" alt="São Paulo" class="flight-route-img" />
-        </div>
-        <div>
-          <span class="text-secondary small d-block lh-1">Voo saindo de</span>
-          <strong class="text-dark fs-6">São Paulo (SAO) ➔ {{ destination.name }}</strong>
+      <div class="d-flex flex-column justify-content-center">
+        <span class="text-secondary small d-block mb-1 lh-1">Voo saindo de</span>
+        <div class="d-flex align-items-center gap-2">
+          <div class="flight-route-icon" title="Origem: São Paulo (SAO)">
+            <img src="assets/spImage.avif" alt="São Paulo" class="flight-route-img" />
+          </div>
+          <strong class="text-dark fs-6">São Paulo (SAO) • {{ destination.name }}</strong>
+          <div class="flight-route-icon" [title]="'Destino: ' + destination.name">
+            <img 
+              [src]="destination.imageUrl || placeholderImage" 
+              [alt]="destination.name" 
+              class="flight-route-img"
+              (error)="handleImageError($event)"
+            />
+          </div>
         </div>
       </div>
 
@@ -227,7 +294,6 @@
         </div>
         <button class="btn btn-reserve-glow" (click)="onReserve()">
           <span>RESERVAR AGORA</span>
-          <i class="bi bi-arrow-right"></i>
         </button>
       </div>
     </div>

@@ -18,7 +18,9 @@ export interface ReservationRequest {
   destinationId: number;
   tripType: TripType;
   outboundFlightId: number;
+  outboundSeatClass?: SeatClass | string | null;
   returnFlightId?: number | null;
+  returnSeatClass?: SeatClass | string | null;
   passengers: PassengerRequest[];
 }
 

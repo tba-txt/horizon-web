@@ -3,19 +3,24 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, shareReplay } from 'rxjs';
 import { Post } from '../models/feed.model';
 import { environment } from '../../../../environments/environment';
+import { TokenStorageService } from '../../../core/auth/services/token-storage.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FeedService {
   private http = inject(HttpClient);
+  private tokenStorage = inject(TokenStorageService);
   private readonly postsUrl = `${environment.apiUrl}/posts`;
   private readonly interactionsUrl = `${environment.apiUrl}/interactions`;
 
   private cachedPosts$?: Observable<Post[]>;
+  private cachedUserId: string | null = null;
 
   getPosts(forceRefresh = false): Observable<Post[]> {
-    if (!this.cachedPosts$ || forceRefresh) {
+    const currentUserId = this.tokenStorage.getUserId() ?? 'guest';
+    if (!this.cachedPosts$ || forceRefresh || this.cachedUserId !== currentUserId) {
+      this.cachedUserId = currentUserId;
       this.cachedPosts$ = this.http.get<Post[]>(this.postsUrl).pipe(
         shareReplay({ bufferSize: 1, refCount: false })
       );
@@ -36,5 +41,6 @@ export class FeedService {
 
   clearCache(): void {
     this.cachedPosts$ = undefined;
+    this.cachedUserId = null;
   }
 }

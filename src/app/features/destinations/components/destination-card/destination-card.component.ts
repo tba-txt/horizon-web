@@ -1,11 +1,11 @@
 import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Destination } from '../../models/destination.model';
 
 @Component({
   selector: 'app-destination-card',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe],
+  imports: [CommonModule],
   templateUrl: './destination-card.component.html',
   styleUrls: ['./destination-card.component.scss']
 })

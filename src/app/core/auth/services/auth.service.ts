@@ -42,7 +42,13 @@ export class AuthService {
   }
 
   public register(data: RegisterRequest): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/auth/register`, data);
+    return this.http.post<any>(`${this.apiUrl}/auth/register`, data).pipe(
+      tap(response => {
+        if (response?.id) {
+          this.tokenStorage.clearNewUserLocalCache(response.id);
+        }
+      })
+    );
   }
 
   public forgotPassword(data: ForgotPasswordRequest): Observable<void> {

@@ -1,14 +1,18 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { QuizService } from '../services/quiz.service';
-import { Quiz, SubmitQuizRequest } from '../models/quiz.model';
+import { Quiz, SubmitQuizRequest, AnswerOption } from '../models/quiz.model';
+import { AuthService } from '../../../core/auth/services/auth.service';
 import { TokenStorageService } from '../../../core/auth/services/token-storage.service';
 import { TravelerIdentityService } from '../../recommendations/services/traveler-identity.service';
 import { TravelerIdentityState } from '../../recommendations/models/traveler-identity.model';
+import { PlaneLoaderComponent } from '../../../shared/components/plane-loader/plane-loader.component';
+import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
+import { FeedbackModalComponent } from '../../../shared/components/feedback-modal/feedback-modal.component';
 
 interface OptionVisual {
   image: string;
@@ -26,824 +30,21 @@ interface BudgetTier {
   badge: string;
 }
 
-import { PlaneLoaderComponent } from '../../../shared/components/plane-loader/plane-loader.component';
-
 @Component({
   selector: 'app-quiz-flow',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent, FooterComponent, PlaneLoaderComponent],
-  template: `
-    <app-navbar></app-navbar>
-
-    <!-- Hero Section -->
-    <header class="hero-container position-relative overflow-hidden">
-      <img 
-        src="assets/quiz.webp" 
-        alt="Quiz Hero" 
-        class="w-100 hero-image"
-        fetchpriority="high"
-        (error)="handleHeroError($event)"
-      />
-    </header>
-
-    <main class="container-fluid px-lg-4 py-5 mx-auto" style="max-width: 1400px;">
-      <div class="row g-4 g-lg-5 justify-content-center">
-        
-        <!-- COLUNA LATERAL ESQUERDA: CARD DE PROGRESSO FIGMA -->
-        <div class="col-12 col-lg-3 d-none d-lg-block">
-          <div class="card border-0 shadow-sm rounded-4 bg-white h-100 overflow-hidden d-flex flex-column" style="min-height: 770px;">
-            <!-- Topo Azul: Progresso & Stepper Horizontal -->
-            <div class="p-4 text-white d-flex flex-column justify-content-between" style="background-color: #5BA4D8; min-height: 180px; height: 180px;">
-              <div>
-                <span class="badge rounded-2 px-3 py-2 fw-bold bg-white text-primary shadow-sm" style="font-size: 0.8rem;">
-                  Progresso
-                </span>
-              </div>
-
-              <!-- Horizontal Stepper (Estilo Figma) -->
-              <div class="position-relative my-2 px-1">
-                <!-- Linha Conectora Branca de Fundo -->
-                <div class="position-absolute start-0 end-0" style="top: 50%; height: 3px; background: rgba(255, 255, 255, 0.45); transform: translateY(-50%); z-index: 1;"></div>
-                
-                <!-- Barra de Progresso Ativa Branca -->
-                <div class="position-absolute start-0" 
-                     style="top: 50%; height: 3px; background: #ffffff; transform: translateY(-50%); z-index: 2; transition: width 0.3s ease;"
-                     [style.width.%]="(currentStep() / 3) * 100">
-                </div>
-
-                <!-- 4 Nós com Rótulos Alternados (Acima / Abaixo) -->
-                <div class="d-flex justify-content-between align-items-center position-relative" style="z-index: 3; min-height: 64px;">
-                  
-                  <!-- 1: Estilo (Rótulo Abaixo) -->
-                  <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(0)" style="width: 48px;">
-                    <div style="height: 18px;"></div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                         [style.background]="currentStep() >= 0 ? '#ffffff' : '#4895CC'"
-                         [style.border]="currentStep() >= 0 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
-                         style="width: 18px; height: 18px; transition: all 0.25s;">
-                      @if (currentStep() > 0 || isStepDone(0)) {
-                        <div class="rounded-circle" style="width: 8px; height: 8px; background-color: #4895CC;"></div>
-                      }
-                    </div>
-                    <span class="small fw-bold text-white mt-1 text-center" style="font-size: 11px; line-height: 1.1;">Estilo</span>
-                  </div>
-
-                  <!-- 2: Clima (Rótulo Acima) -->
-                  <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(1)" style="width: 48px;">
-                    <span class="small fw-bold text-white mb-1 text-center" style="font-size: 11px; line-height: 1.1;">Clima</span>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                         [style.background]="currentStep() >= 1 ? '#ffffff' : '#4895CC'"
-                         [style.border]="currentStep() >= 1 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
-                         style="width: 18px; height: 18px; transition: all 0.25s;">
-                      @if (currentStep() > 1 || isStepDone(1)) {
-                        <div class="rounded-circle" style="width: 8px; height: 8px; background-color: #4895CC;"></div>
-                      }
-                    </div>
-                    <div style="height: 18px;"></div>
-                  </div>
-
-                  <!-- 3: Experiência (Rótulo Abaixo) -->
-                  <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(2)" style="width: 58px;">
-                    <div style="height: 18px;"></div>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                         [style.background]="currentStep() >= 2 ? '#ffffff' : '#4895CC'"
-                         [style.border]="currentStep() >= 2 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
-                         style="width: 18px; height: 18px; transition: all 0.25s;">
-                      @if (currentStep() > 2 || isStepDone(2)) {
-                        <div class="rounded-circle" style="width: 8px; height: 8px; background-color: #4895CC;"></div>
-                      }
-                    </div>
-                    <span class="small fw-bold text-white mt-1 text-center" style="font-size: 11px; line-height: 1.1;">Experiência</span>
-                  </div>
-
-                  <!-- 4: Orçamento (Rótulo Acima) -->
-                  <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(3)" style="width: 58px;">
-                    <span class="small fw-bold text-white mb-1 text-center" style="font-size: 11px; line-height: 1.1;">Orçamento</span>
-                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
-                         [style.background]="currentStep() >= 3 ? '#ffffff' : '#4895CC'"
-                         [style.border]="currentStep() >= 3 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
-                         style="width: 18px; height: 18px; transition: all 0.25s;">
-                      @if (currentStep() === 3 || isStepDone(3)) {
-                        <div class="rounded-circle" style="width: 8px; height: 8px; background-color: #4895CC;"></div>
-                      }
-                    </div>
-                    <div style="height: 18px;"></div>
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-            <!-- Imagem Horizon do Figma na parte inferior do card -->
-            <div class="flex-grow-1 overflow-hidden position-relative" style="min-height: 590px;">
-              <img 
-                src="assets/horizon-fgm1.webp" 
-                alt="Horizon Travel" 
-                class="w-100 h-100 object-fit-cover d-block" 
-                loading="lazy"
-              />
-            </div>
-          </div>
-        </div>
-
-        <!-- COLUNA PRINCIPAL: WIZARD INTERATIVO -->
-        <div class="col-12 col-lg-6">
-
-          <!-- Estado: Loading -->
-          @if (isLoading()) {
-            <div class="card border-0 shadow-sm rounded-4 p-5 bg-white text-center">
-              <div class="py-4">
-                <app-plane-loader></app-plane-loader>
-              </div>
-            </div>
-          }
-
-          <!-- Estado: Erro -->
-          @else if (errorMessage()) {
-            <div class="alert alert-danger p-4 rounded-4 shadow-sm text-center" role="alert">
-              <div class="display-6 mb-2">⚠️</div>
-              <h5 class="fw-bold mb-2">Ops! Ocorreu um problema ao carregar o quiz.</h5>
-              <p class="mb-3 small text-danger-emphasis">{{ errorMessage() }}</p>
-              <button class="btn btn-outline-danger btn-sm px-4 rounded-2 fw-semibold" (click)="loadQuiz()">
-                Tentar novamente
-              </button>
-            </div>
-          }
-
-          <!-- Estado: Sucesso após Submissão (Design de Identidade de /recommendations Compacto) -->
-          @else if (isSubmitted()) {
-            <div 
-              class="card bg-white question-wizard-card position-relative overflow-hidden p-4 p-md-5 d-flex flex-column justify-content-between"
-              [style.border]="isEcoQuizChoice() ? '3px solid #65A30D' : '3px solid #5BA4D8'"
-              style="min-height: 770px; border-radius: 32px !important;"
-            >
-              
-              <!-- Topo: Perfil do Usuário + Cartão Horizon (Igual a /recommendations) -->
-              <div class="d-flex justify-content-between align-items-center gap-3">
-                <div class="d-flex align-items-center gap-3">
-                  <div class="rounded-circle d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0"
-                       style="width: 60px; height: 60px; background-color: #f8fafc; border: 2px solid #e2e8f0;">
-                    @if (identityData()?.profileImageUrl) {
-                      <img [src]="identityData()!.profileImageUrl" alt="Foto de perfil" class="w-100 h-100 object-fit-cover rounded-circle" />
-                    } @else {
-                      <img src="assets/default-avatar.webp" alt="Foto de perfil padrão" class="w-100 h-100 object-fit-cover rounded-circle" />
-                    }
-                  </div>
-                  <div>
-                    <span class="text-uppercase fw-bold d-block mb-1"
-                          [style.color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
-                          style="font-size: 0.75rem; letter-spacing: 0.08em;">
-                      PERFIL
-                    </span>
-                    <h3 class="h5 fw-bold text-dark mb-0">
-                      {{ identityData()?.socialName || identityData()?.userName || 'Viajante' }}
-                    </h3>
-                    <span class="text-secondary small">DNA do viajante</span>
-                  </div>
-                </div>
-
-                <!-- Miniatura do Cartão Horizon (Verde para Eco, Azul para Comum) -->
-                <div class="rounded-3 overflow-hidden shadow-sm flex-shrink-0" style="width: 84px; height: 112px;">
-                  @if (isEcoQuizChoice()) {
-                    <img src="assets/horizon-verde.webp" alt="Horizon Ecoturismo" class="w-100 h-100 object-fit-cover d-block" />
-                  } @else {
-                    <img src="assets/horizon45.webp" alt="Horizon Viagem" class="w-100 h-100 object-fit-cover d-block" />
-                  }
-                </div>
-              </div>
-
-              <!-- Meio: Afinidades Mapeadas -->
-              <div class="my-3">
-                <span class="text-uppercase fw-bold d-block mb-3"
-                      [style.color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
-                      style="font-size: 0.78rem; letter-spacing: 0.08em;">
-                  AFINIDADES
-                </span>
-
-                <div class="d-flex flex-column gap-3">
-                  @for (aff of displayAffinities(); track aff.label) {
-                    <div>
-                      <div class="d-flex justify-content-between align-items-end mb-1">
-                        <span class="fw-bold text-dark small">{{ aff.label }}</span>
-                        <span class="fw-bold text-dark small">{{ aff.pct }}</span>
-                      </div>
-                      <div class="progress overflow-hidden" style="height: 8px; border-radius: 6px; background-color: #e2e8f0;">
-                        <div 
-                          class="progress-bar" 
-                          role="progressbar" 
-                          [style.width.%]="aff.pct"
-                          [style.background-color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
-                          style="border-radius: 6px; transition: width 1s ease;"
-                        ></div>
-                      </div>
-                    </div>
-                  }
-                </div>
-              </div>
-
-              <!-- Como o Horizon te Vê (Idêntico a /recommendations) -->
-              <div class="my-2">
-                <span class="text-uppercase fw-bold d-block mb-2"
-                      [style.color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
-                      style="font-size: 0.8rem; letter-spacing: 0.08em;">
-                  COMO O HORIZON TE VÊ
-                </span>
-
-                <h2 class="fw-bold text-dark mb-2" style="font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.5px;">
-                  O seu coração pede por 
-                  <span [style.color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'">
-                    {{ displayAffinities()[0]?.label || 'Novas Experiências' }}
-                  </span>
-                </h2>
-
-                <p class="text-secondary mb-0" style="font-size: 0.98rem; line-height: 1.6;">
-                  Você busca experiências marcadas por 
-                  <strong class="text-dark">{{ (displayAffinities()[0]?.label || 'viagens personalizadas') | lowercase }}</strong>@if (displayAffinities()[1]) { e <strong class="text-dark">{{ displayAffinities()[1].label | lowercase }}</strong>}. O algoritmo entende você como um viajante que procura destinos focados nestas características.
-                </p>
-              </div>
-
-              <!-- Botões de Ação -->
-              <div class="d-flex flex-column align-items-center gap-2 w-100 pt-2">
-                <a 
-                  routerLink="/recommendations" 
-                  class="btn w-100 py-3 rounded-2 fw-bold shadow-sm fs-6 border-0 text-white d-flex align-items-center justify-content-center text-decoration-none"
-                  [style.background-color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
-                  style="max-width: 340px;"
-                >
-                  Ver Destinos Compatíveis
-                </a>
-                <button 
-                  type="button" 
-                  class="btn btn-link text-muted text-decoration-none py-1 fw-semibold small"
-                  (click)="resetQuiz()"
-                >
-                  Refazer Quiz
-                </button>
-              </div>
-
-            </div>
-          }
-
-          <!-- Estado: Wizard de Perguntas & Orçamento -->
-          @else if (quiz() && quiz()!.questions && quiz()!.questions.length > 0) {
-            
-            <!-- PASSO ATUAL: PERGUNTA DINÂMICA -->
-            @if (currentStep() < quiz()!.questions.length) {
-              @let currentQuestion = quiz()!.questions[currentStep()];
-
-              <div class="card border-0 shadow-sm rounded-4 bg-white question-wizard-card position-relative overflow-hidden p-0 d-flex flex-column" style="min-height: 770px;">
-                
-                <!-- Tutorial Overlay (Apenas no início) -->
-                @if (showSwipeTutorial() && currentStep() === 0) {
-                  <div class="position-absolute top-0 start-0 w-100 h-100 z-3 d-flex flex-column text-white" style="background: rgba(35, 35, 35, 0.96); border-radius: inherit; backdrop-filter: blur(4px);">
-                    <div class="position-relative w-100 h-100">
-                      <!-- Linha divisória vertical central -->
-                      <div class="position-absolute top-0 bottom-0 start-50 border-start border-secondary opacity-50"></div>
-                      
-                      <div class="row h-100 m-0">
-                        <!-- Lado Esquerdo -->
-                        <div class="col-6 d-flex flex-column align-items-center justify-content-center p-3 text-center">
-                          <p class="fw-bold fs-6 mb-4 px-2" style="max-width: 250px;">Arraste para a esquerda caso não concorde com essa opção.</p>
-                          <div class="position-relative" style="width: 140px; height: 180px;">
-                            <div class="bg-secondary rounded-4 position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.3;"></div>
-                            <img src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?w=400&q=80" alt="Exemplo Discordar" class="position-absolute top-0 start-0 rounded-4 shadow-lg object-fit-cover w-100 h-100" style="transform: rotate(-12deg) translateX(-15px) translateY(-5px); border: 2px solid rgba(255,255,255,0.1);" />
-                          </div>
-                        </div>
-
-                        <!-- Lado Direito -->
-                        <div class="col-6 d-flex flex-column align-items-center justify-content-center p-3 text-center">
-                          <div class="position-relative mb-4" style="width: 140px; height: 180px;">
-                            <div class="bg-secondary rounded-4 position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.3;"></div>
-                            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80" alt="Exemplo Selecionar" class="position-absolute top-0 start-0 rounded-4 shadow-lg object-fit-cover w-100 h-100" style="transform: rotate(12deg) translateX(15px) translateY(5px); border: 2px solid rgba(255,255,255,0.1);" />
-                          </div>
-                          <p class="fw-bold fs-6 px-2" style="max-width: 250px;">Arraste para a direita para selecionar.</p>
-                        </div>
-                      </div>
-                      
-                      <!-- Botão Começar centralizado na base -->
-                      <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4 pb-2 z-3">
-                        <button class="btn btn-light rounded-2 px-5 py-3 fw-bold fs-5 text-dark" style="box-shadow: 0 4px 15px rgba(0,0,0,0.5);" (click)="showSwipeTutorial.set(false)">Começar</button>
-                      </div>
-                    </div>
-                  </div>
-                }
-
-                <!-- Sessão da Pergunta pintada de azul com texto em branco -->
-                <div class="p-4 text-white d-flex flex-column justify-content-between" style="background-color: #5BA4D8; min-height: 180px; height: 180px;">
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="badge rounded-2 px-3 py-2 fw-bold bg-white text-primary">
-                      @if (selectedAnswers()[currentQuestion.id]) {
-                        ✓ Escolha Selecionada
-                      } @else {
-                        Pergunta {{ currentStep() + 1 }} de {{ quiz()!.questions.length }}
-                      }
-                    </span>
-                  </div>
-
-                  <h2 class="h4 fw-bold text-white mb-2">
-                    {{ currentQuestion.text }}
-                  </h2>
-                  <p class="text-white text-opacity-75 small mb-0">
-                    Selecione apenas uma única opção
-                  </p>
-                </div>
-
-                <div class="p-4 p-md-5 pt-4 d-flex flex-column justify-content-between flex-grow-1" style="min-height: 590px;">
-                  <!-- Container do Swipe (Tinder Cards) -->
-                  <div class="position-relative mx-auto mt-4 mb-5 user-select-none" style="width: 260px; height: 380px;">
-                    @for (answer of currentQuestion.answers; track answer.id; let i = $index) {
-                      @if (i >= topCardIndex() && i < topCardIndex() + 3) {
-                        <div 
-                          class="position-absolute w-100 h-100 rounded-4 shadow-lg bg-light"
-                          [style.z-index]="currentQuestion.answers.length - i"
-                          [style.transform]="getCardTransform(i - topCardIndex())"
-                          [style.opacity]="getCardOpacity(i - topCardIndex())"
-                          [style.transition]="isDragging() && i === topCardIndex() ? 'none' : 'transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease'"
-                          [style.cursor]="i === topCardIndex() ? 'grab' : 'auto'"
-                          (mousedown)="startDrag($event, i)"
-                          (touchstart)="startDrag($event, i)"
-                        >
-                           <img [src]="getOptionVisual(answer.text).image" class="w-100 h-100 object-fit-cover rounded-4" style="pointer-events: none;" />
-                           
-                           <!-- Etiqueta flutuante retangular -->
-                           <div class="position-absolute bg-light text-dark shadow-sm px-4 py-2 rounded-2"
-                                style="top: 30px; right: -25px; background: rgba(240, 240, 240, 0.95) !important;">
-                             <span class="fw-bold fs-6" style="letter-spacing: -0.02em;">{{ answer.text }}</span>
-                           </div>
-
-                           <!-- Overlay Dinâmico Swipe -->
-                           @if (isDragging() && i === topCardIndex()) {
-                             <div class="position-absolute top-50 start-50 translate-middle w-100 h-100 pointer-events-none d-flex align-items-center justify-content-center" style="border-radius: inherit;">
-                               @if (dragDeltaX > 60) {
-                                 <div class="position-absolute bg-success w-100 h-100 rounded-4" style="opacity: 0.15;"></div>
-                                 <i class="bi bi-check-circle-fill text-success position-relative z-3 shadow-sm bg-white rounded-circle" style="font-size: 5rem;"></i>
-                               }
-                               @if (dragDeltaX < -60) {
-                                 <div class="position-absolute bg-danger w-100 h-100 rounded-4" style="opacity: 0.15;"></div>
-                                 <i class="bi bi-x-circle-fill text-danger position-relative z-3 shadow-sm bg-white rounded-circle" style="font-size: 5rem;"></i>
-                               }
-                             </div>
-                           }
-                        </div>
-                      }
-                    }
-                  </div>
-                  
-                  <div class="text-center text-muted small mt-2 fw-medium">
-                    Opção {{ topCardIndex() + 1 }} de {{ currentQuestion.answers.length }}
-                  </div>
-                </div>
-
-              </div>
-            }
-
-            <!-- PASSO FINAL: ORÇAMENTO & INVESTIMENTO (ESTILO FIGMA) -->
-            @else {
-              <div class="card border-0 shadow-sm rounded-4 bg-white question-wizard-card position-relative overflow-hidden p-0 d-flex flex-column" style="min-height: 770px;">
-                
-                <!-- Topo Azul: Meu Orçamento (*Por pessoa) -->
-                <div class="p-4 text-white text-center d-flex flex-column justify-content-center align-items-center" style="background-color: #5BA4D8; min-height: 180px; height: 180px;">
-                  <span class="text-white text-opacity-75 small mb-1" style="font-size: 0.85rem; letter-spacing: 0.02em;">*Por pessoa</span>
-                  <h2 class="h3 fw-bold text-white mb-2">Meu orçamento</h2>
-                  <div class="display-6 fw-bold text-white">
-                    {{ formatCurrency(budget()) }}
-                  </div>
-                </div>
-
-                <!-- Corpo Branco: Input, Finalizar Quiz e Voltar -->
-                <div class="p-4 p-md-5 bg-white text-center d-flex flex-column align-items-center justify-content-center flex-grow-1" style="min-height: 590px;">
-                  
-                  <div class="mb-4 w-100">
-                    <div class="d-flex align-items-center rounded-3 border border-2 shadow-sm mx-auto position-relative bg-white px-4 py-2" style="max-width: 320px; border-color: #e2e8f0 !important;">
-                      <span class="text-secondary fw-bold fs-4 me-3">R$</span>
-                      <input 
-                        type="text" 
-                        class="border-0 text-dark fw-bold shadow-none fs-4 flex-grow-1 bg-transparent p-0" 
-                        style="outline: none !important; box-shadow: none !important; border: none !important;"
-                        [value]="budget()"
-                        (input)="onBudgetInput($event)"
-                        (blur)="onBudgetBlur($event)"
-                        placeholder="Ex: 15000"
-                      />
-                    </div>
-                    @if (budgetError()) {
-                      <div class="text-danger small mt-2 fw-semibold animate__animated animate__fadeIn">{{ budgetError() }}</div>
-                    }
-                  </div>
-
-                  <div class="d-flex flex-column align-items-center gap-2 w-100 mt-2">
-                    <button 
-                      type="button" 
-                      [disabled]="!isBudgetValid() || isSubmitting()"
-                      (click)="onSubmit()"
-                      class="btn w-100 py-3 rounded-2 fw-bold shadow-sm fs-5 border-0 text-white d-flex align-items-center justify-content-center"
-                      style="background-color: #5BA4D8; max-width: 320px; transition: transform 0.2s;"
-                    >
-                      @if (isSubmitting()) {
-                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                        Finalizando...
-                      } @else {
-                        Finalizar Quiz
-                      }
-                    </button>
-                    <button 
-                      type="button" 
-                      class="btn btn-link text-muted text-decoration-none py-2 fw-semibold"
-                      (click)="prevStep()"
-                    >
-                      Voltar
-                    </button>
-                  </div>
-
-                </div>
-
-              </div>
-            }
-          }
-
-        </div>
-
-        <!-- COLUNA LATERAL DIREITA -->
-        <div class="col-12 col-lg-3 d-none d-lg-block">
-          <aside>
-             <div class="rounded-4 overflow-hidden shadow-sm">
-               <img src="assets/Group14.png" alt="Horizon Travel" class="w-100 d-block" loading="lazy">
-             </div>
-          </aside>
-        </div>
-
-      </div>
-    </main>
-
-    <!-- Footer -->
-    <app-footer></app-footer>
-  `,
-  styles: [`
-
-    .question-wizard-card {
-      min-height: 770px;
-      height: 770px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    @media (max-width: 991.98px) {
-      .question-wizard-card {
-        height: auto;
-        min-height: 770px;
-      }
-    }
-    .text-primary { color: #4895CC !important; }
-    .bg-primary { background-color: #4895CC !important; }
-    .btn-primary { background-color: #4895CC !important; border-color: #4895CC !important; color: white !important; }
-    .progress-bar { background-color: #4895CC !important; }
-    .hero-container {
-      width: 100%;
-      background: #0b2545;
-      height: 320px;
-      max-height: 320px;
-    }
-
-    .hero-image {
-      width: 100%;
-      height: 320px;
-      max-height: 320px;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-
-    
-
-    .backdrop-blur {
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-    }
-
-    .progress-track {
-      box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
-    }
-
-    .progress-bar-glow {
-      background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
-      transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    /* Stepper Pills */
-    .stepper-pill {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      color: rgba(255, 255, 255, 0.7);
-      transition: all 0.25s ease;
-    }
-
-    .stepper-pill:hover {
-      background: rgba(255, 255, 255, 0.18);
-      color: #fff;
-    }
-
-    .stepper-pill-active {
-      background: #38bdf8 !important;
-      border-color: #38bdf8 !important;
-      color: #07192f !important;
-      box-shadow: 0 0 14px rgba(56, 189, 248, 0.5);
-    }
-
-    .stepper-pill-done {
-      background: rgba(16, 185, 129, 0.2) !important;
-      border-color: rgba(16, 185, 129, 0.4) !important;
-      color: #6ee7b7 !important;
-    }
-
-    .stepper-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: currentColor;
-    }
-
-    /* Cards Visuais de Perguntas */
-    /* Cards Estilo Swiss Chalet (Referência Fiel da Imagem) */
-    .swiss-chalet-card {
-      width: 100%;
-      max-width: 300px;
-      height: 450px; /* Altura significativamente maior que a largura */
-      border-radius: 32px;
-      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.25);
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      position: relative;
-      overflow: hidden;
-      background: #111;
-      /* CLIPPING RIGOROSO 100% BLINDADO CONTRA VAZAMENTO: CLIP-PATH + MASK-IMAGE */
-      clip-path: inset(0 round 32px);
-      -webkit-mask-image: -webkit-radial-gradient(white, black);
-      mask-image: radial-gradient(white, black);
-      isolation: isolate;
-      transform: translateZ(0);
-      transition: transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.35s ease, border-color 0.25s ease;
-    }
-
-    .swiss-chalet-card:hover {
-      transform: translateY(-8px);
-    }
-
-    /* Borda Azul para os de CIMA (Linha 1) */
-    .card-border-blue {
-      border: 3px solid #0284c7 !important;
-      box-shadow: 0 10px 28px rgba(2, 132, 199, 0.25);
-    }
-    .card-border-blue:hover {
-      border-color: #38bdf8 !important;
-      box-shadow: 0 16px 36px rgba(56, 189, 248, 0.45);
-    }
-    .swiss-chalet-card.is-selected.card-border-blue {
-      border-color: #38bdf8 !important;
-      box-shadow: 0 0 35px rgba(56, 189, 248, 0.65) !important;
-      transform: translateY(-5px);
-    }
-
-    /* Borda Verde para os de BAIXO (Linha 2) */
-    .card-border-green {
-      border: 3px solid #10b981 !important;
-      box-shadow: 0 10px 28px rgba(16, 185, 129, 0.25);
-    }
-    .card-border-green:hover {
-      border-color: #34d399 !important;
-      box-shadow: 0 16px 36px rgba(52, 211, 153, 0.45);
-    }
-    .swiss-chalet-card.is-selected.card-border-green {
-      border-color: #34d399 !important;
-      box-shadow: 0 0 35px rgba(52, 211, 153, 0.65) !important;
-      transform: translateY(-5px);
-    }
-
-    /* A imagem de fundo preenche o CARD INTEIRO sem nenhum vazamento */
-    .swiss-full-bg-img {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 29px; /* Corta perfeitamente no raio interno da borda */
-      transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
-    }
-
-    .swiss-chalet-card:hover .swiss-full-bg-img {
-      transform: scale(1.06);
-    }
-
-    /* Camada de Frosted Glass / Blur:
-       Diminuída significativamente para começar bem mais em baixo (apenas 36% da base),
-       deixando os 64% superiores totalmente livres, nítidos e claros! */
-    .swiss-glass-blur-layer {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 38%;
-      border-radius: 0 0 29px 29px;
-      backdrop-filter: blur(24px) saturate(135%) brightness(0.72);
-      -webkit-backdrop-filter: blur(24px) saturate(135%) brightness(0.72);
-      background: linear-gradient(
-        180deg, 
-        rgba(0, 0, 0, 0.05) 0%, 
-        rgba(0, 0, 0, 0.25) 30%, 
-        rgba(0, 0, 0, 0.62) 100%
-      );
-      mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 100%);
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 100%);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .swiss-card-content {
-      padding: 16px 20px 22px 20px;
-      margin-top: auto;
-      z-index: 2;
-    }
-
-    .swiss-card-title {
-      font-size: 1.45rem;
-      font-weight: 700;
-      color: #ffffff;
-      margin-bottom: 16px;
-      letter-spacing: -0.02em;
-      line-height: 1.25;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
-    }
-
-    .swiss-card-btn {
-      width: 100%;
-      background: #ffffff;
-      color: #111827;
-      font-weight: 700;
-      font-size: 0.95rem;
-      padding: 14px 20px;
-      border-radius: 9999px;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.2s ease;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    }
-
-    .swiss-chalet-card:hover .swiss-card-btn {
-      background: #f8fafc;
-      transform: scale(1.02);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .swiss-card-btn.btn-selected {
-      background: #38bdf8 !important;
-      color: #07192f !important;
-      box-shadow: 0 0 20px rgba(56, 189, 248, 0.6) !important;
-    }
-
-    .card-border-green .swiss-card-btn.btn-selected {
-      background: #10b981 !important;
-      color: #ffffff !important;
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.6) !important;
-    }
-
-    .swiss-selected-glow {
-      position: absolute;
-      inset: -2px;
-      border: 2px solid #38bdf8;
-      border-radius: 32px;
-      pointer-events: none;
-      box-shadow: inset 0 0 22px rgba(56, 189, 248, 0.35);
-      z-index: 4;
-    }
-
-    .card-border-green .swiss-selected-glow {
-      border-color: #34d399 !important;
-      box-shadow: inset 0 0 22px rgba(52, 211, 153, 0.35) !important;
-    }
-
-    /* Orçamento Tiers */
-    .budget-tier-card {
-      background: #f8fafc;
-      border-color: #e2e8f0 !important;
-      transition: all 0.2s ease;
-    }
-
-    .budget-tier-card:hover {
-      background: #f0f9ff;
-      border-color: #7dd3fc !important;
-      transform: translateY(-2px);
-    }
-
-    .budget-tier-card.budget-tier-active {
-      background: #eff6ff !important;
-      border-color: #0284c7 !important;
-      box-shadow: 0 4px 16px rgba(2, 132, 199, 0.2) !important;
-    }
-
-    .budget-display-box {
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-      border-color: #bae6fd !important;
-    }
-
-    .budget-gradient-text {
-      background: linear-gradient(90deg, #0369a1 0%, #0284c7 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .custom-slider {
-      accent-color: #0284c7;
-      height: 8px;
-    }
-
-    /* Archetype Hero */
-    .archetype-hero {
-      background: linear-gradient(135deg, #07192f 0%, #0b2545 50%, #0369a1 100%);
-    }
-
-    .sparkle-circle {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.12);
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      backdrop-filter: blur(10px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
-    }
-
-    .letter-spacing {
-      letter-spacing: 0.08em;
-    }
-
-    /* Radar scan animation */
-    .radar-scan-circle {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 2px solid rgba(56, 189, 248, 0.4);
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 30px rgba(56, 189, 248, 0.25);
-    }
-
-    .radar-icon {
-      font-size: 40px;
-      animation: floatIcon 3s ease-in-out infinite;
-    }
-
-    @keyframes floatIcon {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-6px); }
-    }
-
-    .radar-sweep {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border-radius: 50%;
-      background: conic-gradient(from 0deg, transparent 70%, rgba(56, 189, 248, 0.6) 100%);
-      animation: spinRadar 2s linear infinite;
-    }
-
-    @keyframes spinRadar {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    .pulse-btn {
-      transition: all 0.25s ease;
-    }
-
-    .pulse-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.4) !important;
-    }
-
-    .cursor-pointer {
-      cursor: pointer;
-    }
-
-    :host .card,
-    :host .card:hover {
-      transform: none !important;
-      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
-    }
-  `]
+  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent, FooterComponent, PlaneLoaderComponent, BackToTopComponent, FeedbackModalComponent],
+  templateUrl: './quiz-flow.component.html',
+  styleUrl: './quiz-flow.component.scss'
 })
 export class QuizFlowComponent implements OnInit {
   private quizService = inject(QuizService);
   private tokenStorage = inject(TokenStorageService);
   private identityService = inject(TravelerIdentityService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
+  showGuestAuthModal = signal(false);
   quiz = signal<Quiz | null>(null);
   isLoading = signal(true);
   isSubmitting = signal(false);
@@ -851,55 +52,156 @@ export class QuizFlowComponent implements OnInit {
   submitErrorMessage = signal<string | null>(null);
   isSubmitted = signal(false);
   identityData = signal<TravelerIdentityState | null>(null);
+  isCsatModalOpen = signal(false);
+  hasSubmittedQuizCsat = signal(false);
 
   // Navegação Wizard
   currentStep = signal(0);
-  selectedAnswers = signal<Record<number, number>>({});
+  selectedAnswers = signal<Record<number, number | number[]>>({});
 
+  // Orçamento e Passaporte
   budget = signal<number | null>(15000);
   budgetError = signal<string | null>(null);
+  hasPassport = signal<boolean>(true);
 
-  onBudgetInput(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    // Aggressively remove anything that is not a digit (including -, +, letters)
-    let cleaned = input.value.replace(/\D/g, '');
-    
-    if (cleaned === '') {
-      this.budgetError.set("Digite um valor válido.");
-      this.budget.set(0);
-      input.value = ''; // Force UI sync
-      return;
+  // Múltiplas Experiências e Ritmo
+  experienceCardIndex = signal<number>(0);
+  selectedExperienceIds = signal<number[]>([]);
+  completedMultiSteps = signal<Set<number>>(new Set());
+
+  // Visualização do Perfil / DNA
+  profileViewMode = signal<'bars' | 'compass'>('bars');
+  isMobileDnaSheetOpen = signal<boolean>(false);
+
+  // Overlays Indicativos / Telas Pretas Explicativas
+  hideAllInstructionOverlays = signal<boolean>(false);
+  dismissedOverlaySteps = signal<Set<number>>(new Set());
+  dontShowInstructionsAgain = signal<boolean>(false);
+
+  // Swipe State
+  showSwipeTutorial = signal<boolean>(true);
+  topCardIndex = signal<number>(0);
+  isDragging = signal<boolean>(false);
+  dragStartX = signal<number>(0);
+  dragCurrentX = signal<number>(0);
+  isCardTransitioning = signal(false);
+
+  get dragDeltaX() {
+    return this.isDragging() ? this.dragCurrentX() - this.dragStartX() : 0;
+  }
+
+  isExperienceStep = computed(() => {
+    const questions = this.quiz()?.questions || [];
+    const step = this.currentStep();
+    if (step >= questions.length) return false;
+    const q = questions[step];
+    if (!q) return false;
+    const text = q.text.toLowerCase();
+    return text.includes('experiência') || text.includes('procura') || text.includes('ritmo') || step === 2 || step === 3;
+  });
+
+  currentExperienceCard = computed(() => {
+    const questions = this.quiz()?.questions || [];
+    if (!this.isExperienceStep()) return null;
+    const q = questions[this.currentStep()];
+    if (!q || !q.answers) return null;
+    const idx = this.experienceCardIndex();
+    return q.answers[idx] || null;
+  });
+
+  currentStepSelectedIds = computed(() => {
+    const questions = this.quiz()?.questions || [];
+    const step = this.currentStep();
+    if (step >= questions.length) return [];
+    const q = questions[step];
+    if (!q) return [];
+    const val = this.selectedAnswers()[q.id];
+    return Array.isArray(val) ? val : [];
+  });
+
+  currentStepTitle = computed(() => {
+    const step = this.currentStep();
+    const qList = this.quiz()?.questions || [];
+    if (step >= qList.length) return 'Orçamento e Passaporte';
+    const q = qList[step];
+    if (!q) return 'Pergunta';
+    const text = q.text.toLowerCase();
+    if (text.includes('estilo')) return 'Estilo';
+    if (text.includes('clima')) return 'Clima';
+    if (text.includes('experiência') || text.includes('procura')) return 'Experiência';
+    if (text.includes('ritmo')) return 'Ritmo';
+    if (text.includes('atmosfera')) return 'Atmosfera';
+    return q.text;
+  });
+
+  shouldShowStepOverlay = computed(() => {
+    if (this.hideAllInstructionOverlays()) return false;
+    if (this.isLoading() || this.errorMessage() || this.isSubmitted()) return false;
+    const step = this.currentStep();
+    if (step === 0) return false;
+    if (step === 2) {
+      return !this.dismissedOverlaySteps().has(step);
+    }
+    return false;
+  });
+
+  currentStepOverlayData = computed(() => {
+    const step = this.currentStep();
+    const qList = this.quiz()?.questions || [];
+    const totalQ = qList.length;
+
+    if (step >= totalQ) {
+      return {
+        badge: 'Planejamento e passaporte',
+        title: 'Investimento e documentos',
+        description: 'Defina o investimento por pessoa e ative a chave de passaporte se você possui documento válido para viagens internacionais.',
+        buttonText: 'Definir orçamento',
+        icon: 'bi-cash-coin',
+        isMulti: false
+      };
     }
 
-    let num = parseInt(cleaned, 10);
-    
-    // Aggressive immediate validation
-    if (num > 30000) {
-      this.budgetError.set("O limite máximo permitido é R$ 30.000");
-      num = 30000;
-    } else if (num < 1000) {
-      this.budgetError.set("O valor mínimo é R$ 1.000");
+    const q = qList[step];
+    const text = q ? q.text.toLowerCase() : '';
+    const isMulti = text.includes('experiência') || text.includes('procura') || text.includes('ritmo') || step === 2 || step === 3;
+
+    if (isMulti) {
+      return {
+        badge: 'Múltipla escolha',
+        title: 'Você pode escolher várias opções',
+        description: 'Avalie cada cartão com calma: arraste para a direita se combina com você, ou para a esquerda para passar.',
+        buttonText: 'Entendi, vamos lá',
+        icon: 'bi-stack',
+        isMulti: true
+      };
     } else {
-      this.budgetError.set(null);
+      return {
+        badge: 'Escolha única',
+        title: 'Selecione sua preferência principal',
+        description: 'Nesta etapa, escolha apenas 1 opção principal. Você pode navegar entre os cartões pelas setas e confirmar a sua favorita.',
+        buttonText: 'Começar escolha',
+        icon: 'bi-hand-index-thumb',
+        isMulti: false
+      };
     }
-    
-    this.budget.set(num);
-    input.value = num.toString(); // Force UI sync exactly to valid number
+  });
+
+  dismissCurrentStepOverlay(): void {
+    if (this.dontShowInstructionsAgain()) {
+      this.hideAllInstructionOverlays.set(true);
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('horizon_quiz_hide_instructions', 'true');
+      }
+    }
+    this.dismissedOverlaySteps.update(set => new Set(set).add(this.currentStep()));
   }
 
-  onBudgetBlur(event: Event): void {
+  toggleDontShowAgain(event: Event): void {
     const input = event.target as HTMLInputElement;
-    let num = this.budget() || 0;
-    
-    if (num < 1000) {
-      this.budget.set(1000);
-      this.budgetError.set("Corrigido para o mínimo de R$ 1.000");
-      input.value = "1000";
-    }
+    this.dontShowInstructionsAgain.set(input.checked);
   }
 
-
-  // Mapeamento de Tiers de Orçamento
+  // Tiers de Orçamento
   readonly budgetTiers: BudgetTier[] = [
     {
       id: 'eco',
@@ -936,20 +238,9 @@ export class QuizFlowComponent implements OnInit {
   ];
 
   // Visual das Opções
-  // Swipe State
-  showSwipeTutorial = signal<boolean>(true);
-  topCardIndex = signal<number>(0);
-  isDragging = signal<boolean>(false);
-  dragStartX = signal<number>(0);
-  dragCurrentX = signal<number>(0);
-
-  get dragDeltaX() {
-    return this.isDragging() ? this.dragCurrentX() - this.dragStartX() : 0;
-  }
-
   visualMap: Record<string, OptionVisual> = {
     'ecoturismo': {
-      image: 'assets/eco.webp',
+      image: 'assets/ecoturismo.webp',
       icon: '🌿',
       subtitle: 'Florestas, trilhas, cachoeiras e conexão pura com a natureza.',
       tag: 'Biofilia e Aventura'
@@ -957,8 +248,8 @@ export class QuizFlowComponent implements OnInit {
     'viagem tradicional': {
       image: 'assets/urban.webp',
       icon: '🏙️',
-      subtitle: 'Grandes metrópoles, compras, museus cosmopolitas e arquitetura.',
-      tag: 'Cosmopolita e Urbano'
+      subtitle: 'Grandes metrópoles, compras, museus e arquitetura mundial.',
+      tag: 'Urbano e Metrópoles'
     },
     'sol e calor': {
       image: 'assets/sol.webp',
@@ -1009,25 +300,25 @@ export class QuizFlowComponent implements OnInit {
       tag: 'Aberto ao Mundo'
     },
     'natureza e vida selvagem': {
-      image: 'assets/sawan.webp',
+      image: 'assets/pantanal.webp',
       icon: '🦁',
       subtitle: 'Safáris, observação de animais e santuários ecológicos.',
       tag: 'Vida Selvagem'
     },
     'vida selvagem': {
-      image: 'assets/sawan.webp',
+      image: 'assets/pantanal.webp',
       icon: '🦁',
       subtitle: 'Safáris, observação de animais e santuários ecológicos.',
       tag: 'Vida Selvagem'
     },
     'cultura e história': {
-      image: 'assets/h.webp',
+      image: 'assets/machu-picchu.webp',
       icon: '🏛️',
       subtitle: 'Ruínas ancestrais, cidades históricas, castelos e tradições.',
       tag: 'Patrimônio Histórico'
     },
     'cultura': {
-      image: 'assets/h.webp',
+      image: 'assets/machu-picchu.webp',
       icon: '🏛️',
       subtitle: 'Ruínas ancestrais, cidades históricas, castelos e tradições.',
       tag: 'Patrimônio Histórico'
@@ -1045,176 +336,427 @@ export class QuizFlowComponent implements OnInit {
       tag: 'Alta Gastronomia'
     },
     'aventura': {
-      image: 'assets/ad.webp',
+      image: 'assets/chapada-diamantina.webp',
       icon: '🧗',
       subtitle: 'Trilhas íngremes, montanhismo e adrenalina em paisagens épicas.',
       tag: 'Adrenalina Pura'
+    },
+    'desconexão e descanso': {
+      image: 'assets/maldivas.webp',
+      icon: '🏖️',
+      subtitle: 'Paz absoluta, praias calmas, resorts e momentos de descanso pleno.',
+      tag: 'Descanso e Praia'
+    },
+    'desconexão': {
+      image: 'assets/maldivas.webp',
+      icon: '🏖️',
+      subtitle: 'Paz absoluta, praias calmas, resorts e momentos de descanso pleno.',
+      tag: 'Descanso e Praia'
+    },
+    'explorador de atrações': {
+      image: 'assets/roma.webp',
+      icon: '🏛️',
+      subtitle: 'Explorar cada esquina, monumentos históricos, museus e bairros icônicos.',
+      tag: 'História e Cidade'
+    },
+    'explorador': {
+      image: 'assets/roma.webp',
+      icon: '🏛️',
+      subtitle: 'Explorar cada esquina, monumentos históricos, museus e bairros icônicos.',
+      tag: 'História e Cidade'
+    },
+    'vida noturna e agito': {
+      image: 'assets/las-vegas.webp',
+      icon: '🌃',
+      subtitle: 'Bares vibrantes, rooftops, eventos culturais e a energia da noite.',
+      tag: 'Noite e Agito Urbano'
+    },
+    'vida noturna': {
+      image: 'assets/las-vegas.webp',
+      icon: '🌃',
+      subtitle: 'Bares vibrantes, rooftops, eventos culturais e a energia da noite.',
+      tag: 'Noite e Agito Urbano'
+    },
+    'mergulho e vida marinha': {
+      image: 'assets/noronha.webp',
+      icon: '🤿',
+      subtitle: 'Mergulho em águas cristalinas, corais protegidos e vida marinha pura.',
+      tag: 'Mergulho e Mar'
+    },
+    'mergulho': {
+      image: 'assets/noronha.webp',
+      icon: '🤿',
+      subtitle: 'Mergulho em águas cristalinas, corais protegidos e vida marinha pura.',
+      tag: 'Mergulho e Mar'
+    },
+    'romântica a dois': {
+      image: 'assets/paris.webp',
+      icon: '✨',
+      subtitle: 'Cenários inesquecíveis, jantares à luz de velas e clima romântico.',
+      tag: 'Romance e Charme'
+    },
+    'romântica': {
+      image: 'assets/paris.webp',
+      icon: '✨',
+      subtitle: 'Cenários inesquecíveis, jantares à luz de velas e clima romântico.',
+      tag: 'Romance e Charme'
+    },
+    'exclusiva e sofisticada': {
+      image: 'assets/dubai.webp',
+      icon: '👑',
+      subtitle: 'Hospitalidade de alto nível, conforto extremo e experiências exclusivas.',
+      tag: 'Luxo e Conforto'
+    },
+    'exclusiva': {
+      image: 'assets/dubai.webp',
+      icon: '👑',
+      subtitle: 'Hospitalidade de alto nível, conforto extremo e experiências exclusivas.',
+      tag: 'Luxo e Conforto'
+    },
+    'natureza autêntica': {
+      image: 'assets/amazonia.webp',
+      icon: '🌿',
+      subtitle: 'Imersão profunda na floresta, fauna nativa e ecossistemas intocados.',
+      tag: 'Ecoturismo Raiz'
+    },
+    'grandes metrópoles': {
+      image: 'assets/nova-york.webp',
+      icon: '🏙️',
+      subtitle: 'Arranha-céus imponentes, compras, gastronomia global e vida moderna.',
+      tag: 'Grandes Metrópoles'
     }
   };
 
   // Computeds de Progresso
   totalSteps = computed(() => {
     const qCount = this.quiz()?.questions?.length || 0;
-    return qCount > 0 ? qCount + 1 : 0; // perguntas + passo do orçamento
-  });
-
-  stepList = computed(() => {
-    const questions = this.quiz()?.questions || [];
-    const list = questions.map((q, idx) => ({
-      index: idx,
-      label: `P${idx + 1}: ${this.getShortLabel(q.text)}`
-    }));
-    if (questions.length > 0) {
-      list.push({ index: questions.length, label: 'Orçamento' });
-    }
-    return list;
+    return qCount > 0 ? qCount + 1 : 0;
   });
 
   progressPercentage = computed(() => {
     const total = this.totalSteps();
     if (total === 0) return 0;
-    const answeredCount = Object.keys(this.selectedAnswers()).length + (this.isBudgetValid() && this.currentStep() === total - 1 ? 1 : 0);
     return Math.min(100, Math.round(((this.currentStep() + 1) / total) * 100));
   });
 
-  // Cálculo Dinâmico do Arquétipo do Viajante
-  liveArchetype = computed(() => {
+  // ========================================================
+  // DNA DO VIAJANTE EM TEMPO REAL ("Seu perfil até aqui")
+  // ========================================================
+  hoveredRadarKey = signal<string | null>(null);
+
+  readonly radarAxes = [
+    { label: 'Praia', angle: -Math.PI / 2, key: 'praia', textX: 150, textY: 34, pctY: 46, anchor: 'middle', lineX: 150, lineY: 55 },
+    { label: 'Natureza', angle: -Math.PI / 6, key: 'natureza', textX: 228, textY: 88, pctY: 100, anchor: 'start', lineX: 215, lineY: 92.5 },
+    { label: 'Aventura', angle: Math.PI / 6, key: 'aventura', textX: 228, textY: 172, pctY: 184, anchor: 'start', lineX: 215, lineY: 167.5 },
+    { label: 'Cidades', angle: Math.PI / 2, key: 'cidade', textX: 150, textY: 226, pctY: 238, anchor: 'middle', lineX: 150, lineY: 205 },
+    { label: 'Cultura', angle: (5 * Math.PI) / 6, key: 'cultura', textX: 72, textY: 172, pctY: 184, anchor: 'end', lineX: 85, lineY: 167.5 },
+    { label: 'Descanso', angle: (-5 * Math.PI) / 6, key: 'relaxamento', textX: 72, textY: 88, pctY: 100, anchor: 'end', lineX: 85, lineY: 92.5 }
+  ];
+
+  dnaProfileValues = computed(() => {
     const answers = this.selectedAnswers();
     const qList = this.quiz()?.questions || [];
-    
-    const chosenTexts: string[] = [];
-    for (const q of qList) {
-      const chosenAnsId = answers[q.id];
-      if (chosenAnsId) {
-        const ansObj = q.answers.find(a => a.id === chosenAnsId);
-        if (ansObj) {
-          chosenTexts.push(ansObj.text.toLowerCase());
+    const b = this.budget() || 15000;
+    const step = this.currentStep();
+    const topIdx = this.topCardIndex();
+
+    let natureza = 0.50;
+    let cultura = 0.50;
+    let praia = 0.50;
+    let aventura = 0.50;
+    let cidade = 0.50;
+    let relaxamento = 0.50;
+    let frio = 0.50;
+
+    // Helper para obter textos das respostas de cada pergunta
+    const getAnswerTexts = (qIdx: number): { texts: string[]; isPreview: boolean } => {
+      const q = qList[qIdx];
+      if (!q) return { texts: [], isPreview: false };
+      const val = answers[q.id];
+      if (Array.isArray(val) && val.length > 0) {
+        return {
+          texts: q.answers.filter(a => val.includes(a.id)).map(a => a.text.toLowerCase()),
+          isPreview: false
+        };
+      }
+      if (typeof val === 'number') {
+        const found = q.answers.find(a => a.id === val);
+        return { texts: found ? [found.text.toLowerCase()] : [], isPreview: false };
+      }
+      if (step === qIdx && q.answers && q.answers.length > 0) {
+        const topCard = q.answers[topIdx % q.answers.length];
+        return { texts: topCard ? [topCard.text.toLowerCase()] : [], isPreview: true };
+      }
+      return { texts: [], isPreview: false };
+    };
+
+    // Q0 - Estilo (Ecoturismo vs Viagem Tradicional)
+    const { texts: q0Texts, isPreview: q0Prev } = getAnswerTexts(0);
+    for (const t of q0Texts) {
+      if (t.includes('eco')) {
+        natureza = q0Prev ? 0.78 : 0.92;
+        aventura = Math.max(aventura, q0Prev ? 0.65 : 0.72);
+        cidade = q0Prev ? 0.35 : 0.25;
+      } else if (t.includes('tradicional')) {
+        cidade = q0Prev ? 0.74 : 0.84;
+        cultura = Math.max(cultura, q0Prev ? 0.68 : 0.75);
+        natureza = q0Prev ? 0.35 : 0.25;
+      }
+    }
+
+    // Q1 - Clima (Sol, Neve, Ameno, Qualquer)
+    const { texts: q1Texts, isPreview: q1Prev } = getAnswerTexts(1);
+    for (const t of q1Texts) {
+      if (t.includes('sol') || t.includes('calor')) {
+        praia = q1Prev ? 0.82 : 0.94;
+        relaxamento = Math.max(relaxamento, 0.65);
+      } else if (t.includes('neve') || t.includes('frio')) {
+        frio = q1Prev ? 0.85 : 0.95;
+        relaxamento = Math.max(relaxamento, 0.65);
+      } else if (t.includes('ameno')) {
+        relaxamento = Math.max(relaxamento, 0.75);
+      }
+    }
+
+    // Q2 - Experiências (Natureza, Cultura, Gastronomia, Aventura)
+    const { texts: q2Texts } = getAnswerTexts(2);
+    for (const t of q2Texts) {
+      if (t.includes('natureza') || t.includes('selvagem')) {
+        natureza = 0.98;
+        aventura = Math.max(aventura, 0.78);
+      }
+      if (t.includes('cultura') || t.includes('história')) {
+        cultura = 0.98;
+      }
+      if (t.includes('gastronomia') || t.includes('urbana')) {
+        cidade = 0.98;
+        cultura = Math.max(cultura, 0.85);
+      }
+      if (t.includes('aventura')) {
+        aventura = 0.98;
+      }
+    }
+
+    // Q3 - Ritmo (Desconexão, Explorador, Vida Noturna, Mergulho)
+    const { texts: q3Texts } = getAnswerTexts(3);
+    for (const t of q3Texts) {
+      if (t.includes('desconexão') || t.includes('descanso')) {
+        relaxamento = 0.98;
+        praia = Math.max(praia, 0.75);
+      }
+      if (t.includes('explorador')) {
+        cultura = Math.max(cultura, 0.92);
+        cidade = Math.max(cidade, 0.75);
+      }
+      if (t.includes('vida noturna') || t.includes('agito')) {
+        cidade = Math.max(cidade, 0.92);
+      }
+      if (t.includes('mergulho')) {
+        natureza = Math.max(natureza, 0.92);
+        aventura = Math.max(aventura, 0.88);
+        praia = Math.max(praia, 0.85);
+      }
+    }
+
+    // Q4 - Atmosfera (Romântica, Exclusiva, Natureza Autêntica, Grandes Metrópoles)
+    const { texts: q4Texts, isPreview: q4Prev } = getAnswerTexts(4);
+    for (const t of q4Texts) {
+      if (t.includes('romântica')) {
+        relaxamento = Math.max(relaxamento, q4Prev ? 0.78 : 0.88);
+        cultura = Math.max(cultura, 0.70);
+      } else if (t.includes('exclusiva')) {
+        relaxamento = Math.max(relaxamento, 0.85);
+      } else if (t.includes('autêntica') || t.includes('natureza')) {
+        natureza = Math.max(natureza, q4Prev ? 0.88 : 0.98);
+        aventura = Math.max(aventura, 0.80);
+      } else if (t.includes('metrópoles')) {
+        cidade = Math.max(cidade, q4Prev ? 0.88 : 0.98);
+      }
+    }
+
+    // Orçamento -> Escala logarítmica proporcional contínua
+    const clampedBudget = Math.max(1000, Math.min(200000, b));
+    const minLog = Math.log(1000);
+    const maxLog = Math.log(200000);
+    const ratio = (Math.log(clampedBudget) - minLog) / (maxLog - minLog);
+    const orcamento = 0.25 + 0.70 * ratio;
+
+    return { natureza, cultura, praia, aventura, cidade, relaxamento, frio, orcamento, calma: relaxamento };
+  });
+
+  // Alias para compatibilidade
+  radarProfileValues = this.dnaProfileValues;
+
+  // Arquétipo Dominante em Tempo Real
+  dominantArchetype = computed(() => {
+    const vals = this.dnaProfileValues();
+    const list = [
+      { name: 'Explorador da Natureza', key: 'natureza', val: vals.natureza, icon: 'bi-tree-fill' },
+      { name: 'Viajante Cultural', key: 'cultura', val: vals.cultura, icon: 'bi-bank' },
+      { name: 'Amante do Litoral', key: 'praia', val: vals.praia, icon: 'bi-sun-fill' },
+      { name: 'Buscador de Aventura', key: 'aventura', val: vals.aventura, icon: 'bi-compass' },
+      { name: 'Urbano e Metrópoles', key: 'cidade', val: vals.cidade, icon: 'bi-buildings-fill' },
+      { name: 'Mente Zen e Descanso', key: 'relaxamento', val: vals.relaxamento, icon: 'bi-cup-hot-fill' }
+    ];
+    list.sort((a, b) => b.val - a.val);
+    return list[0];
+  });
+
+  // Medidores DNA de Afinidade (Opção A)
+  dnaTraitBars = computed(() => {
+    const vals = this.dnaProfileValues();
+    return [
+      { label: 'Natureza', key: 'natureza', icon: 'bi-tree-fill', pct: Math.round(vals.natureza * 100) },
+      { label: 'Cultura', key: 'cultura', icon: 'bi-bank', pct: Math.round(vals.cultura * 100) },
+      { label: 'Praia e Sol', key: 'praia', icon: 'bi-sun-fill', pct: Math.round(vals.praia * 100) },
+      { label: 'Aventura', key: 'aventura', icon: 'bi-compass', pct: Math.round(vals.aventura * 100) },
+      { label: 'Grandes Cidades', key: 'cidade', icon: 'bi-buildings-fill', pct: Math.round(vals.cidade * 100) },
+      { label: 'Descanso e Spa', key: 'relaxamento', icon: 'bi-cup-hot-fill', pct: Math.round(vals.relaxamento * 100) }
+    ];
+  });
+
+  // Geometria da Bússola Polar Minimalista (Opção B)
+  radarPolygonPoints = computed(() => {
+    const vals = this.dnaProfileValues();
+    const cx = 150;
+    const cy = 130;
+    const r = 75;
+
+    return this.radarAxes.map(axis => {
+      const val = (vals as any)[axis.key] || 0.5;
+      const x = cx + r * val * Math.cos(axis.angle);
+      const y = cy + r * val * Math.sin(axis.angle);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+  });
+
+  radarInnerPolygonPoints = computed(() => {
+    const vals = this.dnaProfileValues();
+    const cx = 150;
+    const cy = 130;
+    const r = 75;
+
+    return this.radarAxes.map(axis => {
+      const val = ((vals as any)[axis.key] || 0.5) * 0.55;
+      const x = cx + r * val * Math.cos(axis.angle);
+      const y = cy + r * val * Math.sin(axis.angle);
+      return `${x.toFixed(1)},${y.toFixed(1)}`;
+    }).join(' ');
+  });
+
+  radarAxisPercent(key: string): number {
+    const vals = this.dnaProfileValues() as Record<string, number>;
+    const val = vals[key] ?? 0.5;
+    return Math.round(val * 100);
+  }
+
+  radarVertexDots = computed(() => {
+    const vals = this.dnaProfileValues();
+    const cx = 150;
+    const cy = 130;
+    const r = 75;
+
+    return this.radarAxes.map(axis => {
+      const val = (vals as any)[axis.key] || 0.5;
+      return {
+        key: axis.key,
+        label: axis.label,
+        val,
+        pct: Math.round(val * 100),
+        isHigh: val >= 0.70,
+        x: cx + r * val * Math.cos(axis.angle),
+        y: cy + r * val * Math.sin(axis.angle)
+      };
+    });
+  });
+
+  // Afinidades do Perfil Final
+  displayAffinities = computed(() => {
+    const vals = this.dnaProfileValues();
+    const list = [
+      { label: 'Ecoturismo e Natureza', pct: Math.round(vals.natureza * 100) },
+      { label: 'Cultura e História', pct: Math.round(vals.cultura * 100) },
+      { label: 'Sol e Litoral', pct: Math.round(vals.praia * 100) },
+      { label: 'Aventura e Montanha', pct: Math.round(vals.aventura * 100) },
+      { label: 'Grandes Cidades', pct: Math.round(vals.cidade * 100) },
+      { label: 'Descanso e Spa', pct: Math.round(vals.relaxamento * 100) }
+    ];
+    return list.sort((a, b) => b.pct - a.pct).slice(0, 3);
+  });
+
+  isEcoQuizChoice(): boolean {
+    const affinities = this.displayAffinities();
+    const vals = this.dnaProfileValues();
+
+    // 1. Se a principal afinidade exibida no título for Ecoturismo/Natureza ou Aventura/Montanha
+    if (affinities.length > 0) {
+      const topLabel = affinities[0].label.toLowerCase();
+      if (topLabel.includes('eco') || topLabel.includes('natureza') || topLabel.includes('aventura') || topLabel.includes('montanha')) {
+        return true;
+      }
+    }
+
+    // 3. Se escolheu explicitamente Ecoturismo na pergunta de Estilo
+    const qList = this.quiz()?.questions || [];
+    const estiloQ = qList.find(q => q.text.toLowerCase().includes('estilo')) || qList[0];
+    if (estiloQ) {
+      const aVal = this.selectedAnswers()[estiloQ.id];
+      const aId = typeof aVal === 'number' ? aVal : (Array.isArray(aVal) ? aVal[0] : null);
+      if (aId) {
+        const ans = estiloQ.answers.find(a => a.id === aId);
+        if (ans && ans.text.toLowerCase().includes('eco')) {
+          return vals.cidade < 0.90 || vals.natureza >= vals.cidade;
         }
       }
     }
 
-    const isEco = chosenTexts.some(t => t.includes('eco') || t.includes('natureza'));
-    const isTrad = chosenTexts.some(t => t.includes('tradicional') || t.includes('urbana'));
-    const isSnow = chosenTexts.some(t => t.includes('neve') || t.includes('frio'));
-    const isSun = chosenTexts.some(t => t.includes('sol') || t.includes('calor'));
-    const isHistory = chosenTexts.some(t => t.includes('história') || t.includes('cultura'));
-    const isAdventure = chosenTexts.some(t => t.includes('aventura'));
-    const isGourmet = chosenTexts.some(t => t.includes('gastronomia'));
-
-    if (isEco && isSnow) {
-      return {
-        title: 'O Nômade dos Picos e Geleiras',
-        icon: '🏔️',
-        tagline: 'Seu coração bate forte por montanhas nevadas e silêncio monumental.',
-        description: 'Você encontra paz em paisagens intocadas pelo homem, ar puro das altitudes e o desafio revigorante de climas frios.',
-        topAffinities: [
-          { label: 'Ecoturismo e Natureza', pct: 95, color: '#10b981' },
-          { label: 'Neve e Clima Frio', pct: 92, color: '#38bdf8' },
-          { label: 'Aventura Selvagem', pct: 86, color: '#6366f1' }
-        ]
-      };
-    } else if (isEco && isAdventure) {
-      return {
-        title: 'O Desbravador da Biosfera',
-        icon: '🌿',
-        tagline: 'Expedições reais, adrenalina pura e respeito à vida selvagem.',
-        description: 'Você não viaja apenas para passear: viaja para se fundir com os biomas mais ricos do planeta e viver histórias inesquecíveis.',
-        topAffinities: [
-          { label: 'Ecoturismo Intenso', pct: 98, color: '#10b981' },
-          { label: 'Aventura e Desafios', pct: 92, color: '#f59e0b' },
-          { label: 'Vida Selvagem', pct: 88, color: '#06b6d4' }
-        ]
-      };
-    } else if (isEco && isSun) {
-      return {
-        title: 'O Guardião das Águas Tropicais',
-        icon: '🌊',
-        tagline: 'Piscinas naturais, recifes de corais e brisa litorânea pura.',
-        description: 'Sua viagem perfeita combina biodiversidade marinha, muito sol e a preservação dos mais belos santuários litorâneos.',
-        topAffinities: [
-          { label: 'Ecoturismo e Praias', pct: 95, color: '#10b981' },
-          { label: 'Sol e Calor Radiante', pct: 90, color: '#f59e0b' },
-          { label: 'Relaxamento e Natureza', pct: 85, color: '#06b6d4' }
-        ]
-      };
-    } else if (isTrad && isHistory) {
-      return {
-        title: 'O Cronista das Grandes Civilizações',
-        icon: '🏛️',
-        tagline: 'Ruínas milenares, museus e segredos guardados na arquitetura.',
-        description: 'Você viaja no espaço e no tempo: ruas de paralelepípedo, bibliotecas antigas e castelos são seus templos sagrados.',
-        topAffinities: [
-          { label: 'Cultura e História', pct: 96, color: '#8b5cf6' },
-          { label: 'Turismo Urbano', pct: 88, color: '#38bdf8' },
-          { label: 'Arquitetura Clássica', pct: 85, color: '#ec4899' }
-        ]
-      };
-    } else if (isTrad && isGourmet) {
-      return {
-        title: 'O Bon Vivant Cosmopolita',
-        icon: '🍷',
-        tagline: 'Alta gastronomia, vinhos premiados e a pulsação das metrópoles.',
-        description: 'Para você, cada viagem é um banquete sensorial: mesas concorridas, luzes de neon e as esquinas mais elegantes do mundo.',
-        topAffinities: [
-          { label: 'Alta Gastronomia', pct: 96, color: '#ef4444' },
-          { label: 'Vida Urbana e Noite', pct: 90, color: '#38bdf8' },
-          { label: 'Cultura Cosmopolita', pct: 85, color: '#8b5cf6' }
-        ]
-      };
-    } else if (isSun) {
-      return {
-        title: 'O Explorador do Verão Eterno',
-        icon: '☀️',
-        tagline: 'Onde o sol brilhar e o mar for azul, é para lá que você vai.',
-        description: 'Energia solar, pores do sol inesquecíveis e momentos de puro descanso com a melhor infraestrutura do mundo.',
-        topAffinities: [
-          { label: 'Calor e Sol', pct: 98, color: '#f59e0b' },
-          { label: 'Praias e Resorts', pct: 90, color: '#06b6d4' },
-          { label: 'Relaxamento Total', pct: 85, color: '#10b981' }
-        ]
-      };
-    } else {
-      return {
-        title: 'O Curador de Horizontes',
-        icon: '🧭',
-        tagline: 'Mente aberta, olhar curioso e flexibilidade para o extraordinário.',
-        description: 'Você não tem amarras: busca tanto a serenidade da natureza quanto a energia vibrante dos centros urbanos.',
-        topAffinities: [
-          { label: 'Versatilidade Global', pct: 90, color: '#38bdf8' },
-          { label: 'Experiências Novas', pct: 88, color: '#10b981' },
-          { label: 'Descoberta Autêntica', pct: 85, color: '#8b5cf6' }
-        ]
-      };
-    }
-  });
-
-  realUserAffinities = computed(() => {
-    const qList = this.quiz()?.questions || [];
-    const answers = this.selectedAnswers();
-    const list: { label: string; pct: number }[] = [];
-
-    const percentages = [95, 90, 85, 80, 75];
-    let pIdx = 0;
-
-    for (const q of qList) {
-      const aId = answers[q.id];
-      if (aId !== undefined) {
-        const ans = q.answers?.find(a => a.id === aId);
-        if (ans) {
-          list.push({
-            label: ans.text,
-            pct: percentages[pIdx % percentages.length]
-          });
-          pIdx++;
-        }
-      }
-    }
-
-    return list;
-  });
+    return false;
+  }
 
   ngOnInit(): void {
+    if (typeof localStorage !== 'undefined') {
+      const hideFlag = localStorage.getItem('horizon_quiz_hide_instructions');
+      if (hideFlag === 'true') {
+        this.hideAllInstructionOverlays.set(true);
+        this.dontShowInstructionsAgain.set(true);
+      }
+    }
     this.loadQuiz();
+    this.checkPendingQuizSubmission();
+  }
+
+  private checkPendingQuizSubmission(): void {
+    if (typeof localStorage !== 'undefined' && this.authService.isAuthenticated()) {
+      const pendingRaw = localStorage.getItem('pending_quiz_submission');
+      if (pendingRaw) {
+        try {
+          const { quizId, payload } = JSON.parse(pendingRaw);
+          if (payload) {
+            this.isSubmitting.set(true);
+            this.quizService.submitQuiz(quizId, payload).subscribe({
+              next: () => {
+                localStorage.removeItem('pending_quiz_submission');
+                this.isSubmitting.set(false);
+                this.isSubmitted.set(true);
+                const uid = this.tokenStorage.getUserId();
+                if (uid) {
+                  localStorage.setItem(`quizCompleted_${uid}`, 'true');
+                }
+                this.identityService.getTravelerIdentity().subscribe({
+                  next: (state) => this.identityData.set(state),
+                  error: () => {}
+                });
+              },
+              error: () => {
+                this.isSubmitting.set(false);
+              }
+            });
+          }
+        } catch {
+          localStorage.removeItem('pending_quiz_submission');
+        }
+      }
+    }
   }
 
   loadQuiz(): void {
@@ -1233,9 +775,11 @@ export class QuizFlowComponent implements OnInit {
     });
   }
 
-  
+  // ========================================================
+  // DRAG E SWIPE LOGIC
+  // ========================================================
   startDrag(event: MouseEvent | TouchEvent, idx: number): void {
-    if (this.isDragging() || idx !== this.topCardIndex()) return;
+    if (this.isDragging()) return;
     this.isDragging.set(true);
     const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
     this.dragStartX.set(clientX);
@@ -1266,30 +810,117 @@ export class QuizFlowComponent implements OnInit {
     document.removeEventListener('mouseup', this.onDragEnd);
     document.removeEventListener('touchend', this.onDragEnd);
 
-    const SWIPE_THRESHOLD = 90;
+    const SWIPE_THRESHOLD = 75;
     
-    if (delta > SWIPE_THRESHOLD) {
-      this.handleSwipeRight();
-    } else if (delta < -SWIPE_THRESHOLD) {
-      this.handleSwipeLeft();
+    if (this.isExperienceStep()) {
+      if (delta > SWIPE_THRESHOLD) {
+        this.handleExperienceChoice(true);
+      } else if (delta < -SWIPE_THRESHOLD) {
+        this.handleExperienceChoice(false);
+      }
     } else {
-      this.dragStartX.set(0);
-      this.dragCurrentX.set(0);
+      if (delta > SWIPE_THRESHOLD) {
+        this.handleSwipeRight();
+      } else if (delta < -SWIPE_THRESHOLD) {
+        this.handleSwipeLeft();
+      }
     }
+
+    this.dragStartX.set(0);
+    this.dragCurrentX.set(0);
   };
 
-  handleSwipeLeft() {
+  handleExperienceChoice(chosen: boolean): void {
+    const questions = this.quiz()?.questions || [];
+    const q = questions[this.currentStep()];
+    if (!q) return;
+
+    const currentCard = this.currentExperienceCard();
+    if (currentCard) {
+      const currentList: number[] = Array.isArray(this.selectedAnswers()[q.id]) 
+        ? [...(this.selectedAnswers()[q.id] as number[])] 
+        : [];
+      if (chosen) {
+        if (!currentList.includes(currentCard.id)) {
+          currentList.push(currentCard.id);
+        }
+      } else {
+        const idx = currentList.indexOf(currentCard.id);
+        if (idx > -1) {
+          currentList.splice(idx, 1);
+        }
+      }
+      this.selectedAnswers.update(prev => ({ ...prev, [q.id]: currentList }));
+    }
+
+    const nextIdx = this.experienceCardIndex() + 1;
+    if (nextIdx < q.answers.length) {
+      this.experienceCardIndex.set(nextIdx);
+    } else {
+      // Concluiu todos os cards desta pergunta múltipla
+      this.completedMultiSteps.update(set => new Set(set).add(q.id));
+      
+      // Avança para o próximo passo do quiz
+      setTimeout(() => {
+        this.currentStep.set(this.currentStep() + 1);
+        this.topCardIndex.set(0);
+        this.experienceCardIndex.set(0);
+      }, 350);
+    }
+  }
+
+  goToExperienceCard(idx: number): void {
+    const questions = this.quiz()?.questions || [];
+    const q = questions[this.currentStep()];
+    if (!q || idx < 0 || idx >= q.answers.length) return;
+    this.experienceCardIndex.set(idx);
+  }
+
+  goToPrevExperienceCard(): void {
+    if (this.experienceCardIndex() > 0) {
+      this.experienceCardIndex.set(this.experienceCardIndex() - 1);
+    }
+  }
+
+  goToNextExperienceCard(): void {
+    const questions = this.quiz()?.questions || [];
+    const q = questions[this.currentStep()];
+    if (q && this.experienceCardIndex() < q.answers.length - 1) {
+      this.experienceCardIndex.set(this.experienceCardIndex() + 1);
+    }
+  }
+
+  goToPrevCard(): void {
+    const questions = this.quiz()?.questions || [];
+    const q = questions[this.currentStep()];
+    if (!q || !q.answers || q.answers.length <= 1) return;
+    const len = q.answers.length;
+    const prevIndex = (this.topCardIndex() - 1 + len) % len;
+    this.goToCard(prevIndex);
+  }
+
+  goToNextCard(): void {
+    const questions = this.quiz()?.questions || [];
+    const q = questions[this.currentStep()];
+    if (!q || !q.answers || q.answers.length <= 1) return;
+    const len = q.answers.length;
+    const nextIndex = (this.topCardIndex() + 1) % len;
+    this.goToCard(nextIndex);
+  }
+
+  handleSwipeLeft(): void {
     const currentQ = this.quiz()!.questions[this.currentStep()];
     let nextIndex = this.topCardIndex() + 1;
     if (nextIndex >= currentQ.answers.length) {
-      nextIndex = 0; // loop
+      nextIndex = 0;
     }
-    this.topCardIndex.set(nextIndex);
+    this.goToCard(nextIndex);
   }
 
-  handleSwipeRight() {
+  handleSwipeRight(): void {
     const currentQ = this.quiz()!.questions[this.currentStep()];
-    const selectedAnswerId = currentQ.answers[this.topCardIndex()].id;
+    const safeIndex = this.topCardIndex() % currentQ.answers.length;
+    const selectedAnswerId = currentQ.answers[safeIndex].id;
     
     const current = { ...this.selectedAnswers() };
     current[currentQ.id] = selectedAnswerId;
@@ -1302,7 +933,7 @@ export class QuizFlowComponent implements OnInit {
        setTimeout(() => {
            if (this.currentStep() < totalQ) {
              this.currentStep.set(this.currentStep() + 1);
-      this.topCardIndex.set(0);
+             this.topCardIndex.set(0);
            }
        }, 300);
     }
@@ -1316,31 +947,70 @@ export class QuizFlowComponent implements OnInit {
     }
     if (indexOffset < 0) return 'scale(0)';
     
-    const translateY = indexOffset * 12;
-    const scale = Math.max(0, 1 - (indexOffset * 0.04));
-    return `translate3d(0, ${translateY}px, 0) scale(${scale})`;
+    // Efeito Baralho (Cartas saltadas / abertas em leque)
+    if (indexOffset === 1) {
+      return 'translate3d(18px, -4px, 0) rotate(4deg) scale(0.96)';
+    }
+    if (indexOffset === 2) {
+      return 'translate3d(-18px, -8px, 0) rotate(-4.5deg) scale(0.92)';
+    }
+    if (indexOffset === 3) {
+      return 'translate3d(28px, -12px, 0) rotate(7.5deg) scale(0.88)';
+    }
+    return 'translate3d(0, 0, 0) scale(1)';
   }
 
   getCardOpacity(indexOffset: number): number {
-    return indexOffset < 3 && indexOffset >= 0 ? 1 - (indexOffset * 0.1) : 0;
+    if (indexOffset === 0) return 1;
+    if (indexOffset === 1) return 0.88;
+    if (indexOffset === 2) return 0.72;
+    return 0;
   }
 
+  goToCard(index: number): void {
+    const currentQ = this.quiz()?.questions?.[this.currentStep()];
+    if (!currentQ || !currentQ.answers || index < 0 || index >= currentQ.answers.length) return;
+    if (this.topCardIndex() === index) return;
 
-  selectAnswer(questionId: number, answerId: number): void {
-    const current = { ...this.selectedAnswers() };
-    current[questionId] = answerId;
-    this.selectedAnswers.set(current);
+    this.isCardTransitioning.set(true);
+    this.topCardIndex.set(index);
+    this.dragStartX.set(0);
+    this.dragCurrentX.set(0);
+    setTimeout(() => {
+      this.isCardTransitioning.set(false);
+    }, 320);
+  }
 
-    // Auto-advance suave após 400ms se não for o último passo
-    const totalQ = this.quiz()?.questions?.length || 0;
-    if (this.currentStep() < totalQ) {
-      setTimeout(() => {
-        if (this.currentStep() < totalQ) {
-          this.currentStep.set(this.currentStep() + 1);
-      this.topCardIndex.set(0);
-        }
-      }, 420);
+  getVisibleStackCards(answers: AnswerOption[]): { answer: AnswerOption; index: number; offset: number }[] {
+    if (!answers || answers.length === 0) return [];
+    const count = Math.min(answers.length, 3);
+    const top = this.topCardIndex();
+    const result: { answer: AnswerOption; index: number; offset: number }[] = [];
+    for (let offset = 0; offset < count; offset++) {
+      const idx = (top + offset) % answers.length;
+      result.push({
+        answer: answers[idx],
+        index: idx,
+        offset: offset
+      });
     }
+    return result;
+  }
+
+  getRemainingExperienceCards(answers: AnswerOption[]): { answer: AnswerOption; index: number; offset: number }[] {
+    if (!answers || answers.length === 0) return [];
+    const currentIdx = this.experienceCardIndex();
+    const remaining = answers.slice(currentIdx);
+    const count = Math.min(remaining.length, 3);
+    const result: { answer: AnswerOption; index: number; offset: number }[] = [];
+    for (let offset = 0; offset < count; offset++) {
+      result.push({
+        answer: remaining[offset],
+        index: currentIdx + offset,
+        offset: offset
+      });
+    }
+    return result;
   }
 
   goToStep(stepIndex: number): void {
@@ -1348,14 +1018,7 @@ export class QuizFlowComponent implements OnInit {
     if (stepIndex >= 0 && stepIndex < total) {
       this.currentStep.set(stepIndex);
       this.topCardIndex.set(0);
-    }
-  }
-
-  nextStep(): void {
-    const total = this.totalSteps();
-    if (this.currentStep() < total - 1) {
-      this.currentStep.set(this.currentStep() + 1);
-      this.topCardIndex.set(0);
+      this.experienceCardIndex.set(0);
     }
   }
 
@@ -1363,6 +1026,7 @@ export class QuizFlowComponent implements OnInit {
     if (this.currentStep() > 0) {
       this.currentStep.set(this.currentStep() - 1);
       this.topCardIndex.set(0);
+      this.experienceCardIndex.set(0);
     }
   }
 
@@ -1370,25 +1034,13 @@ export class QuizFlowComponent implements OnInit {
     const questions = this.quiz()?.questions || [];
     if (stepIndex < questions.length) {
       const q = questions[stepIndex];
-      return this.selectedAnswers()[q.id] !== undefined;
+      const ans = this.selectedAnswers()[q.id];
+      if (Array.isArray(ans)) {
+        return ans.length > 0 || this.completedMultiSteps().has(q.id);
+      }
+      return ans !== undefined;
     }
     return this.isBudgetValid();
-  }
-
-  getStepTitle(stepIndex: number): string {
-    const questions = this.quiz()?.questions || [];
-    if (stepIndex < questions.length) {
-      return questions[stepIndex].text;
-    }
-    return 'Orçamento Planejado';
-  }
-
-  private getShortLabel(questionText: string): string {
-    const lower = questionText.toLowerCase();
-    if (lower.includes('estilo')) return 'Estilo';
-    if (lower.includes('clima')) return 'Clima';
-    if (lower.includes('experiência') || lower.includes('procura')) return 'Experiência';
-    return 'Pergunta';
   }
 
   getOptionVisual(answerText: string): OptionVisual {
@@ -1409,18 +1061,9 @@ export class QuizFlowComponent implements OnInit {
     };
   }
 
-  hasAnyAnswer(): boolean {
-    return Object.keys(this.selectedAnswers()).length > 0;
-  }
-
-  getAnswerById(question: any, answerId?: number): any {
-    if (!answerId || !question || !question.answers) return null;
-    return question.answers.find((a: any) => a.id === answerId);
-  }
-
   isBudgetValid(): boolean {
     const b = this.budget();
-    return b !== null && b !== undefined && b >= 1000 && b <= 30000;
+    return b !== null && b !== undefined && b >= 1000 && b <= 200000;
   }
 
   isFormValid(): boolean {
@@ -1432,29 +1075,90 @@ export class QuizFlowComponent implements OnInit {
     const answers = this.selectedAnswers();
     const allAnswered = currentQuiz.questions.every(q => {
       if (q.required === false) return true;
-      return answers[q.id] !== undefined;
+      const ans = answers[q.id];
+      if (Array.isArray(ans)) return ans.length > 0;
+      return ans !== undefined;
     });
 
     return allAnswered && this.isBudgetValid();
   }
 
+  onBudgetInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let cleaned = input.value.replace(/\D/g, '');
+    
+    if (cleaned === '') {
+      this.budgetError.set("Digite um valor válido.");
+      this.budget.set(0);
+      input.value = '';
+      return;
+    }
+
+    let num = parseInt(cleaned, 10);
+    if (num > 200000) {
+      this.budgetError.set("O limite máximo permitido é R$ 200.000");
+      num = 200000;
+    } else if (num < 1000) {
+      this.budgetError.set("O valor mínimo é R$ 1.000");
+    } else {
+      this.budgetError.set(null);
+    }
+    
+    this.budget.set(num);
+    input.value = num.toString();
+  }
+
+  onBudgetBlur(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let num = this.budget() || 0;
+    
+    if (num < 1000) {
+      this.budget.set(1000);
+      this.budgetError.set("Corrigido para o mínimo de R$ 1.000");
+      input.value = "1000";
+    }
+  }
+
+  setBudgetPreset(amount: number): void {
+    this.budget.set(amount);
+    this.budgetError.set(null);
+  }
+
+  togglePassport(event: Event): void {
+    const checkbox = event.target as HTMLInputElement;
+    this.hasPassport.set(checkbox.checked);
+  }
+
+  togglePassportDirect(): void {
+    this.hasPassport.update(v => !v);
+  }
+
   onSubmit(): void {
     if (!this.isFormValid()) return;
 
-    this.isSubmitting.set(true);
-    this.submitErrorMessage.set(null);
-
-    const answersMap: Record<string, number> = {};
-    Object.entries(this.selectedAnswers()).forEach(([qId, aId]) => {
-      answersMap[qId] = aId;
+    const answersMap: Record<string, number | number[]> = {};
+    Object.entries(this.selectedAnswers()).forEach(([qId, val]) => {
+      answersMap[qId] = val;
     });
 
     const payload: SubmitQuizRequest = {
       answers: answersMap,
-      budgetPerPerson: this.budget()!
+      budgetPerPerson: this.budget()!,
+      hasPassport: this.hasPassport()
     };
 
     const quizId = this.quiz()?.id || null;
+
+    if (!this.authService.isAuthenticated()) {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem('pending_quiz_submission', JSON.stringify({ quizId, payload }));
+      }
+      this.showGuestAuthModal.set(true);
+      return;
+    }
+
+    this.isSubmitting.set(true);
+    this.submitErrorMessage.set(null);
 
     this.quizService.submitQuiz(quizId, payload).subscribe({
       next: () => {
@@ -1465,78 +1169,54 @@ export class QuizFlowComponent implements OnInit {
           localStorage.setItem(`quizCompleted_${uid}`, 'true');
         }
         this.identityService.getTravelerIdentity().subscribe({
-          next: (state) => {
-            this.identityData.set(state);
-          },
+          next: (state) => this.identityData.set(state),
           error: () => {}
         });
+        setTimeout(() => {
+          this.isCsatModalOpen.set(true);
+        }, 1200);
       },
-      error: (error) => {
+      error: (err) => {
         this.isSubmitting.set(false);
-        this.submitErrorMessage.set(error.message || 'Erro ao salvar as respostas do quiz.');
+        this.submitErrorMessage.set(err.message || 'Falha ao salvar respostas do quiz.');
       }
     });
   }
 
-  isEcoQuizChoice = computed(() => {
-    const affinities = this.realUserAffinities();
-    return affinities.some(a => a.label.toLowerCase().includes('eco'));
-  });
-
-  displayAffinities = computed(() => {
-    const idState = this.identityData();
-    if (idState && idState.topDimensions && idState.topDimensions.length > 0) {
-      return idState.topDimensions.slice(0, 4).map(d => ({
-        label: d.label,
-        pct: d.percentage
-      }));
-    }
-    return this.realUserAffinities();
-  });
-
   resetQuiz(): void {
-    this.isSubmitted.set(false);
-    this.identityData.set(null);
     this.selectedAnswers.set({});
-    this.budget.set(15000);
+    this.selectedExperienceIds.set([]);
+    this.experienceCardIndex.set(0);
+    this.topCardIndex.set(0);
     this.currentStep.set(0);
-    this.showSwipeTutorial.set(true);
-    this.submitErrorMessage.set(null);
-    this.loadQuiz();
+    this.isSubmitted.set(false);
+    this.budget.set(15000);
+    this.hasPassport.set(true);
   }
 
-  setBudgetPreset(amount: number): void {
-    this.budget.set(amount);
+  formatCurrency(value: number | null): string {
+    if (value === null || value === undefined) return 'R$ 0,00';
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   }
 
-  formatCurrency(value?: number | null): string {
-    if (value === undefined || value === null) return 'R$ 0,00';
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(value);
+  goToLoginAfterQuiz(): void {
+    this.showGuestAuthModal.set(false);
+    this.router.navigate(['/login'], { queryParams: { returnUrl: '/quiz' } });
   }
 
-  readonly placeholderHero = 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1200&auto=format&fit=crop';
-  
-  handleHeroError(event: any): void {
-    event.target.src = this.placeholderHero;
+  goToRegisterAfterQuiz(): void {
+    this.showGuestAuthModal.set(false);
+    this.router.navigate(['/register'], { queryParams: { returnUrl: '/quiz' } });
+  }
+
+  handleHeroError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    if (target) {
+      target.src = 'assets/trivia-bg.webp';
+    }
+  }
+
+  onQuizCsatSubmitted(): void {
+    this.hasSubmittedQuizCsat.set(true);
   }
 }
-// trigger reload
-// trigger reload 2
-// trigger reload 3
-// trigger reload 4
-// trigger reload 5
-// trigger reload 6
-// trigger reload 7
-// trigger reload 8
-// trigger reload 9
-// trigger reload 10
-// trigger reload 11
-// trigger reload 12
-// trigger reload 13
-// trigger reload 14
-// trigger reload 15
-// trigger reload 16
-// trigger reload 17
-// trigger reload 18
-// trigger reload 19
-

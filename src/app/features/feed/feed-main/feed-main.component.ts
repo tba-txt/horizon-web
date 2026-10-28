@@ -1,1106 +1,48 @@
-import { Component, OnInit, inject, signal, computed, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, computed, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { animate, stagger } from 'motion';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { FeedService } from '../services/feed.service';
 import { Post } from '../models/feed.model';
+import { AuthService } from '../../../core/auth/services/auth.service';
 import { TokenStorageService } from '../../../core/auth/services/token-storage.service';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
 import { PlaneLoaderComponent } from '../../../shared/components/plane-loader/plane-loader.component';
+import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
 
 @Component({
   selector: 'app-feed-main',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent, FooterComponent, PlaneLoaderComponent],
-  template: `
-    <app-navbar></app-navbar>
-
-    <!-- Hero Section -->
-    <header class="hero-container position-relative overflow-hidden">
-      <img 
-        src="assets/feed.webp" 
-        alt="Feed de Histórias e Crônicas de Viagem" 
-        class="w-100 hero-image"
-        fetchpriority="high"
-        (error)="handleImageError($event)"
-      />
-    </header>
-
-    <main class="container-fluid px-3 px-xl-5 py-4 py-lg-5" style="max-width: 1240px; margin-top: 0;">
-      
-      <!-- Layout em 2 Colunas: Centro (Feed Editorial) | Direita (Quiz CTA) -->
-      <div class="row g-4 justify-content-center">
-
-        <!-- ==================== COLUNA PRINCIPAL: FEED ==================== -->
-        <div class="col-12 col-lg-8">
-          
-          <section class="mb-4">
-            <h1 class="h2 fw-bold text-dark mb-3">Feed</h1>
-
-            <div class="row g-3 align-items-center pt-2 pb-3 border-bottom">
-              <div class="col-12 col-md-7">
-                <div class="input-group">
-                  <span class="input-group-text bg-white border-end-0 text-muted" aria-hidden="true">
-                    <i class="bi bi-search"></i>
-                  </span>
-                  <input 
-                    type="text" 
-                    class="form-control border-start-0 ps-0" 
-                    placeholder="Buscar crônicas, dicas, experiências..."
-                    [ngModel]="searchQuery()" 
-                    (ngModelChange)="searchQuery.set($event)" 
-                    aria-label="Buscar crônicas, dicas e experiências"
-                  />
-                  @if (searchQuery()) {
-                    <button class="btn btn-outline-secondary border-start-0" type="button" (click)="searchQuery.set('')" aria-label="Limpar campo de busca">
-                      <i class="bi bi-x-lg" aria-hidden="true"></i>
-                    </button>
-                  }
-                </div>
-              </div>
-
-              <div class="col-12 col-md-5 d-flex justify-content-md-end align-items-center gap-2">
-                <div class="btn-group btn-group-sm rounded-pill p-1 bg-light border" role="group" aria-label="Ordenar artigos">
-                  <button 
-                    type="button" 
-                    class="btn rounded-pill px-3 fw-semibold"
-                    [class.btn-primary]="sortBy() === 'recent'"
-                    [class.btn-light]="sortBy() !== 'recent'"
-                    [attr.aria-pressed]="sortBy() === 'recent'"
-                    (click)="sortBy.set('recent')"
-                  >
-                    Recentes
-                  </button>
-                  <button 
-                    type="button" 
-                    class="btn rounded-pill px-3 fw-semibold"
-                    [class.btn-primary]="sortBy() === 'popular'"
-                    [class.btn-light]="sortBy() !== 'popular'"
-                    [attr.aria-pressed]="sortBy() === 'popular'"
-                    (click)="sortBy.set('popular')"
-                  >
-                    Populares
-                  </button>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          @if (isLoading()) {
-            <div class="d-flex align-items-center justify-content-center py-5" aria-live="polite">
-              <app-plane-loader></app-plane-loader>
-            </div>
-          } @else if (filteredPosts().length === 0) {
-            <div class="text-center py-5 bg-white rounded-4 border shadow-sm p-4" aria-live="polite">
-              <i class="bi bi-journal-x fs-1 text-secondary mb-2 d-block" aria-hidden="true"></i>
-              <h3 class="h5 fw-bold text-dark mb-1">Nenhum artigo encontrado</h3>
-              <p class="text-muted small mb-3">Tente mudar os termos de busca.</p>
-              <button class="btn btn-outline-primary btn-sm rounded-pill px-4 fw-semibold" (click)="clearFilters()">
-                Limpar Busca
-              </button>
-            </div>
-          } @else {
-            <div class="d-flex flex-column gap-5 feed-container">
-              @for (post of displayedPosts(); track post.id) {
-                <article class="card border-0 shadow-sm rounded-4 overflow-hidden post-card bg-white mb-4">
-                  
-                  @if (post.postType === 'THIS_OR_THAT') {
-                    <div class="card-body p-4 p-md-5 bg-white text-center">
-                      <div class="mb-4">
-                        <span class="badge rounded-3 px-3 py-2 mb-2" style="background-color: #5BA4D8; color: white; font-weight: 600; font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase;">
-                          <i class="bi bi-arrows-collapse me-1"></i> Isso ou Aquilo
-                        </span>
-                        <h2 class="h4 fw-bold text-dark lh-sm mb-0" style="font-family: var(--font-heading);">Selecione apenas uma opção</h2>
-                      </div>
-                      
-                      <div class="this-or-that-container position-relative">
-                        <div class="row g-2 justify-content-center position-relative">
-                          <!-- Botão Central VS -->
-                          <div class="vs-badge position-absolute top-50 start-50 translate-middle bg-white text-dark fw-bold rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.1rem; font-family: var(--font-heading); border: 4px solid #fff; z-index: 10; transition: opacity 0.5s ease; pointer-events: none;" [style.opacity]="thisOrThatSelection()[post.id] ? '0' : '1'">
-                            VS
-                          </div>
-                          
-                          @for (opt of post.thisOrThatOptions; track opt.id; let idx = $index) {
-                            <div class="col-6">
-                              <div 
-                                class="this-or-that-card position-relative overflow-hidden"
-                                [class.voted]="thisOrThatSelection()[post.id] === opt.id"
-                                [class.dimmed]="thisOrThatSelection()[post.id] && thisOrThatSelection()[post.id] !== opt.id"
-                                [class.rounded-start-4]="idx === 0"
-                                [class.rounded-end-4]="idx === 1"
-                                (click)="selectThisOrThat(post.id, opt.id)"
-                                style="cursor: pointer; height: 320px; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); border: none !important;"
-                              >
-                                @if (opt.image) {
-                                  <img [src]="opt.image" loading="lazy" decoding="async" class="w-100 h-100 object-fit-cover option-img" style="transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);" alt="Option" (error)="handleImageError($event)">
-                                } @else {
-                                  <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
-                                    <i class="bi bi-image text-white-50" style="font-size: 2.5rem; opacity: 0.35;"></i>
-                                  </div>
-                                }
-                                
-                                <!-- Gradiente Overlay -->
-                                <div class="position-absolute inset-0 w-100 h-100" style="background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.4) 50%, transparent 100%); transition: opacity 0.6s ease;"></div>
-                                
-                                <!-- Conteúdo (Texto e Votos) -->
-                                <div class="position-absolute bottom-0 start-0 w-100 p-3 p-md-4 text-start z-2 d-flex flex-column justify-content-end">
-                                  <h3 class="h5 text-white fw-bold mb-2 option-label" style="text-shadow: 0 2px 10px rgba(0,0,0,0.9), 0 4px 20px rgba(0,0,0,0.8); transition: transform 0.4s ease;">{{ opt.label }}</h3>
-                                  
-                                  <!-- Votação (Porcentagem + Quantidade de Votos com Sombra Preta) -->
-                                  @if (thisOrThatSelection()[post.id]) {
-                                    <div class="vote-stats-container mt-1 animate-fade-in">
-                                      <div class="d-flex align-items-baseline gap-2 text-white flex-wrap">
-                                        <span class="fw-black fs-3 lh-1 text-white" style="color: #ffffff; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95), 0 0 16px rgba(0, 0, 0, 0.9);">{{ getVotePercentage(post, opt) }}%</span>
-                                        <span class="text-white fw-semibold" style="font-size: 0.85rem; text-shadow: 0 2px 6px rgba(0, 0, 0, 0.95), 0 0 10px rgba(0, 0, 0, 0.9);">
-                                          • {{ getVoteCount(post, opt) }} {{ getVoteCount(post, opt) === 1 ? 'voto' : 'votos' }}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  }
-                                </div>
-                              </div>
-                            </div>
-                          }
-                        </div>
-                        
-                        <div class="d-flex justify-content-center" style="min-height: 40px; margin-top: 1rem; transition: opacity 0.6s ease;" [style.opacity]="thisOrThatSelection()[post.id] ? '1' : '0'">
-                          @if (thisOrThatSelection()[post.id]) {
-                            <button class="btn btn-sm text-white fw-semibold px-4 rounded-3 shadow-sm" style="background-color: #65A30D; border: none; font-size: 0.8rem;" (click)="resetThisOrThat(post.id)">
-                              <i class="bi bi-arrow-counterclockwise me-1"></i> Refazer Escolha
-                            </button>
-                          }
-                        </div>
-                      </div>
-                    </div>
-                  } @else if (post.postType === 'TRIVIA') {
-                    <div class="card-body p-4 p-md-5 text-center text-white trivia-card-body" style="background: linear-gradient(rgba(11, 37, 69, 0.45), rgba(11, 37, 69, 0.55)), url('assets/trivia-bg.webp') center/cover no-repeat;">
-                      <div class="mb-4 text-center">
-                        <h2 class="h4 fw-bold lh-sm mb-0 text-white" style="text-shadow: 0 2px 8px rgba(0,0,0,0.6);">Parada Obrigatória Horizon</h2>
-                      </div>
-                      
-                      <div class="bg-white text-dark rounded-4 p-4 p-md-4 shadow-sm text-start">
-                        <h3 class="h5 fw-bold mb-4 text-dark lh-base" style="font-size: 1.12rem; color: #0f172a !important;">
-                          {{ post.triviaData?.question }}
-                        </h3>
-                        
-                        <div class="d-flex flex-column gap-3">
-                          @for (opt of post.triviaData?.options; track opt; let idx = $index) {
-                            <button 
-                              type="button"
-                              class="trivia-option-card d-flex align-items-center justify-content-between"
-                              [class.is-correct]="triviaSelection()[post.id] === idx && idx === post.triviaData!.correctIndex"
-                              [class.is-wrong]="triviaSelection()[post.id] === idx && idx !== post.triviaData!.correctIndex"
-                              [class.is-revealed-correct]="triviaSelection()[post.id] !== undefined && triviaSelection()[post.id] !== post.triviaData!.correctIndex && idx === post.triviaData!.correctIndex"
-                              [class.is-dimmed]="triviaSelection()[post.id] !== undefined && triviaSelection()[post.id] !== idx && idx !== post.triviaData!.correctIndex"
-                              [disabled]="triviaSelection()[post.id] !== undefined"
-                              (click)="selectTrivia(post.id, idx)"
-                            >
-                              <div class="d-flex align-items-center gap-3">
-                                <span class="trivia-radio-dot">
-                                  @if (triviaSelection()[post.id] === idx && idx === post.triviaData!.correctIndex) {
-                                    <i class="bi bi-check-lg text-success fw-bold" style="font-size: 0.85rem;"></i>
-                                  } @else if (triviaSelection()[post.id] === idx && idx !== post.triviaData!.correctIndex) {
-                                    <i class="bi bi-x-lg text-danger fw-bold" style="font-size: 0.85rem;"></i>
-                                  } @else if (triviaSelection()[post.id] !== undefined && idx === post.triviaData!.correctIndex) {
-                                    <i class="bi bi-check-lg text-success fw-bold" style="font-size: 0.85rem;"></i>
-                                  }
-                                </span>
-                                <span>{{ opt }}</span>
-                              </div>
-                            </button>
-                          }
-                        </div>
-                        
-                        @if (triviaSelection()[post.id] !== undefined) {
-                          <div class="mt-4 trivia-feedback-card shadow-sm">
-                            @if (triviaSelection()[post.id] === post.triviaData!.correctIndex) {
-                              <div class="d-flex align-items-center gap-2 mb-2 text-white fw-bold" style="font-size: 0.95rem;">
-                                <span>Você acertou! A resposta correta é: <u class="text-white fw-semibold">{{ post.triviaData?.options[post.triviaData!.correctIndex] }}</u></span>
-                              </div>
-                              <p class="mb-0 text-white small lh-base" style="font-size: 0.88rem; color: rgba(255, 255, 255, 0.92) !important;">
-                                {{ post.triviaData?.explanation }}
-                              </p>
-                            } @else {
-                              <div class="d-flex align-items-center gap-2 mb-2 text-white fw-bold" style="font-size: 0.95rem;">
-                                <span>Não foi dessa vez! A opção correta era: <u class="text-white fw-semibold">{{ post.triviaData?.options[post.triviaData!.correctIndex] }}</u></span>
-                              </div>
-                              <p class="mb-0 text-white small lh-base" style="font-size: 0.88rem; color: rgba(255, 255, 255, 0.92) !important;">
-                                {{ post.triviaData?.explanation }}
-                              </p>
-                            }
-                          </div>
-                        }
-                      </div>
-                    </div>
-                  } @else {
-                    <div class="position-relative post-image-wrapper">
-                    <div 
-                      #trackRef
-                      class="carousel-track"
-                      [class.is-dragging]="isDragging[post.id]"
-                      (mousedown)="onMouseDown($event, post.id, trackRef)"
-                      (mousemove)="onMouseMove($event, post.id, trackRef)"
-                      (mouseup)="onMouseUp(post.id, trackRef)"
-                      (mouseleave)="onMouseUp(post.id, trackRef)"
-                      (scroll)="onCarouselScroll(post.id, trackRef)"
-                    >
-                      @for (img of getPostImages(post); track $index) {
-                        <div class="carousel-slide">
-                          <img 
-                            [src]="img" 
-                            [alt]="post.title" 
-                            class="w-100 h-100 object-fit-cover pointer-events-none"
-                            loading="lazy"
-                            decoding="async"
-                            width="800"
-                            height="450"
-                            draggable="false"
-                            (error)="handleImageError($event)"
-                          />
-                        </div>
-                      }
-                    </div>
-
-                    @if (getPostImages(post).length > 1) {
-                      <button 
-                        type="button" 
-                        class="btn carousel-control-btn carousel-prev" 
-                        (click)="scrollCarousel(post, -1, $event, trackRef)"
-                        aria-label="Imagem anterior"
-                        title="Imagem anterior"
-                      >
-                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-                      </button>
-                      
-                      <button 
-                        type="button" 
-                        class="btn carousel-control-btn carousel-next" 
-                        (click)="scrollCarousel(post, 1, $event, trackRef)"
-                        aria-label="Próxima imagem"
-                        title="Próxima imagem"
-                      >
-                        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
-                      </button>
-
-                      <div class="carousel-indicators-custom" role="tablist" aria-label="Indicadores de fotos">
-                        @for (img of getPostImages(post); track $index) {
-                          <button 
-                            type="button"
-                            class="carousel-dot" 
-                            role="tab"
-                            [class.active]="(activeImageIndex()[post.id] ?? 0) === $index"
-                            [attr.aria-label]="'Ir para imagem ' + ($index + 1) + ' de ' + getPostImages(post).length"
-                            (click)="goToSlide(post, $index, $event, trackRef)"
-                          ></button>
-                        }
-                      </div>
-                    }
-                  </div>
-
-                  <div class="card-body p-4 p-md-5">
-                    <h2 class="h4 fw-bold text-dark mb-3 lh-sm">{{ post.title }}</h2>
-
-                    @if (post.caption) {
-                      <p class="text-secondary mb-4 lh-base fs-6 post-preview-text">
-                        {{ getPostPreview(post.caption) }}
-                      </p>
-                    }
-
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-2">
-                      <div class="like-unlike-radio">
-  <div>
-    <input
-      [checked]="post.userInteraction === 'LIKE'"
-      (click)="$event.preventDefault(); toggleInteraction(post, 'LIKE', $event)"
-      [id]="'like-' + post.id"
-      [name]="'feedback-' + post.id"
-      class="custom-radio-fb"
-      type="radio"
-    />
-    <label [for]="'like-' + post.id" class="feedback-label mb-0" [style.color]="post.userInteraction === 'LIKE' ? 'var(--active-color)' : 'var(--inactive-color)'">
-      <svg class="icon" width="27" height="27" viewBox="0 0 27 27" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M0.7229 26.5H5.92292V10.9008H0.7229V26.5ZM26.6299 15.2618L24.372 23.7566C23.9989 25.3696 22.5621 26.5 20.9072 26.5H8.52293V10.9278L10.7573 2.87293C10.9669 1.50799 12.1418 0.5 13.524 0.5C15.0699 0.5 16.323 1.7527 16.323 3.29837V10.8998H23.1651C25.4519 10.9009 27.1453 13.0335 26.6299 15.2618Z" fill="currentColor"></path>
-      </svg>
-      <span class="d-flex align-items-center gap-1">Like <span class="badge rounded-pill bg-light text-dark border ms-1">{{ post.likesCount || 0 }}</span></span>
-    </label>
-  </div>
-  <div>
-    <input
-      [checked]="post.userInteraction === 'DISLIKE'"
-      (click)="$event.preventDefault(); toggleInteraction(post, 'DISLIKE', $event)"
-      [name]="'feedback-' + post.id"
-      [id]="'unlike-' + post.id"
-      class="custom-radio-fb"
-      type="radio"
-    />
-    <label [for]="'unlike-' + post.id" class="feedback-label mb-0" [style.color]="post.userInteraction === 'DISLIKE' ? '#dc2626' : 'var(--inactive-color)'">
-      <svg class="icon" width="27" height="27" viewBox="0 0 27 27" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-        <path fill-rule="evenodd" clip-rule="evenodd" d="M26.7229 0.5L21.5229 0.5L21.5229 16.0992L26.7229 16.0992L26.7229 0.5ZM0.815853 11.7382L3.07376 3.24339C3.44687 1.63037 4.88372 0.500027 6.53861 0.500027L18.9229 0.500028L18.9229 16.0722L16.6885 24.1271C16.4789 25.492 15.304 26.5 13.9218 26.5C12.3759 26.5 11.1228 25.2473 11.1228 23.7016L11.1228 16.1002L4.28068 16.1002C1.99391 16.0991 0.300502 13.9664 0.815853 11.7382Z" fill="currentColor"></path>
-      </svg>
-      <span class="d-flex align-items-center gap-1">Unlike <span class="badge rounded-pill bg-light text-dark border ms-1">{{ post.dislikesCount || 0 }}</span></span>
-    </label>
-  </div>
-</div>
-
-                      <div>
-                        <button 
-                          type="button" 
-                          class="btn btn-dark rounded-pill px-4 py-2 fw-semibold shadow-sm d-flex align-items-center gap-2"
-                          (click)="openArticleReader(post)"
-                          [attr.aria-label]="'Ler matéria completa: ' + post.title"
-                        >
-                          Ler Artigo <i class="bi bi-arrow-right" aria-hidden="true"></i>
-                        </button>
-                      </div>
-                    </div>
-
-                  </div>
-                  }
-                </article>
-              }
-            </div>
-          }
-
-        </div>
-
-        <!-- ==================== COLUNA LATERAL: MISSÕES & RECOMPENSAS ==================== -->
-        <aside class="col-12 col-lg-4 d-none d-lg-block">
-          <div class="d-flex flex-column gap-4 sticky-sidebar sidebar-right">
-            
-            <div class="card border-0 rounded-4 text-white p-4 shadow-sm" style="background: #5BA4D8;">
-              <div class="position-relative z-1">
-                <div class="d-flex align-items-center justify-content-between mb-2">
-                  <span class="badge bg-warning text-dark fw-bold px-3 py-1 rounded-pill">
-                    <i class="bi bi-tag-fill me-1"></i> 10% OFF
-                  </span>
-                  <span class="small text-white fw-bold">
-                    {{ missionsCompletedCount() }}/3 Concluídas
-                  </span>
-                </div>
-
-                <h3 class="h5 fw-bold mb-1 text-white">Libere 10% de Desconto!</h3>
-                <p class="small text-white mb-3" style="opacity: 0.95; line-height: 1.4;">
-                  Cumpra as 3 tarefas de viajante abaixo e receba um cupom pessoal exclusivo para sua próxima reserva no checkout:
-                </p>
-
-                <!-- Barra de Progresso Geral das Missões -->
-                <div class="progress mb-3" style="height: 7px; background: rgba(255, 255, 255, 0.25); border-radius: 999px;">
-                  <div 
-                    class="progress-bar bg-warning rounded-pill transition-all" 
-                    role="progressbar" 
-                    [style.width.%]="(missionsCompletedCount() / 3) * 100"
-                    [attr.aria-valuenow]="missionsCompletedCount()" 
-                    aria-valuemin="0" 
-                    aria-valuemax="3"
-                  ></div>
-                </div>
-
-                <!-- Lista de Tarefas -->
-                <div class="d-flex flex-column gap-2 mb-3">
-                  
-                  <!-- Tarefa 1: Quiz Horizon -->
-                  <div class="p-2 px-3 rounded-3 d-flex align-items-center justify-content-between transition-all shadow-sm"
-                       [style.background]="quizMissionCompleted() ? '#f0fdf4' : '#ffffff'"
-                       [style.border]="quizMissionCompleted() ? '1px solid #86efac' : '1px solid rgba(0, 0, 0, 0.06)'">
-                    <div class="d-flex align-items-center gap-2">
-                      <i class="bi fs-5" 
-                         [class.bi-check-circle-fill]="quizMissionCompleted()" 
-                         [class.text-success]="quizMissionCompleted()" 
-                         [class.bi-circle]="!quizMissionCompleted()" 
-                         [style.color]="!quizMissionCompleted() ? '#94a3b8' : null"></i>
-                      <div>
-                        <strong class="d-block small" [class.text-success]="quizMissionCompleted()" [class.text-dark]="!quizMissionCompleted()">
-                          Faça o seu Quiz Horizon
-                        </strong>
-                        @if (!quizMissionCompleted()) {
-                          <a routerLink="/quiz" class="fw-bold text-decoration-none" style="font-size: 0.75rem; color: #5BA4D8;">
-                            Iniciar Quiz agora ›
-                          </a>
-                        } @else {
-                          <span class="text-success small fw-semibold" style="font-size: 0.72rem;">Perfil de viajante ativo</span>
-                        }
-                      </div>
-                    </div>
-                    <span class="badge rounded-pill fw-bold" 
-                          [class.bg-success]="quizMissionCompleted()" 
-                          [class.text-white]="quizMissionCompleted()"
-                          [class.bg-light]="!quizMissionCompleted()"
-                          [class.text-secondary]="!quizMissionCompleted()"
-                          [class.border]="!quizMissionCompleted()">
-                      {{ quizMissionCompleted() ? '1/1' : '0/1' }}
-                    </span>
-                  </div>
-
-                  <!-- Tarefa 2: Interagir com 10 posts -->
-                  <div class="p-2 px-3 rounded-3 d-flex align-items-center justify-content-between transition-all shadow-sm"
-                       [style.background]="interactionsCount() >= 10 ? '#f0fdf4' : '#ffffff'"
-                       [style.border]="interactionsCount() >= 10 ? '1px solid #86efac' : '1px solid rgba(0, 0, 0, 0.06)'">
-                    <div class="d-flex align-items-center gap-2">
-                      <i class="bi fs-5" 
-                         [class.bi-check-circle-fill]="interactionsCount() >= 10" 
-                         [class.text-success]="interactionsCount() >= 10" 
-                         [class.bi-circle]="interactionsCount() < 10" 
-                         [style.color]="interactionsCount() < 10 ? '#94a3b8' : null"></i>
-                      <div>
-                        <strong class="d-block small" [class.text-success]="interactionsCount() >= 10" [class.text-dark]="interactionsCount() < 10">
-                          Interaja com 10 conteúdos
-                        </strong>
-                        <span class="text-muted d-block" style="font-size: 0.72rem;">Likes, Isso ou Aquilo ou Trivias</span>
-                      </div>
-                    </div>
-                    <span class="badge rounded-pill fw-bold" 
-                          [class.bg-success]="interactionsCount() >= 10" 
-                          [class.text-white]="interactionsCount() >= 10"
-                          [class.bg-light]="interactionsCount() < 10"
-                          [class.text-secondary]="interactionsCount() < 10"
-                          [class.border]="interactionsCount() < 10">
-                      {{ interactionsCount() }}/10
-                    </span>
-                  </div>
-
-                  <!-- Tarefa 3: Ler 1 matéria completa -->
-                  <div class="p-2 px-3 rounded-3 d-flex align-items-center justify-content-between transition-all shadow-sm"
-                       [style.background]="articleRead() ? '#f0fdf4' : '#ffffff'"
-                       [style.border]="articleRead() ? '1px solid #86efac' : '1px solid rgba(0, 0, 0, 0.06)'">
-                    <div class="d-flex align-items-center gap-2">
-                      <i class="bi fs-5" 
-                         [class.bi-check-circle-fill]="articleRead()" 
-                         [class.text-success]="articleRead()" 
-                         [class.bi-circle]="!articleRead()" 
-                         [style.color]="!articleRead() ? '#94a3b8' : null"></i>
-                      <div>
-                        <strong class="d-block small" [class.text-success]="articleRead()" [class.text-dark]="!articleRead()">
-                          Leia 1 post completo
-                        </strong>
-                        <span class="text-muted d-block" style="font-size: 0.72rem;">Abra a matéria em um dos posts</span>
-                      </div>
-                    </div>
-                    <span class="badge rounded-pill fw-bold" 
-                          [class.bg-success]="articleRead()" 
-                          [class.text-white]="articleRead()"
-                          [class.bg-light]="!articleRead()"
-                          [class.text-secondary]="!articleRead()"
-                          [class.border]="!articleRead()">
-                      {{ articleRead() ? '1/1' : '0/1' }}
-                    </span>
-                  </div>
-
-                </div>
-
-                <!-- ESTADO DE RECOMPENSA DESBLOQUEADA -->
-                @if (allMissionsCompleted()) {
-                  @if (couponUsed()) {
-                    <div class="p-3 rounded-3 bg-white text-dark shadow-sm text-center animate-bounce-in">
-                      <div class="d-flex align-items-center justify-content-center gap-1 text-secondary fw-bold small text-uppercase mb-1">
-                        <i class="bi bi-check-circle-fill text-success fs-5"></i> Cupom Já Utilizado
-                      </div>
-                      <div class="d-flex align-items-center justify-content-center p-2 rounded-2 bg-light border my-2">
-                        <span class="font-monospace text-muted text-decoration-line-through small">{{ couponCode() }}</span>
-                      </div>
-                      <small class="text-muted d-block" style="font-size: 0.72rem;">
-                        Você já aproveitou este desconto de 10% OFF em uma de suas viagens. Benefício de uso único por viajante!
-                      </small>
-                    </div>
-                  } @else {
-                    <div class="p-3 rounded-3 bg-white text-dark shadow-sm text-center animate-bounce-in">
-                      <div class="d-flex align-items-center justify-content-center gap-1 text-success fw-bold small text-uppercase mb-1">
-                        <i class="bi bi-gift-fill text-warning fs-5"></i> Cupom Liberado!
-                      </div>
-                      <div class="d-flex align-items-center justify-content-between p-2 rounded-2 bg-light border border-dashed my-2">
-                        <span class="font-monospace fw-bold fs-5 tracking-wider" style="color: #5BA4D8;">{{ couponCode() }}</span>
-                        <button 
-                          type="button" 
-                          class="btn btn-sm rounded-pill px-3 fw-bold text-white" 
-                          [class.btn-success]="couponCopied()"
-                          [style.background]="!couponCopied() ? '#5BA4D8' : null"
-                          [style.border-color]="!couponCopied() ? '#5BA4D8' : null"
-                          (click)="copyCoupon()"
-                        >
-                          <i class="bi" [class.bi-check-lg]="couponCopied()" [class.bi-clipboard]="!couponCopied()"></i>
-                          {{ couponCopied() ? 'Copiado!' : 'Copiar' }}
-                        </button>
-                      </div>
-                      <small class="text-muted d-block" style="font-size: 0.72rem;">
-                        Insira este cupom no checkout para abater 10% do total da sua viagem! (Válido para uso único)
-                      </small>
-                    </div>
-                  }
-                } @else {
-                  <div class="text-center pt-2">
-                    <small class="text-white fw-bold" style="font-size: 0.8rem;">
-                      <i class="bi bi-lightning-charge-fill text-warning me-1"></i> Falta pouco para liberar seu cupom!
-                    </small>
-                  </div>
-                }
-
-              </div>
-            </div>
-
-          </div>
-        </aside>
-
-      </div>
-    </main>
-
-    <!-- MODAL DE LEITURA COMPLETA DO ARTIGO -->
-    @if (selectedArticle(); as article) {
-      <div class="modal-backdrop fade show modal-article-backdrop" (click)="closeArticleReader()"></div>
-      <div class="modal fade show d-block modal-article-reader" tabindex="-1" role="dialog" aria-modal="true" (click)="closeArticleReader()">
-        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable modal-article-dialog" (click)="$event.stopPropagation()">
-          <div class="modal-content modal-article-shell border-0 overflow-hidden">
-            <div class="modal-header border-0 px-4 px-md-5 pt-4 pb-2">
-              <div>
-                <div class="article-reader-kicker">Matéria completa</div>
-                <h2 class="article-reader-title mb-0">{{ article.title }}</h2>
-              </div>
-              <button type="button" class="btn-close ms-3" (click)="closeArticleReader()" aria-label="Fechar matéria"></button>
-            </div>
-
-            <div class="modal-body px-4 px-md-5 pt-3 pb-4">
-              <div class="position-relative rounded-3 overflow-hidden mb-4 article-reader-media">
-                <img 
-                  [src]="getActiveImage(article)" 
-                  [alt]="article.title" 
-                  class="article-reader-image" 
-                />
-
-                @if (getPostImages(article).length > 1) {
-                  <button 
-                    type="button" 
-                    class="btn carousel-control-btn carousel-prev" 
-                    (click)="prevImage(article, $event)" 
-                    aria-label="Imagem anterior"
-                    title="Imagem anterior"
-                  >
-                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
-                  </button>
-                  <button 
-                    type="button" 
-                    class="btn carousel-control-btn carousel-next" 
-                    (click)="nextImage(article, $event)" 
-                    aria-label="Próxima imagem"
-                    title="Próxima imagem"
-                  >
-                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
-                  </button>
-                }
-              </div>
-
-              @if (article.caption) {
-                <div class="article-reader-copy px-0 py-2">
-                  <p class="article-text-body">{{ article.caption }}</p>
-                </div>
-              }
-            </div>
-
-            <footer class="article-reader-footer px-4 px-md-5 py-3">
-              <div class="article-reactions d-flex align-items-center gap-2" role="group" aria-label="Avaliar matéria">
-                <button 
-                  type="button" 
-                  class="btn btn-sm d-flex align-items-center gap-2 px-3 py-2 rounded-pill border article-modal-btn" 
-                  [class.btn-liked]="article.userInteraction === 'LIKE'" 
-                  (click)="toggleInteraction(article, 'LIKE', $event)" 
-                  aria-label="Gostei da matéria"
-                >
-                  <svg class="icon" width="20" height="20" viewBox="0 0 27 27" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0.7229 26.5H5.92292V10.9008H0.7229V26.5ZM26.6299 15.2618L24.372 23.7566C23.9989 25.3696 22.5621 26.5 20.9072 26.5H8.52293V10.9278L10.7573 2.87293C10.9669 1.50799 12.1418 0.5 13.524 0.5C15.0699 0.5 16.323 1.7527 16.323 3.29837V10.8998H23.1651C25.4519 10.9009 27.1453 13.0335 26.6299 15.2618Z" fill="currentColor"></path>
-                  </svg>
-                  <span class="fw-semibold">Like</span>
-                  <span class="badge rounded-pill bg-white text-dark border ms-1">{{ article.likesCount || 0 }}</span>
-                </button>
-
-                <button 
-                  type="button" 
-                  class="btn btn-sm d-flex align-items-center gap-2 px-3 py-2 rounded-pill border article-modal-btn" 
-                  [class.btn-disliked]="article.userInteraction === 'DISLIKE'" 
-                  (click)="toggleInteraction(article, 'DISLIKE', $event)" 
-                  aria-label="Não gostei da matéria"
-                >
-                  <svg class="icon" width="20" height="20" viewBox="0 0 27 27" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd" clip-rule="evenodd" d="M26.7229 0.5L21.5229 0.5L21.5229 16.0992L26.7229 16.0992L26.7229 0.5ZM0.815853 11.7382L3.07376 3.24339C3.44687 1.63037 4.88372 0.500027 6.53861 0.500027L18.9229 0.500028L18.9229 16.0722L16.6885 24.1271C16.4789 25.492 15.304 26.5 13.9218 26.5C12.3759 26.5 11.1228 25.2473 11.1228 23.7016L11.1228 16.1002L4.28068 16.1002C1.99391 16.0991 0.300502 13.9664 0.815853 11.7382Z" fill="currentColor"></path>
-                  </svg>
-                  <span class="fw-semibold">Unlike</span>
-                  <span class="badge rounded-pill bg-white text-dark border ms-1">{{ article.dislikesCount || 0 }}</span>
-                </button>
-              </div>
-
-              <button type="button" class="article-return-button" (click)="closeArticleReader()">
-                Voltar ao feed
-              </button>
-            </footer>
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- BOTÃO FLUTUANTE: VOLTAR AO TOPO -->
-    @if (showBackToTop()) {
-      <button 
-        type="button" 
-        class="btn-back-to-top shadow-lg"
-        (click)="scrollToTop()"
-        aria-label="Voltar para o topo da página"
-        title="Voltar ao topo"
-      >
-        <i class="bi bi-arrow-up-circle-fill fs-5"></i>
-        <span>Voltar ao topo</span>
-      </button>
-    }
-
-    <app-footer></app-footer>
-  `,
-  styles: [`
-    .animate-fade-in {
-      animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-    .animate-pop {
-      animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    }
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(10px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes pop {
-      0% { transform: scale(0.5); opacity: 0; }
-      70% { transform: scale(1.15); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    
-    .bg-success-subtle { background-color: #f0fdf4 !important; }
-    .bg-danger-subtle { background-color: #fef2f2 !important; }
-    .text-success-emphasis { color: #166534 !important; }
-    .text-danger-emphasis { color: #991b1b !important; }
-
-    :host {
-      display: block;
-      background-color: #f8fafc;
-      min-height: 100vh;
-    }
-
-    .hero-container {
-      width: 100%;
-      background: #0b2545;
-      height: 320px;
-      max-height: 320px;
-    }
-
-    .hero-image {
-      width: 100%;
-      height: 320px;
-      max-height: 320px;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-
-    .post-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .post-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(11, 37, 69, 0.08) !important;
-    }
-
-    /* THIS OR THAT COMPONENT */
-    .this-or-that-card .option-img {
-      transform: scale(1);
-    }
-    .this-or-that-card:not(.voted):not(.dimmed):hover .option-img {
-      transform: none;
-    }
-    .this-or-that-card:not(.voted):not(.dimmed):hover .option-label {
-      transform: translateY(-4px);
-    }
-    .this-or-that-card.voted .option-img {
-      transform: none;
-    }
-    .this-or-that-card.dimmed .option-img {
-      filter: grayscale(80%) brightness(0.6);
-    }
-    .this-or-that-card.dimmed .option-label {
-      opacity: 0.6;
-    }
-    .vote-stats-container {
-      opacity: 0;
-      transform: translateY(10px);
-      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .vote-stats-container.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .selection-check.show {
-      opacity: 1 !important;
-      transform: scale(1) !important;
-    }
-
-    .post-image-wrapper {
-      position: relative;
-      height: 480px;
-      background: #f1f5f9;
-      overflow: hidden;
-    }
-
-    .modal-article-backdrop { background: rgba(11, 37, 69, 0.68); }
-    .modal-article-reader { padding: 16px 10px; }
-    .modal-article-dialog { max-width: 820px; }
-    .modal-article-shell { 
-      border-radius: 16px; 
-      background: #ffffff;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    }
-    .article-reader-kicker {
-      margin-bottom: 0.35rem;
-      color: #0284c7;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-    }
-    .article-reader-title {
-      color: #0f172a;
-      font-size: clamp(1.35rem, 2.5vw, 1.85rem);
-      font-weight: 800;
-      line-height: 1.25;
-    }
-    .article-reader-media { 
-      background: #0f172a; 
-      border-radius: 12px;
-    }
-    .article-reader-image {
-      display: block;
-      width: 100%;
-      height: auto;
-      max-height: 480px;
-      object-fit: cover;
-      margin: 0 auto;
-    }
-    .article-reader-copy {
-      padding: 0;
-    }
-    .article-text-body {
-      margin: 0;
-      color: #334155;
-      font-size: 1.02rem;
-      line-height: 1.85;
-      white-space: pre-line;
-      text-align: justify;
-    }
-    .article-reader-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      background-color: #f8fafc;
-      border-top: 1px solid #e2e8f0;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-    }
-    .article-reactions { 
-      display: flex; 
-      align-items: center; 
-      gap: 0.75rem; 
-    }
-    .article-modal-btn {
-      background: #ffffff;
-      color: #475569;
-      border-color: #e2e8f0 !important;
-      font-size: 0.85rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-    .article-modal-btn:hover {
-      background: #f1f5f9;
-      color: #0f172a;
-    }
-    .article-modal-btn.btn-liked {
-      background: #e0f2fe !important;
-      border-color: #7dd3fc !important;
-      color: #0284c7 !important;
-    }
-    .article-modal-btn.btn-disliked {
-      background: #fee2e2 !important;
-      border-color: #fca5a5 !important;
-      color: #dc2626 !important;
-    }
-    .article-return-button {
-      padding: 0.5rem 1.1rem;
-      border: 1px solid #cbd5e1;
-      border-radius: 50px;
-      background: #ffffff;
-      color: #475569;
-      font-weight: 600;
-      font-size: 0.875rem;
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-    .article-return-button:hover { 
-      background: #0b2545; 
-      color: #ffffff; 
-      border-color: #0b2545;
-      box-shadow: 0 4px 12px rgba(11, 37, 69, 0.2);
-    }
-    @media (max-width: 767.98px) {
-      .modal-article-reader { padding: 8px; }
-      .article-reader-image { max-height: 320px; }
-      .article-reader-footer { align-items: flex-start; flex-direction: column; }
-    }
-
-    .carousel-track {
-      display: flex;
-      width: 100%;
-      height: 100%;
-      overflow-x: auto;
-      scroll-snap-type: x mandatory;
-      scroll-behavior: smooth;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-      cursor: grab;
-      user-select: none;
-    }
-    .carousel-track.is-dragging {
-      scroll-snap-type: none !important;
-      scroll-behavior: auto !important;
-      cursor: grabbing;
-    }
-    .carousel-track::-webkit-scrollbar {
-      display: none;
-    }
-
-    .carousel-slide {
-      flex: 0 0 100%;
-      width: 100%;
-      height: 100%;
-      scroll-snap-align: start;
-      scroll-snap-stop: always;
-      position: relative;
-    }
-    
-    .pointer-events-none {
-      pointer-events: none;
-    }
-
-    .carousel-control-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.9);
-      color: #0b2545;
-      border: none;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.25rem;
-      z-index: 15;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .carousel-control-btn:hover {
-      background: #ffffff;
-      transform: translateY(-50%) scale(1.1);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-    }
-    .carousel-prev { left: 20px; }
-    .carousel-next { right: 20px; }
-
-    .carousel-indicators-custom {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      z-index: 15;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 8px 12px;
-      border-radius: 30px;
-      backdrop-filter: blur(4px);
-    }
-    .carousel-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.5);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: none;
-      padding: 0;
-    }
-    .carousel-dot:focus-visible {
-      outline: 2px solid #ffffff !important;
-      outline-offset: 2px;
-    }
-    .carousel-dot.active {
-      width: 24px;
-      border-radius: 12px;
-      background: #ffffff;
-    }
-
-
-    .btn-interaction {
-      background: #f1f5f9;
-      color: #64748b;
-      border: none;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .btn-interaction:hover {
-      background: #e2e8f0;
-      transform: none;
-    }
-    .btn-liked {
-      background: #e0f2fe !important;
-      color: #0284c7 !important;
-    }
-    .btn-disliked {
-      background: #fee2e2 !important;
-      color: #dc2626 !important;
-    }
-
-    
-
-
-    .sticky-sidebar {
-      position: sticky;
-      top: 100px;
-    }
-
-    .post-preview-text {
-      display: -webkit-box;
-      -webkit-line-clamp: 4;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      color: #64748b;
-      line-height: 1.5;
-    }
-
-        .trivia-card-body {
-      background-size: cover !important;
-      background-position: center !important;
-      background-repeat: no-repeat !important;
-    }
-    .trivia-option-card {
-      background: #ffffff;
-      color: #1e293b;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 0.95rem 1.15rem;
-      font-weight: 550;
-      font-size: 0.98rem;
-      cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      width: 100%;
-      text-align: left;
-    }
-    .trivia-option-card:hover:not(:disabled) {
-      background: #f8fafc;
-      border-color: #38bdf8;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
-    }
-    .trivia-option-card.is-correct {
-      background: #ecfdf5 !important;
-      border-color: #65A30D !important;
-      color: #065f46 !important;
-      font-weight: 600;
-    }
-    .trivia-option-card.is-wrong {
-      background: #fef2f2 !important;
-      border-color: #ef4444 !important;
-      color: #991b1b !important;
-      font-weight: 600;
-    }
-    .trivia-option-card.is-revealed-correct {
-      background: #ecfdf5 !important;
-      border: 1.5px solid #65A30D !important;
-      color: #065f46 !important;
-      font-weight: 600;
-    }
-    .trivia-option-card.is-dimmed {
-      opacity: 0.45;
-    }
-    .trivia-radio-dot {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      border: 2px solid #cbd5e1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.2s ease;
-    }
-    .trivia-feedback-card {
-      background: #5BA4D8 !important;
-      border: 1.5px solid #5BA4D8 !important;
-      color: #ffffff !important;
-      border-radius: 14px;
-      padding: 1.15rem 1.3rem;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    .btn-back-to-top {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      z-index: 1040;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: #0b2545;
-      color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 50px;
-      padding: 10px 20px;
-      font-weight: 600;
-      font-size: 0.85rem;
-      cursor: pointer;
-      box-shadow: 0 10px 25px rgba(11, 37, 69, 0.35);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      animation: fadeInUp 0.3s ease-out;
-    }
-    .btn-back-to-top:hover {
-      background: #0284c7;
-      transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 15px 30px rgba(2, 132, 199, 0.4);
-      color: #ffffff;
-    }
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    .animate-bounce-in {
-      animation: bounceIn 0.5s ease-out;
-    }
-    @keyframes bounceIn {
-      0% { opacity: 0; transform: scale(0.9); }
-      60% { opacity: 1; transform: scale(1.03); }
-      100% { transform: scale(1); }
-    }
-  `]
+  imports: [CommonModule, FormsModule, RouterLink, NavbarComponent, FooterComponent, PlaneLoaderComponent, BackToTopComponent],
+  templateUrl: './feed-main.component.html',
+  styleUrls: ['./feed-main.component.scss']
 })
-export class FeedMainComponent implements OnInit {
+export class FeedMainComponent implements OnInit, OnDestroy {
   private feedService = inject(FeedService);
   private tokenStorage = inject(TokenStorageService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private http = inject(HttpClient);
 
+  showGuestAuthModal = signal(false);
+
   // ==================== MISSÕES DE GAMIFICAÇÃO & CUPOM ====================
+  isMissionsOpen = signal<boolean>(false);
+  isWiggling = signal<boolean>(false);
+  // Balão sutil de lembrete das missões (aparece a cada 5 minutos)
+  subtleNotice = signal<string | null>(null);
+
+  private wiggleIntervalId?: any;
+  private noticeIntervalId?: any;
+  private noticeTimeoutId?: any;
+  private wiggleTimeoutId?: any;
+
   quizMissionCompleted = signal<boolean>(false);
   interactedPostIds = signal<number[]>([]);
   articleRead = signal<boolean>(false);
@@ -1271,8 +213,21 @@ export class FeedMainComponent implements OnInit {
     }
   }
 
+  categories = [
+    { id: 'ALL', label: 'Tudo', icon: 'bi-compass' },
+    { id: 'ARTICLE', label: 'Posts', icon: 'bi-journal-richtext' },
+    { id: 'THIS_OR_THAT', label: 'Isso ou Aquilo', icon: 'bi-arrows-collapse' },
+    { id: 'TRIVIA', label: 'Trivias', icon: 'bi-patch-question' },
+    { id: 'ECO', label: 'Ecoturismo', icon: 'bi-tree' },
+    { id: 'CULTURE', label: 'Cultura & História', icon: 'bi-bank' }
+  ];
+
+  selectedCategory = signal<string>('ALL');
   sortBy = signal<'recent' | 'popular'>('recent');
   searchQuery = signal('');
+  shareNotice = signal<string | null>(null);
+  private shareTimeoutId?: any;
+
   thisOrThatSelection = signal<Record<number, number>>({});
   triviaSelection = signal<Record<number, number>>({});
   communityVotes = signal<Record<number, Record<number, number>>>({});
@@ -1313,6 +268,7 @@ export class FeedMainComponent implements OnInit {
   filteredPosts = computed(() => {
     let list = [...this.posts()];
     const query = this.searchQuery().trim().toLowerCase();
+    const cat = this.selectedCategory();
     
     if (query) {
       list = list.filter(p => 
@@ -1323,12 +279,96 @@ export class FeedMainComponent implements OnInit {
       );
     }
 
+    if (cat !== 'ALL') {
+      if (cat === 'ARTICLE') {
+        list = list.filter(p => p.postType === 'ARTICLE' || (!p.postType && !!p.caption));
+      } else if (cat === 'THIS_OR_THAT') {
+        list = list.filter(p => p.postType === 'THIS_OR_THAT');
+      } else if (cat === 'TRIVIA') {
+        list = list.filter(p => p.postType === 'TRIVIA');
+      } else if (cat === 'ECO') {
+        list = list.filter(p => 
+          p.title?.toLowerCase().includes('patagônia') ||
+          p.title?.toLowerCase().includes('amazônia') ||
+          p.title?.toLowerCase().includes('bonito') ||
+          p.title?.toLowerCase().includes('lençóis') ||
+          p.title?.toLowerCase().includes('iguaçu') ||
+          p.title?.toLowerCase().includes('jalapão') ||
+          p.title?.toLowerCase().includes('galápagos') ||
+          p.title?.toLowerCase().includes('pantanal') ||
+          p.title?.toLowerCase().includes('banff') ||
+          p.attributes?.some(a => a.attributeName?.toUpperCase().includes('ECO'))
+        );
+      } else if (cat === 'CULTURE') {
+        list = list.filter(p => 
+          p.title?.toLowerCase().includes('incas') ||
+          p.title?.toLowerCase().includes('toscana') ||
+          p.title?.toLowerCase().includes('paraty') ||
+          p.title?.toLowerCase().includes('xingó') ||
+          p.title?.toLowerCase().includes('gramado') ||
+          p.title?.toLowerCase().includes('tromsø') ||
+          p.title?.toLowerCase().includes('trancoso') ||
+          p.attributes?.some(a => a.attributeName?.toUpperCase().includes('CULT'))
+        );
+      }
+    }
+
     if (this.sortBy() === 'popular') {
       list.sort((a, b) => (b.likesCount || 0) - (a.likesCount || 0));
     }
 
     return list;
   });
+
+  setCategory(catId: string): void {
+    this.selectedCategory.set(catId);
+    this.visibleCount.set(15);
+    this.triggerFeedAnimation();
+  }
+
+  sharePost(post: Post, event: Event): void {
+    event.stopPropagation();
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      const shareUrl = `${window.location.origin}/feed#post-${post.id}`;
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        this.shareNotice.set('Link da matéria copiado para compartilhar!');
+        if (this.shareTimeoutId) clearTimeout(this.shareTimeoutId);
+        this.shareTimeoutId = setTimeout(() => this.shareNotice.set(null), 3500);
+      });
+    }
+  }
+
+  getPostLocation(post: Post): string {
+    return 'Destinos Horizon';
+  }
+
+  getPostReadTime(post: Post): string {
+    const len = (post.caption || '').length;
+    const mins = Math.max(2, Math.ceil(len / 450));
+    return `${mins} min de leitura`;
+  }
+
+  getPostTags(post: Post): string[] {
+    if (post.attributes && post.attributes.length > 0) {
+      return post.attributes.slice(0, 2).map(a => '#' + a.attributeName.toLowerCase());
+    }
+    const t = (post.title || '').toLowerCase();
+    if (t.includes('incas') || t.includes('machu')) return ['#História', '#Arqueologia'];
+    if (t.includes('lençóis') || t.includes('jalapão')) return ['#Ecoturismo', '#Dunas'];
+    if (t.includes('iguaçu') || t.includes('bonito')) return ['#Ecoturismo', '#Águas'];
+    if (t.includes('patagônia') || t.includes('tromsø') || t.includes('banff')) return ['#Frio', '#Montanha'];
+    if (t.includes('amazônica') || t.includes('pantanal') || t.includes('galápagos')) return ['#VidaSelvagem', '#Natureza'];
+    if (t.includes('gramado') || t.includes('toscana')) return ['#Gastronomia', '#Charme'];
+    if (t.includes('paraty') || t.includes('trancoso')) return ['#Histórico', '#Praia'];
+    if (t.includes('dolomitas')) return ['#Trekking', '#Alpes'];
+    return ['#Viagem', '#Exploração'];
+  }
+
+  handleLogoError(event: any): void {
+    if (event?.target) {
+      event.target.style.display = 'none';
+    }
+  }
 
   displayedPosts = computed(() => {
     return this.filteredPosts().slice(0, this.visibleCount());
@@ -1338,6 +378,8 @@ export class FeedMainComponent implements OnInit {
   onEscapeKey(): void {
     if (this.selectedArticle()) {
       this.closeArticleReader();
+    } else if (this.isMissionsOpen()) {
+      this.isMissionsOpen.set(false);
     }
   }
 
@@ -1395,12 +437,55 @@ export class FeedMainComponent implements OnInit {
 
     this.checkQuizCompletion();
     this.syncCouponIfEligible();
+    this.startMissionsTimers();
     this.loadPosts();
+  }
+
+  private startMissionsTimers(): void {
+    if (typeof window === 'undefined') return;
+
+    // Tremor inicial sutil após 2.5s para demonstrar ao usuário
+    setTimeout(() => {
+      if (!this.allMissionsCompleted()) {
+        this.isWiggling.set(true);
+        setTimeout(() => this.isWiggling.set(false), 1500);
+      }
+    }, 2500);
+
+    // A cada 30 segundos, treme por 1.5s enquanto não completou todas as missões
+    this.wiggleIntervalId = setInterval(() => {
+      if (!this.allMissionsCompleted()) {
+        this.isWiggling.set(true);
+        if (this.wiggleTimeoutId) clearTimeout(this.wiggleTimeoutId);
+        this.wiggleTimeoutId = setTimeout(() => {
+          this.isWiggling.set(false);
+        }, 1500);
+      }
+    }, 30000);
+
+    // Balão sutil de lembrete das missões: aparece a cada 5 minutos (300.000 ms) e recolhe após 8 segundos
+    this.noticeIntervalId = setInterval(() => {
+      if (!this.allMissionsCompleted() && !this.isMissionsOpen()) {
+        this.subtleNotice.set('Clique aqui pra ganhar 10% OFF ✨');
+        if (this.noticeTimeoutId) clearTimeout(this.noticeTimeoutId);
+        this.noticeTimeoutId = setTimeout(() => {
+          this.subtleNotice.set(null);
+        }, 8000);
+      }
+    }, 300000);
+  }
+
+  ngOnDestroy(): void {
+    if (this.wiggleIntervalId) clearInterval(this.wiggleIntervalId);
+    if (this.noticeIntervalId) clearInterval(this.noticeIntervalId);
+    if (this.wiggleTimeoutId) clearTimeout(this.wiggleTimeoutId);
+    if (this.noticeTimeoutId) clearTimeout(this.noticeTimeoutId);
   }
 
   clearFilters(): void {
     this.searchQuery.set('');
     this.sortBy.set('recent');
+    this.selectedCategory.set('ALL');
     this.visibleCount.set(15);
     this.triggerFeedAnimation();
   }
@@ -1939,32 +1024,45 @@ export class FeedMainComponent implements OnInit {
       mixedFeed.push(finalArticles[aIdx++]);
     }
 
-    const userInteractions = this.loadStoredUserInteractions();
-    const currentSelections = { ...this.thisOrThatSelection() };
-    const currentTrivias = this.triviaSelection();
-    let selectionsChanged = false;
+    const isAuth = this.authService.isAuthenticated();
+    const userInteractions = isAuth ? this.loadStoredUserInteractions() : {};
+    const currentSelections = isAuth ? { ...this.thisOrThatSelection() } : {};
+    const currentTrivias = isAuth ? this.triviaSelection() : {};
+    const validInteractedIds = new Set<number>();
 
     for (const p of mixedFeed) {
       const isFromBackend = backendIds.has(p.id);
 
       if (p.postType === 'THIS_OR_THAT') {
-        if (p.userInteraction === 'VOTE' && p.userOptionId) {
-          currentSelections[p.id] = p.userOptionId;
-          selectionsChanged = true;
-          this.recordInteraction(p.id);
-        } else if (currentSelections[p.id] !== undefined) {
-          this.recordInteraction(p.id);
-          if (isFromBackend && p.userInteraction !== 'VOTE') {
-            this.feedService.interact(p.id, 'VOTE', currentSelections[p.id]).subscribe({ error: () => {} });
+        if (!isAuth) {
+          p.userInteraction = null;
+          p.userOptionId = null;
+          continue;
+        }
+        if (isFromBackend) {
+          if (p.userInteraction === 'VOTE' && p.userOptionId) {
+            currentSelections[p.id] = p.userOptionId;
+            validInteractedIds.add(p.id);
+          } else {
+            delete currentSelections[p.id];
+            p.userInteraction = null;
+            p.userOptionId = null;
           }
+        } else if (currentSelections[p.id] !== undefined) {
+          validInteractedIds.add(p.id);
         }
         continue;
       }
 
       if (p.postType === 'TRIVIA') {
-        if (currentTrivias[p.id] !== undefined) {
-          this.recordInteraction(p.id);
+        if (isAuth && currentTrivias[p.id] !== undefined) {
+          validInteractedIds.add(p.id);
         }
+        continue;
+      }
+
+      if (!isAuth) {
+        p.userInteraction = null;
         continue;
       }
 
@@ -1972,39 +1070,31 @@ export class FeedMainComponent implements OnInit {
         ? p.userInteraction
         : null;
       const localInt = userInteractions[p.id] || null;
-      const effectiveInt = backendInt || localInt || null;
 
-      let dbLikes = p.likesCount ?? 0;
-      let dbDislikes = p.dislikesCount ?? 0;
-
-      // Se o usuário já havia clicado em Like/Dislike e ficou salvo apenas localmente (ex: antes do seed dos posts 101-125),
-      // sincroniza automaticamente com o backend e soma no contador real do post
-      if (!backendInt && localInt) {
-        if (localInt === 'LIKE') dbLikes += 1;
-        if (localInt === 'DISLIKE') dbDislikes += 1;
-        this.feedService.interact(p.id, localInt).subscribe({ error: () => {} });
-      }
+      // Se o post veio do backend (PostgreSQL), o banco é a fonte única da verdade para curtidas do usuário
+      const effectiveInt = isFromBackend ? backendInt : (backendInt || localInt || null);
 
       p.userInteraction = effectiveInt;
-      p.likesCount = dbLikes;
-      p.dislikesCount = dbDislikes;
+      p.likesCount = p.likesCount ?? 0;
+      p.dislikesCount = p.dislikesCount ?? 0;
 
       if (effectiveInt) {
         userInteractions[p.id] = effectiveInt;
-        this.recordInteraction(p.id);
+        validInteractedIds.add(p.id);
+      } else {
+        delete userInteractions[p.id];
       }
     }
 
-    if (selectionsChanged) {
-      this.thisOrThatSelection.set(currentSelections);
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(this.getThisOrThatStorageKey(), JSON.stringify(currentSelections));
-      }
-    }
+    this.thisOrThatSelection.set(currentSelections);
+    this.interactedPostIds.set(Array.from(validInteractedIds));
 
-    if (typeof localStorage !== 'undefined') {
+    if (typeof localStorage !== 'undefined' && isAuth) {
+      localStorage.setItem(this.getThisOrThatStorageKey(), JSON.stringify(currentSelections));
       localStorage.setItem(this.getUserInteractionsStorageKey(), JSON.stringify(userInteractions));
+      localStorage.setItem(this.getInteractionsStorageKey(), JSON.stringify(Array.from(validInteractedIds)));
     }
+    this.syncCouponIfEligible();
 
     return mixedFeed;
   }
@@ -2026,17 +1116,41 @@ export class FeedMainComponent implements OnInit {
         this.posts.set(mixed);
         this.isLoading.set(false);
         this.triggerFeedAnimation();
+        this.checkInitialPostNavigation(mixed);
       },
       error: () => {
         const mixed = this.buildFeed([]);
         this.posts.set(mixed);
         this.isLoading.set(false);
         this.triggerFeedAnimation();
+        this.checkInitialPostNavigation(mixed);
       }
     });
   }
 
+  private checkInitialPostNavigation(posts: Post[]): void {
+    const rawId = this.route.snapshot.queryParams['post'] || this.route.snapshot.fragment?.replace('post-', '');
+    const postId = Number(rawId);
+    if (postId) {
+      const found = posts.find(p => p.id === postId);
+      if (found) {
+        setTimeout(() => {
+          this.openArticleReader(found);
+          const el = document.getElementById(`post-${postId}`);
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }, 350);
+      }
+    }
+  }
+
   selectThisOrThat(postId: number, optionId: number): void {
+    if (!this.authService.isAuthenticated()) {
+      this.showGuestAuthModal.set(true);
+      return;
+    }
+
     if (!this.thisOrThatSelection()[postId]) {
       this.thisOrThatSelection.update(s => ({ ...s, [postId]: optionId }));
       this.recordInteraction(postId);
@@ -2143,6 +1257,11 @@ export class FeedMainComponent implements OnInit {
   }
 
   selectTrivia(postId: number, optionIndex: number): void {
+    if (!this.authService.isAuthenticated()) {
+      this.showGuestAuthModal.set(true);
+      return;
+    }
+
     if (this.triviaSelection()[postId] === undefined) {
       this.triviaSelection.update(s => ({ ...s, [postId]: optionIndex }));
       this.recordInteraction(postId);
@@ -2285,6 +1404,11 @@ export class FeedMainComponent implements OnInit {
   }
 
   toggleInteraction(post: Post, type: 'LIKE' | 'DISLIKE', event?: Event): void {
+    if (!this.authService.isAuthenticated()) {
+      this.showGuestAuthModal.set(true);
+      return;
+    }
+
     if (event) {
       const btn = event.currentTarget as HTMLElement;
       if (btn) animate(btn, { scale: [1, 1.2, 0.9, 1] }, { duration: 0.4, ease: 'easeOut' });
@@ -2300,6 +1424,7 @@ export class FeedMainComponent implements OnInit {
       if (type === 'DISLIKE') updatedDislikes = Math.max(0, updatedDislikes - 1);
       this.removeInteraction(postId);
       this.updatePostState(postId, null, updatedLikes, updatedDislikes);
+      this.feedService.clearCache();
       this.feedService.interact(postId, type).subscribe({
         error: () => { /* Ignora 404 para mock posts */ }
       });

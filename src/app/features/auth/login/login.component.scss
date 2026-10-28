@@ -1,0 +1,724 @@
+:host {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      width: 100%;
+      min-height: 100%;
+    }
+
+    .pointer-events-none {
+      pointer-events: none;
+    }
+    
+    /* Trilha do Avião */
+    .airplane-trail {
+      bottom: clamp(-40px, -3vh, -10px);
+      right: clamp(10px, 2vw, 35px);
+      height: clamp(55%, 72vh, 80%);
+      max-width: 90%;
+      object-fit: contain;
+      opacity: 0.95;
+      transform: translateY(35px);
+      transition: all 0.3s ease;
+    }
+
+    /* Container dos 3 monumentos no rodapé */
+    .landmarks-container {
+      z-index: 0;
+      bottom: -2px !important;                /* <-- MOVI OS ÍCONES PARA BAIXO AQUI */
+      transform: translateY(8px);             /* <-- AJUSTE FINO PARA DESCER MAIS UM POUCO */
+      padding-left: clamp(1.5rem, 3vw, 3rem);
+      padding-right: clamp(1.5rem, 3vw, 3rem);
+      padding-bottom: 0;
+    }
+
+    /* Monumentos (Coliseu, Torre Eiffel, Taj Mahal) */
+    .landmark-icon {
+      height: clamp(55px, 7.5vw, 105px);
+      object-fit: contain;
+      opacity: 0.92;
+      transition: height 0.3s ease;
+    }
+
+    .auth-glass-wrapper {
+      padding: 1.5rem 1rem;
+      min-height: 100%;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .glass-card {
+      max-width: 360px;
+      /* Camada de vidro ultra translúcida (revela o fundo com desfoque e refração) */
+      background: linear-gradient(
+        135deg, 
+        rgba(255, 255, 255, 0.28) 0%, 
+        rgba(255, 255, 255, 0.08) 100%
+      );
+      backdrop-filter: blur(18px) saturate(230%) contrast(100%);
+      -webkit-backdrop-filter: blur(36px) saturate(210%) contrast(106%);
+      border: 1.5px solid rgba(255, 255, 255, 0.65);
+      border-radius: clamp(16px, 3vw, 22px);
+      /* Sombra macia + bisel / chanfro de luz brilhante nas bordas internas do vidro */
+      box-shadow: 
+        0 30px 60px -12px rgba(11, 37, 69, 0.15),
+        0 12px 28px -6px rgba(74, 144, 226, 0.08),
+        inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1.5px 1px 0 rgba(255, 255, 255, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Brilho reflexivo sutil no topo do vidro (Specular Sheen) */
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.28) 0%,
+        rgba(255, 255, 255, 0.04) 40%,
+        transparent 100%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+.globe-scene {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    transform: scale(1.06);
+  }
+}
+
+.globe-svg {
+  width: 76px;
+  height: 76px;
+  opacity: 0.95;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+  animation: globeSpin 18s linear infinite;
+}
+
+@keyframes globeSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.globe-plane-container {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  top: 50%; left: 50%;
+  margin-top: -55px;
+  margin-left: -55px;
+  border-radius: 50%;
+  animation: orbit2D 2.5s linear infinite; /* Mais rápido */
+}
+
+/* Rastro (Trail) do Avião */
+.globe-plane-container::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-left-color: rgba(255, 255, 255, 0.15);
+  transform: rotate(-45deg);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+.globe-plane {
+  position: absolute;
+  top: -12px;
+  left: calc(50% - 12px);
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+  transform: rotate(90deg);
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,0.4));
+  z-index: 2;
+}
+
+@keyframes orbit2D {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+    
+    .custom-glass-input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      color: #5BA4D8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .form-control-glass {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.72);      /* <-- Menos transparente, fundo sólido suave muito visível */
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid rgba(91, 164, 216, 0.35); /* <-- Borda azul Horizon suave bem definida */
+      border-radius: 12px;
+      padding: 0.6rem 0.8rem 0.6rem 2.25rem;
+      font-size: 0.85rem;
+      color: #1e293b;
+      /* Sombreamento refinado nos campos para dar profundidade e destaque */
+      box-shadow: 
+        0 4px 16px -2px rgba(11, 37, 69, 0.08),
+        0 2px 6px 0 rgba(91, 164, 216, 0.06),
+        inset 0 1.5px 2px rgba(255, 255, 255, 0.9);
+      transition: all 0.25s ease;
+      outline: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-control-glass::placeholder {
+      color: #94a3b8;
+    }
+
+    .form-control-glass:focus {
+      background: #ffffff;
+      border-color: #5BA4D8;
+      box-shadow: 
+        0 8px 24px -4px rgba(91, 164, 216, 0.28),
+        0 0 0 4px rgba(91, 164, 216, 0.18),
+        inset 0 1px 2px rgba(255, 255, 255, 0.9);
+    }
+
+    .form-control-glass.is-invalid {
+      border-color: #ef4444;
+      background: rgba(254, 242, 242, 0.8);
+    }
+
+    /* Botão de Revelar Senha */
+    .btn-toggle-eye {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 6px;
+      transition: color 0.2s ease, transform 0.15s ease;
+      z-index: 2;
+    }
+
+    .btn-toggle-eye:hover {
+      color: #5BA4D8;
+      transform: scale(1.1);
+    }
+
+    /* Switch Customizado */
+    .custom-switch {
+      width: 34px !important;
+      height: 18px !important;
+      background-color: #cbd5e1;
+      border-color: #cbd5e1;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23fff'/%3e%3c/svg%3e") !important;
+      cursor: pointer;
+    }
+    
+    .custom-switch:checked {
+      background-color: #5BA4D8;
+      border-color: #5BA4D8;
+    }
+
+    .custom-switch:focus {
+      box-shadow: none;
+    }
+
+    .CartBtn {
+      width: 100%;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: linear-gradient(135deg, #5BA4D8 0%, #2b6cb0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+      overflow: hidden;
+      box-shadow: 0 10px 24px rgba(91, 164, 216, 0.35);
+      position: relative;
+      color: white;
+    }
+
+    .IconContainer {
+      position: absolute;
+      left: -40px;
+      width: 28px;
+      height: 28px;
+      background-color: transparent;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+      z-index: 3;
+      transition: all 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .plane-svg {
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+      transition: transform 0.6s ease;
+      width: 16px;
+      height: 16px;
+    }
+
+    .btn-text-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      transition: all 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .btn-text {
+      color: #ffffff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-chevron {
+      color: rgba(255, 255, 255, 0.85);
+      transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s ease;
+    }
+
+    /* --- ESTADO HOVER (Entrada suave do avião vindo da esquerda) --- */
+    .CartBtn:hover:not(:disabled) {
+      background: linear-gradient(135deg, #4a91c5 0%, #1d5088 100%);
+      box-shadow: 0 12px 28px rgba(91, 164, 216, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .CartBtn:hover:not(:disabled) .IconContainer {
+      left: calc(50% - 68px);
+      opacity: 1;
+      transform: rotate(-6deg);
+    }
+
+    .CartBtn:hover:not(:disabled) .btn-text-wrapper {
+      transform: translateX(14px);
+    }
+
+    .CartBtn:hover:not(:disabled) .btn-chevron {
+      transform: translateX(4px);
+    }
+
+    /* --- ESTADO ACTIVE (Pressionado) --- */
+    .CartBtn:active:not(:disabled) {
+      transform: translateY(0) scale(0.98);
+      transition-duration: 0.2s;
+    }
+
+    /* --- ESTADO TAKEOFF / DECOLAGEM (Quando clica em Entrar / isLoading) --- */
+    .CartBtn.is-takeoff {
+      background: linear-gradient(135deg, #2b6cb0 0%, #153e75 100%);
+      cursor: wait;
+    }
+
+    .CartBtn.is-takeoff .IconContainer {
+      opacity: 1;
+      animation: airplaneFlyAway 2.2s cubic-bezier(0.35, 0, 0.25, 1) forwards;
+    }
+
+    .CartBtn.is-takeoff .btn-text-wrapper {
+      transform: translateX(0);
+    }
+
+    .CartBtn.is-takeoff .btn-chevron {
+      opacity: 0;
+      transform: translateX(30px);
+    }
+
+    .CartBtn.is-takeoff .jet-stream {
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      height: 2px;
+      width: 70%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+      animation: jetStreamAnim 2.2s ease-out forwards;
+      z-index: 1;
+    }
+
+    @keyframes airplaneFlyAway {
+      0% {
+        left: calc(50% - 68px);
+        transform: translateY(0) rotate(-6deg) scale(1);
+        opacity: 1;
+      }
+      20% {
+        /* Preparação e leve recuo na pista */
+        left: calc(50% - 76px);
+        transform: translateY(2px) rotate(0deg) scale(0.96);
+        opacity: 1;
+      }
+      50% {
+        /* Aceleração firme pelo corpo do botão */
+        left: calc(50% + 15px);
+        transform: translateY(-4px) rotate(-12deg) scale(1.08);
+        opacity: 1;
+      }
+      75% {
+        /* Começo da inclinação de subida */
+        left: calc(50% + 75px);
+        transform: translateY(-16px) rotate(-18deg) scale(1.18);
+        opacity: 1;
+      }
+      100% {
+        /* Decolagem graciosa saindo pelo canto superior direito */
+        left: 110%;
+        transform: translateY(-42px) rotate(-24deg) scale(1.28);
+        opacity: 0;
+      }
+    }
+
+    @keyframes jetStreamAnim {
+      0% {
+        opacity: 0;
+        transform: scaleX(0);
+        transform-origin: left;
+      }
+      30% {
+        opacity: 0.4;
+      }
+      60% {
+        opacity: 0.85;
+        transform: scaleX(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scaleX(1.5) translateX(50px);
+      }
+    }
+
+    .CartBtn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .hover-link {
+      transition: all 0.2s ease;
+    }
+
+    .hover-link:hover {
+      color: #2b6cb0 !important;
+      text-decoration: underline !important;
+    }
+
+    .login-anim-item {
+      opacity: 1;
+    }
+
+    .mobile-auth-hero-container {
+      width: 100%;
+      position: relative;
+      margin-bottom: 2.85rem;
+    }
+
+    .mobile-auth-hero-banner {
+      width: 100%;
+      height: 235px;
+      position: relative;
+      background: linear-gradient(135deg, #0b2545 0%, #134074 100%);
+      border-radius: 0 0 50% 50% / 0 0 46px 46px;
+      box-shadow: none;
+      overflow: hidden;
+    }
+
+    .mobile-hero-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 38%;
+    }
+
+    .mobile-hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 65%, rgba(11, 37, 69, 0.22) 100%);
+      pointer-events: none;
+    }
+
+    .mobile-hero-floating-badge {
+      position: absolute;
+      bottom: -42px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 84px;
+      height: 84px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: none !important;
+      z-index: 10;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+      &:hover {
+        transform: translateX(-50%) scale(1.06);
+      }
+    }
+
+    /* Semicírculo superior exatamente até a linha do banner (50% = 42px) sem vazar nas laterais */
+    .mobile-hero-floating-badge::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50%;
+      background: #ffffff;
+      border-radius: 84px 84px 0 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .mobile-globe-scene {
+      width: 76px;
+      height: 76px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mobile-globe-svg {
+      width: 48px;
+      height: 48px;
+      opacity: 0.95;
+      filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.15));
+      animation: globeSpin 18s linear infinite;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .mobile-globe-svg,
+      .globe-svg {
+        animation: none;
+      }
+    }
+
+    .mobile-globe-plane-container {
+      position: absolute;
+      width: 72px;
+      height: 72px;
+      top: 50%;
+      left: 50%;
+      margin-top: -36px;
+      margin-left: -36px;
+      border-radius: 50%;
+      animation: orbit2D 2.5s linear infinite;
+    }
+
+    .mobile-globe-plane-container::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      border: 1.5px solid transparent;
+      border-top-color: #5BA4D8;
+      border-left-color: rgba(91, 164, 216, 0.2);
+      transform: rotate(-45deg);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .mobile-globe-plane {
+      position: absolute;
+      top: -9px;
+      left: calc(50% - 9px);
+      width: 18px;
+      height: 18px;
+      color: #5BA4D8;
+      transform: rotate(90deg);
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+      z-index: 2;
+    }
+
+    .mobile-welcome-header {
+      padding-top: 0.25rem;
+    }
+
+    .mobile-welcome-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #0b2545;
+      letter-spacing: -0.3px;
+    }
+
+    .mobile-welcome-sub {
+      font-size: 0.88rem;
+      color: #64748b;
+      font-weight: 500;
+    }
+
+    @media (max-width: 991.98px) {
+      .glass-card {
+        max-width: 380px;
+      }
+      .airplane-trail {
+        opacity: 0.65;
+        height: 60%;
+        transform: translateY(20px);
+      }
+    }
+
+    /* Mobile e celulares em geral (< 768px) */
+    @media (max-width: 767.98px) {
+      .auth-glass-wrapper {
+        padding: 0 !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
+        min-height: 100vh;
+        background-color: #ffffff;
+      }
+
+      .glass-card {
+        max-width: 100% !important;
+        width: 100% !important;
+        background: transparent !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 1.5rem 2.5rem 1.5rem !important;
+        border-radius: 0 !important;
+      }
+
+      .glass-card::before {
+        display: none !important;
+      }
+
+      .custom-glass-input-group .form-control-glass {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        box-shadow: none;
+        padding: 0.72rem 0.85rem 0.72rem 2.45rem;
+        font-size: 0.92rem;
+      }
+
+      .custom-glass-input-group .form-control-glass:focus {
+        background: #ffffff;
+        border-color: #5BA4D8;
+        box-shadow: 0 0 0 3.5px rgba(91, 164, 216, 0.2);
+      }
+
+      .CartBtn {
+        height: 48px;
+        border-radius: 12px;
+        background: #5BA4D8;
+        box-shadow: 0 8px 20px rgba(91, 164, 216, 0.3);
+      }
+
+      .CartBtn:hover:not(:disabled) {
+        background: #4a91c5;
+      }
+    }
+
+    /* Celulares menores (ex: iPhone SE, Galaxy A03, telas <= 380px) */
+    @media (max-width: 380px) {
+      .mobile-auth-hero-banner {
+        height: 205px;
+      }
+      .mobile-hero-floating-badge {
+        width: 74px;
+        height: 74px;
+        bottom: -37px;
+      }
+      .mobile-globe-scene {
+        width: 68px;
+        height: 68px;
+      }
+      .mobile-globe-svg {
+        width: 42px;
+        height: 42px;
+      }
+      .mobile-globe-plane-container {
+        width: 64px;
+        height: 64px;
+        margin-top: -32px;
+        margin-left: -32px;
+      }
+      .mobile-auth-hero-container {
+        margin-bottom: 2.6rem;
+      }
+      .glass-card {
+        padding: 0 1rem 2rem 1rem !important;
+      }
+      .mobile-welcome-title {
+        font-size: 1.3rem;
+      }
+      .CartBtn {
+        height: 44px;
+      }
+    }
+
+    /* Telas de notebook ou telas em paisagem com altura reduzida (<= 700px no Desktop) */
+    @media (min-width: 768px) and (max-height: 700px) {
+      .glass-card {
+        padding: 0.85rem 1.5rem !important;
+      }
+      .globe-scene {
+        width: 70px;
+        height: 70px;
+        margin-bottom: 0.25rem !important;
+      }
+      .globe-svg {
+        width: 46px;
+        height: 46px;
+      }
+      .globe-plane-container {
+        width: 66px;
+        height: 66px;
+        margin-top: -33px;
+        margin-left: -33px;
+      }
+      .globe-plane {
+        width: 17px;
+        height: 17px;
+      }
+      .landmarks-container {
+        opacity: 0.35;
+      }
+      .landmark-icon {
+        height: 45px;
+      }
+    }

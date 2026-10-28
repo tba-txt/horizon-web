@@ -21,7 +21,6 @@ export const routes: Routes = [
   },
   {
     path: 'destinations',
-    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -43,12 +42,10 @@ export const routes: Routes = [
   },
   {
     path: 'quiz',
-    canActivate: [authGuard],
     loadComponent: () => import('./features/quiz/quiz-flow/quiz-flow.component').then(m => m.QuizFlowComponent)
   },
   {
     path: 'feed',
-    canActivate: [authGuard],
     loadComponent: () => import('./features/feed/feed-main/feed-main.component').then(m => m.FeedMainComponent)
   },
   {
@@ -58,8 +55,11 @@ export const routes: Routes = [
   },
   {
     path: 'flights',
-    canActivate: [authGuard],
     loadComponent: () => import('./features/flights/flight-search/flight-search.component').then(m => m.FlightSearchComponent)
+  },
+  {
+    path: 'faq',
+    loadComponent: () => import('./features/faq/faq.component').then(m => m.FaqComponent)
   },
   {
     path: 'profile',
@@ -68,6 +68,11 @@ export const routes: Routes = [
   },
   {
     path: 'checkout',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent)
+  },
+  {
+    path: 'checkout/:id',
     canActivate: [authGuard],
     loadComponent: () => import('./features/checkout/checkout.component').then(m => m.CheckoutComponent)
   },

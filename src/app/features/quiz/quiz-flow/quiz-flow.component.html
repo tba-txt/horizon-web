@@ -1,0 +1,1266 @@
+<app-navbar></app-navbar>
+
+<!-- Hero Section -->
+<header class="hero-container position-relative overflow-hidden">
+  <img 
+    src="assets/quiz.webp" 
+    alt="Quiz Hero" 
+    class="w-100 hero-image"
+    fetchpriority="high"
+    (error)="handleHeroError($event)"
+  />
+</header>
+
+<main class="container-fluid px-lg-4 py-5 mx-auto" style="max-width: 1400px;">
+  <div class="row g-4 g-lg-5 justify-content-center">
+    
+    <!-- COLUNA LATERAL ESQUERDA: CARD DE PROGRESSO FIGMA -->
+    <div class="col-12 col-lg-3 d-none d-lg-block">
+      <div class="card border-0 shadow-sm rounded-4 bg-white h-100 overflow-hidden d-flex flex-column" style="min-height: 770px;">
+        <!-- Topo Azul: Progresso e Stepper Horizontal -->
+        <div class="p-4 text-white d-flex flex-column justify-content-between" style="background-color: #5BA4D8; min-height: 180px; height: 180px;">
+          <div>
+            <span class="badge rounded-2 px-3 py-2 fw-bold bg-white text-primary shadow-sm" style="font-size: 0.8rem;">
+              Progresso
+            </span>
+          </div>
+
+          <!-- Horizontal Stepper (Estilo Figma) com 6 Etapas -->
+          <div class="position-relative my-2 px-1">
+            <!-- Linha Conectora Branca de Fundo -->
+            <div class="position-absolute start-0 end-0" style="top: 50%; height: 3px; background: rgba(255, 255, 255, 0.45); transform: translateY(-50%); z-index: 1;"></div>
+            
+            <!-- Barra de Progresso Ativa Branca -->
+            <div class="position-absolute start-0" 
+                 style="top: 50%; height: 3px; background: #ffffff; transform: translateY(-50%); z-index: 2; transition: width 0.3s ease;"
+                 [style.width.%]="(currentStep() / 5) * 100">
+            </div>
+
+            <!-- 6 Nós com Rótulos Alternados (Acima / Abaixo) -->
+            <div class="d-flex justify-content-between align-items-center position-relative" style="z-index: 3; min-height: 64px;">
+              
+              <!-- 1: Estilo (Rótulo Abaixo) -->
+              <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(0)" style="width: 40px;">
+                <div style="height: 18px;"></div>
+                <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                     [style.background]="currentStep() >= 0 ? '#ffffff' : '#4895CC'"
+                     [style.border]="currentStep() >= 0 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
+                     style="width: 17px; height: 17px; transition: all 0.25s;">
+                  @if (currentStep() > 0 || isStepDone(0)) {
+                    <div class="rounded-circle" style="width: 7px; height: 7px; background-color: #4895CC;"></div>
+                  }
+                </div>
+                <span class="small fw-bold text-white mt-1 text-center" style="font-size: 10px; line-height: 1.1;">Estilo</span>
+              </div>
+
+              <!-- 2: Clima (Rótulo Acima) -->
+              <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(1)" style="width: 40px;">
+                <span class="small fw-bold text-white mb-1 text-center" style="font-size: 10px; line-height: 1.1;">Clima</span>
+                <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                     [style.background]="currentStep() >= 1 ? '#ffffff' : '#4895CC'"
+                     [style.border]="currentStep() >= 1 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
+                     style="width: 17px; height: 17px; transition: all 0.25s;">
+                  @if (currentStep() > 1 || isStepDone(1)) {
+                    <div class="rounded-circle" style="width: 7px; height: 7px; background-color: #4895CC;"></div>
+                  }
+                </div>
+                <div style="height: 18px;"></div>
+              </div>
+
+              <!-- 3: Experiência (Rótulo Abaixo) -->
+              <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(2)" style="width: 44px;">
+                <div style="height: 18px;"></div>
+                <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                     [style.background]="currentStep() >= 2 ? '#ffffff' : '#4895CC'"
+                     [style.border]="currentStep() >= 2 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
+                     style="width: 17px; height: 17px; transition: all 0.25s;">
+                  @if (currentStep() > 2 || isStepDone(2)) {
+                    <div class="rounded-circle" style="width: 7px; height: 7px; background-color: #4895CC;"></div>
+                  }
+                </div>
+                <span class="small fw-bold text-white mt-1 text-center" style="font-size: 10px; line-height: 1.1;">Experiência</span>
+              </div>
+
+              <!-- 4: Ritmo (Rótulo Acima) -->
+              <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(3)" style="width: 40px;">
+                <span class="small fw-bold text-white mb-1 text-center" style="font-size: 10px; line-height: 1.1;">Ritmo</span>
+                <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                     [style.background]="currentStep() >= 3 ? '#ffffff' : '#4895CC'"
+                     [style.border]="currentStep() >= 3 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
+                     style="width: 17px; height: 17px; transition: all 0.25s;">
+                  @if (currentStep() > 3 || isStepDone(3)) {
+                    <div class="rounded-circle" style="width: 7px; height: 7px; background-color: #4895CC;"></div>
+                  }
+                </div>
+                <div style="height: 18px;"></div>
+              </div>
+
+              <!-- 5: Atmosfera (Rótulo Abaixo) -->
+              <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(4)" style="width: 44px;">
+                <div style="height: 18px;"></div>
+                <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                     [style.background]="currentStep() >= 4 ? '#ffffff' : '#4895CC'"
+                     [style.border]="currentStep() >= 4 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
+                     style="width: 17px; height: 17px; transition: all 0.25s;">
+                  @if (currentStep() > 4 || isStepDone(4)) {
+                    <div class="rounded-circle" style="width: 7px; height: 7px; background-color: #4895CC;"></div>
+                  }
+                </div>
+                <span class="small fw-bold text-white mt-1 text-center" style="font-size: 10px; line-height: 1.1;">Atmosfera</span>
+              </div>
+
+              <!-- 6: Orçamento (Rótulo Acima) -->
+              <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(5)" style="width: 44px;">
+                <span class="small fw-bold text-white mb-1 text-center" style="font-size: 10px; line-height: 1.1;">Orçamento</span>
+                <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                     [style.background]="currentStep() >= 5 ? '#ffffff' : '#4895CC'"
+                     [style.border]="currentStep() >= 5 ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
+                     style="width: 17px; height: 17px; transition: all 0.25s;">
+                  @if (currentStep() === 5 || isStepDone(5)) {
+                    <div class="rounded-circle" style="width: 7px; height: 7px; background-color: #4895CC;"></div>
+                  }
+                </div>
+                <div style="height: 18px;"></div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Imagem Horizon do Figma na parte inferior do card -->
+        <div class="flex-grow-1 overflow-hidden position-relative" style="min-height: 590px;">
+          <img 
+            src="assets/horizon-fgm1.webp" 
+            alt="Horizon" 
+            class="w-100 h-100 object-fit-cover d-block" 
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUNA PRINCIPAL: WIZARD INTERATIVO -->
+    <div class="col-12 col-lg-6">
+
+      <!-- BARRA DE PROGRESSO COMPLETA NO MOBILE (SEM EMOJIS) -->
+      @if (!isLoading() && !errorMessage() && !isSubmitted() && quiz()) {
+        <div class="d-block d-lg-none mb-4">
+          <div class="card border-0 shadow-sm rounded-4 text-white p-3 p-sm-4" style="background-color: #5BA4D8;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="badge rounded-2 px-3 py-1 fw-bold bg-white text-primary" style="font-size: 0.78rem;">
+                Progresso
+              </span>
+              <span class="fw-bold small text-white">
+                Passo {{ currentStep() + 1 }} de {{ totalSteps() }}: {{ currentStepTitle() }}
+              </span>
+            </div>
+
+            <!-- Stepper Horizontal Mobile com 6 Etapas -->
+            <div class="position-relative my-3 px-1">
+              <div class="position-absolute start-0 end-0" style="top: 50%; height: 3px; background: rgba(255, 255, 255, 0.45); transform: translateY(-50%); z-index: 1;"></div>
+              <div class="position-absolute start-0" 
+                   style="top: 50%; height: 3px; background: #ffffff; transform: translateY(-50%); z-index: 2; transition: width 0.3s ease;"
+                   [style.width.%]="(currentStep() / 5) * 100">
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center position-relative" style="z-index: 3;">
+                @for (step of [0, 1, 2, 3, 4, 5]; track step) {
+                  <div class="d-flex flex-column align-items-center cursor-pointer" (click)="goToStep(step)">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center shadow-sm"
+                         [style.background]="currentStep() >= step ? '#ffffff' : '#4895CC'"
+                         [style.border]="currentStep() >= step ? '3px solid #ffffff' : '2px solid rgba(255,255,255,0.7)'"
+                         style="width: 18px; height: 18px; transition: all 0.25s;">
+                      @if (currentStep() > step || isStepDone(step)) {
+                        <div class="rounded-circle" style="width: 8px; height: 8px; background-color: #4895CC;"></div>
+                      }
+                    </div>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between text-white text-opacity-85" style="font-size: 0.72rem;">
+              <span>Estilo</span>
+              <span>Clima</span>
+              <span>Experiência</span>
+              <span>Ritmo</span>
+              <span>Atmosfera</span>
+              <span>Orçamento</span>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Estado: Loading -->
+      @if (isLoading()) {
+        <div class="card border-0 shadow-sm rounded-4 p-5 bg-white text-center">
+          <div class="py-4">
+            <app-plane-loader></app-plane-loader>
+          </div>
+        </div>
+      }
+
+      <!-- Estado: Erro -->
+      @else if (errorMessage()) {
+        <div class="alert alert-danger p-4 rounded-4 shadow-sm text-center" role="alert">
+          <div class="display-6 mb-2 text-danger"><i class="bi bi-exclamation-triangle-fill"></i></div>
+          <h5 class="fw-bold mb-2">Ops! Ocorreu um problema ao carregar o quiz.</h5>
+          <p class="mb-3 small text-danger-emphasis">{{ errorMessage() }}</p>
+          <button class="btn btn-outline-danger btn-sm px-4 rounded-2 fw-semibold" (click)="loadQuiz()">
+            Tentar novamente
+          </button>
+        </div>
+      }
+
+      <!-- Estado: Sucesso após Submissão -->
+      @else if (isSubmitted()) {
+        <div 
+          class="card bg-white question-wizard-card position-relative overflow-hidden p-4 p-md-5 d-flex flex-column justify-content-between"
+          [style.border]="isEcoQuizChoice() ? '3px solid #65A30D' : '3px solid #5BA4D8'"
+          style="min-height: 770px; border-radius: 32px !important;"
+        >
+          <!-- Topo: Perfil do Usuário + Cartão Horizon -->
+          <div class="d-flex justify-content-between align-items-center gap-3">
+            <div class="d-flex align-items-center gap-3">
+              <div class="rounded-circle d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0"
+                   style="width: 60px; height: 60px; background-color: #f8fafc; border: 2px solid #e2e8f0;">
+                @if (identityData()?.profileImageUrl) {
+                  <img [src]="identityData()!.profileImageUrl" alt="Foto de perfil" class="w-100 h-100 object-fit-cover rounded-circle" />
+                } @else {
+                  <img src="assets/default-avatar.webp" alt="Foto de perfil padrão" class="w-100 h-100 object-fit-cover rounded-circle" />
+                }
+              </div>
+              <div>
+                <span class="text-uppercase fw-bold d-block mb-1"
+                      [style.color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
+                      style="font-size: 0.75rem; letter-spacing: 0.08em;">
+                  PERFIL
+                </span>
+                <h3 class="h5 fw-bold text-dark mb-0">
+                  {{ identityData()?.socialName || identityData()?.userName || 'Viajante' }}
+                </h3>
+                <span class="text-secondary small">DNA do viajante</span>
+              </div>
+            </div>
+
+            <div class="rounded-3 overflow-hidden shadow-sm flex-shrink-0" style="width: 84px; height: 112px;">
+              @if (isEcoQuizChoice()) {
+                <img src="assets/horizon-verde.webp" alt="Horizon Ecoturismo" class="w-100 h-100 object-fit-cover d-block" />
+              } @else {
+                <img src="assets/horizon45.webp" alt="Horizon Viagem" class="w-100 h-100 object-fit-cover d-block" />
+              }
+            </div>
+          </div>
+
+          <!-- Meio: Afinidades Mapeadas -->
+          <div class="my-3">
+            <span class="text-uppercase fw-bold d-block mb-3"
+                  [style.color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
+                  style="font-size: 0.78rem; letter-spacing: 0.08em;">
+              AFINIDADES
+            </span>
+
+            <div class="d-flex flex-column gap-3">
+              @for (aff of displayAffinities(); track aff.label) {
+                <div>
+                  <div class="d-flex justify-content-between align-items-end mb-1">
+                    <span class="fw-bold text-dark small">{{ aff.label }}</span>
+                    <span class="fw-bold text-dark small">{{ aff.pct }}%</span>
+                  </div>
+                  <div class="progress overflow-hidden" style="height: 8px; border-radius: 6px; background-color: #e2e8f0;">
+                    <div 
+                      class="progress-bar" 
+                      role="progressbar" 
+                      [style.width.%]="aff.pct"
+                      [style.background-color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
+                      style="border-radius: 6px; transition: width 1s ease;"
+                    ></div>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+          <!-- Como o Horizon te Vê -->
+          <div class="my-2">
+            <span class="text-uppercase fw-bold d-block mb-2"
+                  [style.color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
+                  style="font-size: 0.8rem; letter-spacing: 0.08em;">
+              COMO O HORIZON TE VÊ
+            </span>
+
+            <h2 class="fw-bold text-dark mb-2" style="font-size: 1.75rem; line-height: 1.25; letter-spacing: -0.5px;">
+              O seu coração pede por 
+              <span [style.color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'">
+                {{ displayAffinities()[0]?.label || 'Novas Experiências' }}
+              </span>
+            </h2>
+
+            <p class="text-secondary mb-0" style="font-size: 0.98rem; line-height: 1.6;">
+              Você busca experiências marcadas por 
+              <strong class="text-dark">{{ (displayAffinities()[0]?.label || 'viagens personalizadas') | lowercase }}</strong>@if (displayAffinities()[1]) { e <strong class="text-dark">{{ displayAffinities()[1].label | lowercase }}</strong>}. O algoritmo entende você como um viajante que procura destinos focados nestas características.
+            </p>
+          </div>
+
+          <!-- Botões de Ação -->
+          <div class="d-flex flex-column align-items-center gap-2 w-100 pt-2">
+            <a 
+              routerLink="/recommendations" 
+              class="btn w-100 py-3 rounded-2 fw-bold shadow-sm fs-6 border-0 text-white d-flex align-items-center justify-content-center text-decoration-none"
+              [style.background-color]="isEcoQuizChoice() ? '#65A30D' : '#5BA4D8'"
+              style="max-width: 340px;"
+            >
+              Ver Destinos Compatíveis
+            </a>
+            <button 
+              type="button" 
+              class="btn btn-link text-muted text-decoration-none py-1 fw-semibold small"
+              (click)="resetQuiz()"
+            >
+              Refazer Quiz
+            </button>
+          </div>
+
+        </div>
+      }
+
+      <!-- Estado: Wizard de Perguntas e Orçamento -->
+      @else if (quiz() && quiz()!.questions && quiz()!.questions.length > 0) {
+        
+        <!-- PASSO ATUAL: PERGUNTA DINÂMICA -->
+        @if (currentStep() < quiz()!.questions.length) {
+          @let currentQuestion = quiz()!.questions[currentStep()];
+
+          <div class="card border-0 shadow-sm rounded-4 bg-white question-wizard-card position-relative overflow-hidden p-0 d-flex flex-column" style="min-height: 770px;">
+            
+            <!-- Tutorial Overlay Original (Apenas no início - Passo 0) -->
+            @if (showSwipeTutorial() && currentStep() === 0) {
+              <div 
+                class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column text-white cursor-pointer quiz-tutorial-overlay" 
+                style="z-index: 100;"
+                (click)="showSwipeTutorial.set(false)"
+              >
+                <div class="position-relative w-100 h-100">
+                  <!-- Linha vertical central -->
+                  <div class="position-absolute top-0 bottom-0 start-50 border-start border-secondary opacity-50"></div>
+                  
+                  <div class="row h-100 m-0">
+                    <!-- Lado Esquerdo -->
+                    <div class="col-6 d-flex flex-column align-items-center justify-content-center p-3 text-center">
+                      <p class="fw-bold fs-6 mb-4 px-2" style="max-width: 250px;">Arraste para a esquerda caso não concorde com essa opção.</p>
+                      <div class="position-relative" style="width: 140px; height: 180px;">
+                        <div class="bg-secondary rounded-4 position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.3;"></div>
+                        <img src="https://images.unsplash.com/photo-1527004013197-933c4bb611b3?w=400&q=80" alt="Exemplo Discordar" class="position-absolute top-0 start-0 rounded-4 shadow-lg object-fit-cover w-100 h-100" style="transform: rotate(-12deg) translateX(-15px) translateY(-5px); border: 2px solid rgba(255,255,255,0.1);" />
+                      </div>
+                    </div>
+
+                    <!-- Lado Direito -->
+                    <div class="col-6 d-flex flex-column align-items-center justify-content-center p-3 text-center">
+                      <div class="position-relative mb-4" style="width: 140px; height: 180px;">
+                        <div class="bg-secondary rounded-4 position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.3;"></div>
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&q=80" alt="Exemplo Selecionar" class="position-absolute top-0 start-0 rounded-4 shadow-lg object-fit-cover w-100 h-100" style="transform: rotate(12deg) translateX(15px) translateY(5px); border: 2px solid rgba(255,255,255,0.1);" />
+                      </div>
+                      <p class="fw-bold fs-6 px-2" style="max-width: 250px;">Arraste para a direita para selecionar.</p>
+                    </div>
+                  </div>
+                  
+                  <!-- Botão Começar centralizado na base -->
+                  <div class="position-absolute bottom-0 start-50 translate-middle-x mb-4 pb-2 quiz-tutorial-btn-container">
+                    <button class="btn btn-light rounded-2 px-5 py-3 fw-bold fs-5 text-dark" style="box-shadow: 0 4px 15px rgba(0,0,0,0.5);" (click)="showSwipeTutorial.set(false)">Começar</button>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- OVERLAY DE INSTRUÇÕES (TELA PRETA EXPLICATIVA - MULTIPLA ESCOLHA) -->
+            @if (shouldShowStepOverlay()) {
+              <div class="position-absolute top-0 start-0 w-100 h-100 d-flex flex-column justify-content-center align-items-center text-center p-4 p-md-5 animate__animated animate__fadeIn"
+                   style="background: rgba(15, 23, 42, 0.94); z-index: 60; backdrop-filter: blur(10px);">
+                
+                <div class="rounded-3 d-flex align-items-center justify-content-center mb-3 shadow-lg"
+                     style="width: 64px; height: 64px; background-color: #5BA4D8; color: #ffffff;">
+                  <i class="bi" [class]="currentStepOverlayData().icon" style="font-size: 1.85rem;"></i>
+                </div>
+
+                <span class="badge rounded-2 px-3 py-1 mb-2 fw-bold text-white shadow-sm"
+                      [style.background-color]="currentStepOverlayData().isMulti ? '#65A30D' : '#5BA4D8'"
+                      style="font-size: 0.78rem; letter-spacing: 0.05em;">
+                  {{ currentStepOverlayData().badge | uppercase }}
+                </span>
+
+                <h3 class="h4 fw-bold text-white mb-2" style="max-width: 440px; letter-spacing: -0.02em;">
+                  {{ currentStepOverlayData().title }}
+                </h3>
+
+                <p class="text-white text-opacity-85 small mb-4 lh-base" style="max-width: 420px; font-size: 0.92rem;">
+                  {{ currentStepOverlayData().description }}
+                </p>
+
+                <button 
+                  type="button" 
+                  class="btn py-3 px-5 rounded-2 fw-bold text-white shadow-lg border-0 fs-6"
+                  style="background-color: #5BA4D8; max-width: 320px; width: 100%; transition: transform 0.2s;"
+                  (click)="dismissCurrentStepOverlay()"
+                >
+                  {{ currentStepOverlayData().buttonText }}
+                </button>
+
+                <div class="form-check mt-4 d-flex align-items-center gap-2 cursor-pointer user-select-none">
+                  <input 
+                    class="form-check-input cursor-pointer" 
+                    type="checkbox" 
+                    id="dontShowAgainCheck"
+                    [checked]="dontShowInstructionsAgain()"
+                    (change)="toggleDontShowAgain($event)"
+                    style="cursor: pointer;"
+                  />
+                  <label class="form-check-label text-white text-opacity-75 small cursor-pointer" for="dontShowAgainCheck" style="font-size: 0.8rem;">
+                    Não mostrar mais avisos explicativos
+                  </label>
+                </div>
+
+              </div>
+            }
+
+            <!-- CASO 1: PASSO DE EXPERIÊNCIAS E RITMO (MÚLTIPLAS - CARDS INDIVIDUAIS DE SWIPE) -->
+            @if (isExperienceStep()) {
+              <div class="p-4 text-white d-flex flex-column justify-content-between" style="background-color: #5BA4D8; min-height: 180px; height: 180px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="badge rounded-2 px-3 py-2 fw-bold bg-white text-primary">
+                    Opção {{ experienceCardIndex() + 1 }} de {{ currentQuestion.answers.length }}
+                  </span>
+                  <span class="small text-white text-opacity-90 fw-bold">
+                    {{ currentStepSelectedIds().length }} de interesse
+                  </span>
+                </div>
+
+                <h2 class="h4 fw-bold text-white mb-2">
+                  {{ currentQuestion.text }}
+                </h2>
+                <p class="text-white text-opacity-75 small mb-0">
+                  Arraste para a direita se combina com você, ou para a esquerda para passar
+                </p>
+              </div>
+
+              <div class="p-4 pt-4 d-flex flex-column justify-content-between flex-grow-1" style="min-height: 590px;">
+                
+                <!-- Indicação de seleção múltipla -->
+                <div class="text-center mb-2">
+                  <span class="fw-bold text-dark" style="font-size: 0.95rem; letter-spacing: -0.2px;">
+                    Escolha <span style="color: #5BA4D8;">quantas combinam</span> com você
+                  </span>
+                </div>
+                
+                <!-- Deck Tinder Individual Limpo (Sem chips com emojis, sem botões extras) -->
+                <div class="position-relative mx-auto my-auto user-select-none" style="width: 280px; height: 390px;">
+                  @for (card of getRemainingExperienceCards(currentQuestion.answers); track card.answer.id) {
+                    <div 
+                      class="position-absolute w-100 h-100 rounded-4 shadow-lg bg-light overflow-hidden quiz-deck-card"
+                      [style.z-index]="10 - card.offset"
+                      [style.transform]="getCardTransform(card.offset)"
+                      [style.opacity]="getCardOpacity(card.offset)"
+                      [style.transition]="isDragging() && card.offset === 0 ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.35s ease'"
+                      [style.cursor]="card.offset === 0 ? 'grab' : 'default'"
+                      (mousedown)="card.offset === 0 ? startDrag($event, card.index) : null"
+                      (touchstart)="card.offset === 0 ? startDrag($event, card.index) : null"
+                    >
+                      <img [src]="getOptionVisual(card.answer.text).image" class="w-100 h-100 object-fit-cover rounded-4" style="pointer-events: none;" />
+                      
+                      <!-- Gradiente e Rótulo Limpo no Rodapé do Card -->
+                      <div class="position-absolute bottom-0 start-0 w-100 p-3 pt-5"
+                           style="background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.92) 100%);">
+                        <span class="d-block fw-bold text-white fs-5 mb-0" style="letter-spacing: -0.02em;">
+                          {{ card.answer.text }}
+                        </span>
+                      </div>
+
+                      <!-- Feedback Visual de Swipe Sutil (Verde para Direita / Vermelho para Esquerda, Sem Texto) -->
+                      @if (card.offset === 0 && isDragging()) {
+                        @if (dragDeltaX > 20) {
+                          <div class="position-absolute top-0 start-0 w-100 h-100 rounded-4 pointer-events-none"
+                               style="background: rgba(101, 163, 13, 0.08); border: 2px solid rgba(101, 163, 13, 0.55); box-shadow: inset 0 0 20px rgba(101, 163, 13, 0.2); z-index: 20; transition: all 0.15s ease;">
+                          </div>
+                        } @else if (dragDeltaX < -20) {
+                          <div class="position-absolute top-0 start-0 w-100 h-100 rounded-4 pointer-events-none"
+                               style="background: rgba(239, 68, 68, 0.08); border: 2px solid rgba(239, 68, 68, 0.55); box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.2); z-index: 20; transition: all 0.15s ease;">
+                          </div>
+                        }
+                      }
+                    </div>
+                  }
+                </div>
+
+                <!-- Indicador de Segmentos com Navegação -->
+                <div class="d-flex flex-column align-items-center w-100 pb-3">
+                  <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center border-0 shadow-sm"
+                      style="width: 32px; height: 32px; background: #f1f5f9; color: #334155;"
+                      [disabled]="experienceCardIndex() === 0"
+                      (click)="goToPrevExperienceCard()"
+                      aria-label="Experiência anterior"
+                    >
+                      <i class="bi bi-chevron-left fw-bold" style="font-size: 0.9rem;"></i>
+                    </button>
+
+                    <div class="d-flex align-items-center gap-2">
+                      @for (answer of currentQuestion.answers; track answer.id; let i = $index) {
+                        <button 
+                          type="button"
+                          class="deck-segment-bar border-0 p-0 cursor-pointer"
+                          [class.active]="i === experienceCardIndex()"
+                          [style.background-color]="currentStepSelectedIds().includes(answer.id) ? '#65A30D' : (i === experienceCardIndex() ? '#5BA4D8' : '#e2e8f0')"
+                          (click)="goToExperienceCard(i)"
+                          [attr.aria-label]="'Ir para ' + answer.text"
+                        ></button>
+                      }
+                    </div>
+
+                    <div class="position-relative d-inline-block">
+                      <button 
+                        type="button" 
+                        class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center border-0 shadow-sm next-option-btn-highlight"
+                        style="width: 34px; height: 34px; background: #5BA4D8; color: #ffffff;"
+                        [disabled]="experienceCardIndex() >= currentQuestion.answers.length - 1"
+                        (click)="goToNextExperienceCard()"
+                        aria-label="Próxima opção"
+                      >
+                        <i class="bi bi-chevron-right fw-bold" style="font-size: 0.9rem;"></i>
+                      </button>
+
+                      @if (experienceCardIndex() === 0) {
+                        <div class="option-next-balloon">
+                          <span>Clique aqui para ver a próxima opção</span>
+                          <div class="balloon-tip"></div>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <span class="text-secondary small fw-semibold" style="font-size: 0.82rem;">
+                    Opção {{ experienceCardIndex() + 1 }} de {{ currentQuestion.answers.length }}: 
+                    <strong class="text-dark">{{ currentQuestion.answers[experienceCardIndex()]?.text }}</strong>
+                  </span>
+                </div>
+
+              </div>
+            }
+
+            <!-- CASO 2: PERGUNTAS DE OPÇÃO ÚNICA (ESTILO E CLIMA) - LIMPO, SEM CHIPS DE EMOJIS, SEM BOTÕES FEIOS -->
+            @else {
+              <div class="p-4 text-white d-flex flex-column justify-content-between" style="background-color: #5BA4D8; min-height: 180px; height: 180px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="badge rounded-2 px-3 py-2 fw-bold bg-white text-primary">
+                    @if (selectedAnswers()[currentQuestion.id]) {
+                      <i class="bi bi-check-lg me-1"></i> Escolha Selecionada
+                    } @else {
+                      Pergunta {{ currentStep() + 1 }} de {{ quiz()!.questions.length }}
+                    }
+                  </span>
+                </div>
+
+                <h2 class="h4 fw-bold text-white mb-2">
+                  {{ currentQuestion.text }}
+                </h2>
+                <p class="text-white text-opacity-75 small mb-0">
+                  Arraste para a direita para confirmar sua escolha
+                </p>
+              </div>
+
+              <div class="p-4 pt-4 d-flex flex-column justify-content-between flex-grow-1" style="min-height: 590px;">
+                
+                <!-- Indicação de seleção única -->
+                <div class="text-center mb-2">
+                  <span class="fw-bold text-dark" style="font-size: 0.95rem; letter-spacing: -0.2px;">
+                    Escolha apenas <span style="color: #65A30D;">uma opção</span>
+                  </span>
+                </div>
+                
+                <div class="position-relative mx-auto my-auto user-select-none" style="width: 280px; height: 390px;">
+                  @for (card of getVisibleStackCards(currentQuestion.answers); track card.answer.id) {
+                    <div 
+                      class="position-absolute w-100 h-100 rounded-4 shadow-lg bg-light overflow-hidden quiz-deck-card"
+                      [style.z-index]="10 - card.offset"
+                      [style.transform]="getCardTransform(card.offset)"
+                      [style.opacity]="getCardOpacity(card.offset)"
+                      [style.transition]="isDragging() && card.offset === 0 ? 'none' : 'transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.35s ease'"
+                      [style.cursor]="card.offset === 0 ? 'grab' : 'pointer'"
+                      (mousedown)="card.offset === 0 ? startDrag($event, card.index) : null"
+                      (touchstart)="card.offset === 0 ? startDrag($event, card.index) : null"
+                      (click)="card.offset > 0 ? goToCard(card.index) : null"
+                      (dblclick)="card.offset === 0 ? handleSwipeRight() : null"
+                    >
+                      <img [src]="getOptionVisual(card.answer.text).image" class="w-100 h-100 object-fit-cover rounded-4" style="pointer-events: none;" />
+                      
+                      <div class="position-absolute bottom-0 start-0 w-100 p-3 pt-5"
+                           style="background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.92) 100%);">
+                        <span class="d-block fw-bold text-white fs-5 mb-0" style="letter-spacing: -0.02em;">
+                          {{ card.answer.text }}
+                        </span>
+                      </div>
+
+                      <!-- Feedback Visual de Swipe Sutil (Verde para Direita / Vermelho para Esquerda, Sem Texto) -->
+                      @if (card.offset === 0 && isDragging()) {
+                        @if (dragDeltaX > 20) {
+                          <div class="position-absolute top-0 start-0 w-100 h-100 rounded-4 pointer-events-none"
+                               style="background: rgba(101, 163, 13, 0.08); border: 2px solid rgba(101, 163, 13, 0.55); box-shadow: inset 0 0 20px rgba(101, 163, 13, 0.2); z-index: 20; transition: all 0.15s ease;">
+                          </div>
+                        } @else if (dragDeltaX < -20) {
+                          <div class="position-absolute top-0 start-0 w-100 h-100 rounded-4 pointer-events-none"
+                               style="background: rgba(239, 68, 68, 0.08); border: 2px solid rgba(239, 68, 68, 0.55); box-shadow: inset 0 0 20px rgba(239, 68, 68, 0.2); z-index: 20; transition: all 0.15s ease;">
+                          </div>
+                        }
+                      }
+                    </div>
+                  }
+                </div>
+
+                <!-- Indicador de Navegação com Setas para Novo Usuário -->
+                <div class="d-flex flex-column align-items-center w-100 pb-3">
+                  <div class="d-flex align-items-center justify-content-center gap-3 mb-2">
+                    <!-- Seta Esquerda -->
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center border-0 shadow-sm"
+                      style="width: 34px; height: 34px; background: #f1f5f9; color: #334155;"
+                      (click)="goToPrevCard()"
+                      aria-label="Ver opção anterior"
+                      title="Opção anterior"
+                    >
+                      <i class="bi bi-chevron-left fw-bold" style="font-size: 0.95rem;"></i>
+                    </button>
+
+                    <!-- Segmentos das opções -->
+                    <div class="d-flex align-items-center gap-2">
+                      @for (answer of currentQuestion.answers; track answer.id; let i = $index) {
+                        <button 
+                          type="button" 
+                          class="deck-segment-bar border-0 p-0"
+                          [class.active]="i === topCardIndex()"
+                          (click)="goToCard(i)"
+                          [attr.aria-label]="'Ir para ' + answer.text"
+                        ></button>
+                      }
+                    </div>
+
+                    <!-- Seta Direita com Balão Explicativo -->
+                    <div class="position-relative d-inline-block">
+                      <button 
+                        type="button" 
+                        class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center border-0 shadow-sm next-option-btn-highlight"
+                        style="width: 36px; height: 36px; background: #5BA4D8; color: #ffffff;"
+                        (click)="goToNextCard()"
+                        aria-label="Ver próxima opção"
+                        title="Próxima opção"
+                      >
+                        <i class="bi bi-chevron-right fw-bold" style="font-size: 0.95rem;"></i>
+                      </button>
+
+                      <!-- Balão Indicativo -->
+                      @if (topCardIndex() === 0) {
+                      <div class="option-next-balloon">
+                        <span>Clique aqui para ver a próxima opção</span>
+                        <div class="balloon-tip"></div>
+                      </div>
+                      }
+                    </div>
+                  </div>
+
+                  <div class="text-center text-muted small fw-semibold">
+                    Opção {{ (topCardIndex() % currentQuestion.answers.length) + 1 }} de {{ currentQuestion.answers.length }}: 
+                    <span class="text-dark fw-bold">{{ currentQuestion.answers[topCardIndex() % currentQuestion.answers.length]?.text }}</span>
+                  </div>
+
+                  <span class="text-secondary text-center small mt-1" style="font-size: 0.76rem;">
+                    Clique nas setas para ver outras opções
+                  </span>
+                </div>
+
+              </div>
+            }
+
+          </div>
+        }
+
+        <!-- PASSO FINAL: ORÇAMENTO E INVESTIMENTO COM CHAVE DE PASSAPORTE -->
+        @else {
+          <div class="card border-0 shadow-sm rounded-4 bg-white question-wizard-card position-relative overflow-hidden p-0 d-flex flex-column" style="min-height: 770px;">
+            
+            <!-- Topo Azul: Meu Orçamento (*Por pessoa) -->
+            <div class="p-4 text-white text-center d-flex flex-column justify-content-center align-items-center" style="background-color: #5BA4D8; min-height: 180px; height: 180px;">
+              <span class="text-white text-opacity-75 small mb-1" style="font-size: 0.85rem; letter-spacing: 0.02em;">*Por pessoa</span>
+              <h2 class="h3 fw-bold text-white mb-2">Meu orçamento</h2>
+              <div class="display-6 fw-bold text-white">
+                {{ formatCurrency(budget()) }}
+              </div>
+            </div>
+
+            <!-- Corpo Branco: Input, Slider, Atalhos, Chave de Passaporte e Finalizar -->
+            <div class="p-4 p-md-5 bg-white text-center d-flex flex-column align-items-center justify-content-center flex-grow-1" style="min-height: 590px;">
+              
+              <div class="mb-3 w-100" style="max-width: 360px;">
+                <label class="text-secondary small fw-semibold d-block mb-2 text-start">
+                  Informe ou ajuste o valor desejado
+                </label>
+
+                <!-- Input Principal -->
+                <div class="d-flex align-items-center rounded-3 border border-2 shadow-sm mx-auto position-relative bg-white px-3 py-2" style="border-color: #cbd5e1 !important;">
+                  <span class="fw-bold fs-4 me-2" style="color: #5BA4D8;">R$</span>
+                  <input 
+                    type="text" 
+                    class="border-0 text-dark fw-bold shadow-none fs-4 flex-grow-1 bg-transparent p-0" 
+                    style="outline: none !important; box-shadow: none !important; border: none !important;"
+                    [value]="budget()"
+                    (input)="onBudgetInput($event)"
+                    (blur)="onBudgetBlur($event)"
+                    placeholder="Ex: 15000"
+                  />
+                </div>
+
+                @if (budgetError()) {
+                  <div class="text-danger small mt-2 fw-semibold animate__animated animate__fadeIn text-start">{{ budgetError() }}</div>
+                }
+
+                <!-- Slider Discreto -->
+                <div class="mt-3 px-1">
+                  <input
+                    type="range"
+                    class="form-range custom-slider w-100"
+                    min="1000"
+                    max="200000"
+                    step="1000"
+                    [value]="budget() || 1000"
+                    (input)="onBudgetInput($event)"
+                  />
+                  <div class="d-flex justify-content-between text-muted" style="font-size: 0.75rem;">
+                    <span>R$ 1.000</span>
+                    <span>R$ 200.000</span>
+                  </div>
+                </div>
+
+                <!-- Atalhos Rápidos Retangulares (Sem Pill) -->
+                <div class="row g-2 mt-2">
+                  @for (preset of [5000, 15000, 30000, 60000]; track preset) {
+                    <div class="col-6">
+                      <button
+                        type="button"
+                        class="btn w-100 py-2 rounded-2 fw-semibold small transition-all"
+                        [style.background-color]="budget() === preset ? 'rgba(91, 164, 216, 0.12)' : '#f8fafc'"
+                        [style.border]="budget() === preset ? '1.5px solid #5BA4D8' : '1px solid #e2e8f0'"
+                        [style.color]="budget() === preset ? '#2b7bb9' : '#475569'"
+                        (click)="setBudgetPreset(preset)"
+                      >
+                        {{ formatCurrency(preset) }}
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                <!-- CHAVE RÁPIDA: PASSAPORTE PARA VIAGENS INTERNACIONAIS (DESIGN HORIZON) -->
+                <div 
+                  class="p-3 rounded-3 text-start w-100 mt-3 cursor-pointer user-select-none transition-all shadow-sm"
+                  [style.background-color]="hasPassport() ? 'rgba(91, 164, 216, 0.08)' : '#f8fafc'"
+                  [style.border]="hasPassport() ? '1.5px solid #5BA4D8' : '1.5px solid #e2e8f0'"
+                  (click)="togglePassportDirect()"
+                >
+                  <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center gap-3">
+                      <!-- Ícone Exclusivo Horizon (Sem Emojis) -->
+                      <div 
+                        class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 transition-all shadow-sm"
+                        [style.background-color]="hasPassport() ? '#5BA4D8' : '#e2e8f0'"
+                        [style.color]="hasPassport() ? '#ffffff' : '#64748b'"
+                        style="width: 44px; height: 44px;"
+                      >
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <rect x="4" y="2" width="16" height="20" rx="3" />
+                          <circle cx="12" cy="10.5" r="3.5" stroke-width="1.6" />
+                          <path d="M8.5 10.5h7" stroke-width="1.3" />
+                          <path d="M12 7c-1.2 1.2-1.8 2.2-1.8 3.5s.6 2.3 1.8 3.5c1.2-1.2 1.8-2.2 1.8-3.5S13.2 8.2 12 7z" stroke-width="1.3" />
+                          <line x1="8" y1="17.5" x2="16" y2="17.5" stroke-width="2" />
+                        </svg>
+                      </div>
+
+                      <div>
+                        <div class="d-flex align-items-center gap-2">
+                          <span class="fw-bold text-dark small mb-0 d-block">
+                            Possuo passaporte válido
+                          </span>
+                          @if (hasPassport()) {
+                            <span class="badge rounded-1 px-2 py-0 fw-bold text-white" style="background-color: #65A30D; font-size: 0.65rem; line-height: 1.4;">
+                              ATIVO
+                            </span>
+                          }
+                        </div>
+                        <span class="text-secondary small d-block" style="font-size: 0.74rem; line-height: 1.25;">
+                          @if (hasPassport()) {
+                            Destinos no mundo inteiro habilitados
+                          } @else {
+                            Apenas destinos no Brasil e América do Sul (com RG)
+                          }
+                        </span>
+                      </div>
+                    </div>
+
+                    <div class="form-check form-switch m-0 ms-2" (click)="$event.stopPropagation()">
+                      <input 
+                        class="form-check-input cursor-pointer" 
+                        type="checkbox" 
+                        role="switch" 
+                        id="passportToggle"
+                        [checked]="hasPassport()"
+                        (change)="togglePassport($event)"
+                        style="width: 2.75rem; height: 1.45rem; cursor: pointer;"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="d-flex flex-column align-items-center gap-2 w-100 mt-2" style="max-width: 360px;">
+                <button 
+                  type="button" 
+                  [disabled]="!isBudgetValid() || isSubmitting()"
+                  (click)="onSubmit()"
+                  class="btn w-100 py-3 rounded-2 fw-bold shadow-sm fs-5 border-0 text-white d-flex align-items-center justify-content-center"
+                  style="background-color: #5BA4D8; transition: transform 0.2s;"
+                >
+                  @if (isSubmitting()) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Finalizando...
+                  } @else {
+                    Finalizar Quiz
+                  }
+                </button>
+                <button 
+                  type="button" 
+                  class="btn btn-link text-muted text-decoration-none py-1 fw-semibold"
+                  (click)="prevStep()"
+                >
+                  Voltar
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        }
+      }
+
+    
+      <!-- PAINEL SEU PERFIL ATÉ O MOMENTO NO MOBILE (SEM EMOJIS) -->
+      @if (!isLoading() && !errorMessage() && !isSubmitted() && quiz()) {
+        <div class="d-block d-lg-none mt-4">
+          <div class="p-3 text-white d-flex flex-column justify-content-between shadow-sm rounded-4" style="background-color: #5BA4D8;">
+            <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+              <span class="radar-live-dot"></span>
+              <h4 class="fw-bold text-white mb-0 text-center" style="font-size: 1.15rem; letter-spacing: -0.01em;">
+                Seu perfil até aqui
+              </h4>
+            </div>
+
+            <!-- Gráfico de Radar SVG Mobile -->
+            <div class="d-flex justify-content-center position-relative my-2 py-1 mx-auto" style="max-width: 320px;">
+              <svg viewBox="-15 5 330 245" class="radar-svg" style="width: 100%; height: auto;">
+                <defs>
+                  <radialGradient id="compassFillGradMobile" cx="50%" cy="50%" r="65%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.75" />
+                    <stop offset="60%" stop-color="#d9f99d" stop-opacity="0.45" />
+                    <stop offset="100%" stop-color="#65A30D" stop-opacity="0.40" />
+                  </radialGradient>
+
+                  <filter id="compassGlowFilterMobile" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#ffffff" flood-opacity="0.40" />
+                  </filter>
+                </defs>
+
+                <!-- Círculos Concêntricos -->
+                <circle cx="150" cy="130" r="75" fill="rgba(11, 37, 69, 0.16)" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" />
+                <circle cx="150" cy="130" r="56.25" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255,255,255,0.28)" stroke-width="1" stroke-dasharray="3 3" />
+                <circle cx="150" cy="130" r="37.5" fill="rgba(11, 37, 69, 0.10)" stroke="rgba(255,255,255,0.30)" stroke-width="1" />
+                <circle cx="150" cy="130" r="18.75" fill="rgba(255, 255, 255, 0.06)" stroke="rgba(255,255,255,0.22)" stroke-width="1" stroke-dasharray="2 2" />
+
+                <!-- Eixos -->
+                @for (axis of radarAxes; track axis.key) {
+                  <line x1="150" y1="130" [attr.x2]="axis.lineX" [attr.y2]="axis.lineY" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+                }
+
+                <!-- Polígono do Radar -->
+                <polygon 
+                  [attr.points]="radarPolygonPoints()" 
+                  fill="url(#compassFillGradMobile)"
+                  stroke="#ffffff"
+                  stroke-width="2.5"
+                  stroke-linejoin="round"
+                  filter="url(#compassGlowFilterMobile)"
+                  style="transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);"
+                />
+
+                <!-- Pontos Vértices -->
+                @for (dot of radarVertexDots(); track dot.key) {
+                  <circle 
+                    [attr.cx]="dot.x" 
+                    [attr.cy]="dot.y" 
+                    r="4.5" 
+                    fill="#ffffff" 
+                    stroke="#65A30D" 
+                    stroke-width="2"
+                    style="transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);"
+                  />
+                }
+
+                <!-- Rótulos e Porcentagens -->
+                @for (axis of radarAxes; track axis.key) {
+                  <text 
+                    [attr.x]="axis.textX" 
+                    [attr.y]="axis.textY" 
+                    [attr.text-anchor]="axis.anchor"
+                    fill="#ffffff" 
+                    font-size="9" 
+                    font-weight="700"
+                    font-family="system-ui, sans-serif"
+                    style="letter-spacing: 0.2px;"
+                  >{{ axis.label }}</text>
+
+                  <text 
+                    [attr.x]="axis.textX" 
+                    [attr.y]="axis.pctY" 
+                    [attr.text-anchor]="axis.anchor"
+                    fill="rgba(255,255,255,0.85)" 
+                    font-size="7.5" 
+                    font-weight="600"
+                    font-family="system-ui, sans-serif"
+                  >{{ radarAxisPercent(axis.key) }}%</text>
+                }
+              </svg>
+            </div>
+
+            <!-- Arquétipo Dominante sem emojis -->
+            <div class="text-center mt-2">
+              <span class="badge rounded-2 px-3 py-2 fw-bold bg-white text-dark shadow-sm">
+                <i class="bi" [class]="dominantArchetype().icon" style="color: #5BA4D8;"></i>
+                <span class="ms-1">{{ dominantArchetype().name }}</span>
+              </span>
+              <span class="text-white text-opacity-75 small d-block mt-2" style="font-size: 0.76rem;">
+                Calculando a compatibilidade com os destinos Horizon
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+    
+    </div>
+
+    <!-- COLUNA LATERAL DIREITA: CARD UNIFICADO (BANNER + PAINEL DNA DO VIAJANTE) -->
+    <div class="col-12 col-lg-3 d-none d-lg-block">
+      <div class="d-flex flex-column">
+        
+        <!-- Topo: Imagem Banner Horizon em tamanho natural -->
+        <img 
+          src="assets/Group14.png" 
+          alt="Horizon" 
+          class="w-100 d-block h-auto" 
+          style="border-radius: 1rem 1rem 0 0;"
+          loading="lazy"
+        />
+
+        <!-- Parte Inferior: Painel Radar (largura idêntica à imagem: 98.9%) -->
+        <div class="p-3 text-white d-flex flex-column justify-content-between shadow-sm radar-panel-card" style="background-color: #5BA4D8; width: 98.9%; border-radius: 0 0 1rem 1rem;">
+          
+          <div class="d-flex align-items-center justify-content-center gap-2 mb-2">
+            <span class="radar-live-dot"></span>
+            <h4 class="fw-bold text-white mb-0 text-center" style="font-size: 1.12rem; letter-spacing: -0.01em;">Seu perfil até aqui</h4>
+          </div>
+
+          <div class="d-flex justify-content-center position-relative my-auto py-1">
+            <svg viewBox="-15 5 330 245" class="radar-svg" style="width: 100%; height: auto;">
+              <defs>
+                <radialGradient id="compassFillGrad" cx="50%" cy="50%" r="65%">
+                  <stop offset="0%" stop-color="#ffffff" stop-opacity="0.75" />
+                  <stop offset="60%" stop-color="#d9f99d" stop-opacity="0.45" />
+                  <stop offset="100%" stop-color="#65A30D" stop-opacity="0.40" />
+                </radialGradient>
+
+                <filter id="compassGlowFilter" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#ffffff" flood-opacity="0.40" />
+                </filter>
+              </defs>
+
+              <!-- Círculos Concêntricos Suaves (100%, 75%, 50%, 25%) -->
+              <circle cx="150" cy="130" r="75" fill="rgba(11, 37, 69, 0.16)" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" />
+              <circle cx="150" cy="130" r="56.25" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255,255,255,0.28)" stroke-width="1" stroke-dasharray="3 3" />
+              <circle cx="150" cy="130" r="37.5" fill="rgba(11, 37, 69, 0.10)" stroke="rgba(255,255,255,0.30)" stroke-width="1" />
+              <circle cx="150" cy="130" r="18.75" fill="rgba(255, 255, 255, 0.06)" stroke="rgba(255,255,255,0.22)" stroke-width="1" stroke-dasharray="2 2" />
+
+              <!-- Eixos Raiados -->
+              @for (axis of radarAxes; track axis.key) {
+                <line x1="150" y1="130" [attr.x2]="axis.lineX" [attr.y2]="axis.lineY" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+              }
+
+              <!-- Polígono Interno de Eco -->
+              <polygon 
+                [attr.points]="radarInnerPolygonPoints()" 
+                fill="rgba(255, 255, 255, 0.15)" 
+                stroke="rgba(255, 255, 255, 0.40)" 
+                stroke-width="1" 
+                stroke-dasharray="2 2"
+                stroke-linejoin="round" 
+                class="radar-inner-poly" 
+              />
+
+              <!-- Polígono Principal da Bússola -->
+              <polygon 
+                [attr.points]="radarPolygonPoints()" 
+                fill="url(#compassFillGrad)" 
+                stroke="#ffffff" 
+                stroke-width="2.2" 
+                stroke-linejoin="round" 
+                filter="url(#compassGlowFilter)"
+                class="radar-main-poly" 
+              />
+
+              <!-- Ponto Central -->
+              <circle cx="150" cy="130" r="2.5" fill="#ffffff" />
+
+              <!-- Vértices -->
+              @for (dot of radarVertexDots(); track dot.key) {
+                <g class="radar-vertex-group" (mouseenter)="hoveredRadarKey.set(dot.key)" (mouseleave)="hoveredRadarKey.set(null)">
+                  @if (dot.isHigh || hoveredRadarKey() === dot.key) {
+                    <circle 
+                      [attr.cx]="dot.x" 
+                      [attr.cy]="dot.y" 
+                      r="7.5" 
+                      fill="rgba(190, 242, 100, 0.38)" 
+                      class="radar-vertex-halo" 
+                    />
+                  }
+                  <circle 
+                    [attr.cx]="dot.x" 
+                    [attr.cy]="dot.y" 
+                    [attr.r]="hoveredRadarKey() === dot.key ? 5.5 : 4" 
+                    fill="#ffffff" 
+                    [attr.stroke]="dot.isHigh ? '#65A30D' : '#0284c7'" 
+                    stroke-width="2" 
+                    class="radar-vertex-dot" 
+                  />
+                </g>
+              }
+
+              <!-- Rótulos dos 6 Eixos -->
+              @for (axis of radarAxes; track axis.key; let i = $index) {
+                @let dot = radarVertexDots()[i];
+                <g class="radar-label-group" (mouseenter)="hoveredRadarKey.set(axis.key)" (mouseleave)="hoveredRadarKey.set(null)" style="cursor: default;">
+                  <text 
+                    [attr.x]="axis.textX" 
+                    [attr.y]="axis.textY" 
+                    [attr.text-anchor]="axis.anchor" 
+                    fill="#ffffff" 
+                    font-size="11.5" 
+                    font-weight="700" 
+                    font-family="inherit"
+                    style="text-shadow: 0 1px 3px rgba(11, 37, 69, 0.5);"
+                  >
+                    {{ axis.label }}
+                  </text>
+                  <text 
+                    [attr.x]="axis.textX" 
+                    [attr.y]="axis.pctY" 
+                    [attr.text-anchor]="axis.anchor" 
+                    [attr.fill]="dot.isHigh ? '#ecfccb' : 'rgba(255, 255, 255, 0.8)'" 
+                    font-size="9.5" 
+                    font-weight="700" 
+                    font-family="inherit"
+                    style="text-shadow: 0 1px 2px rgba(11, 37, 69, 0.4);"
+                  >
+                    {{ dot.pct }}%
+                  </text>
+                </g>
+              }
+            </svg>
+          </div>
+
+          <!-- Rodapé do Card -->
+          <div class="pt-2 text-center text-white text-opacity-80" style="font-size: 0.72rem;">
+            <span>Calculando a compatibilidade com os destinos Horizon</span>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- OFF-CANVAS / MODAL DO DNA DO VIAJANTE NO MOBILE -->
+@if (isMobileDnaSheetOpen()) {
+  <div class="modal-backdrop fade show" style="background: rgba(11, 37, 69, 0.75); z-index: 1055;" (click)="isMobileDnaSheetOpen.set(false)"></div>
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" style="z-index: 1060;" (click)="isMobileDnaSheetOpen.set(false)">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;" (click)="$event.stopPropagation()">
+      <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden p-0 text-white" style="background-color: #5BA4D8;">
+        
+        <div class="d-flex justify-content-between align-items-center p-3 pb-2">
+          <div class="d-flex align-items-center gap-2">
+            <span class="radar-live-dot"></span>
+            <h5 class="fw-bold text-white mb-0">Seu perfil até aqui</h5>
+          </div>
+          <button 
+            type="button" 
+            class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center text-white border-0"
+            style="width: 32px; height: 32px; background: rgba(255, 255, 255, 0.2);"
+            (click)="isMobileDnaSheetOpen.set(false)"
+            aria-label="Fechar perfil"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <div class="p-3 pt-0 text-center">
+          <!-- Bússola Circular no Mobile -->
+          <div class="d-flex justify-content-center position-relative my-2">
+            <svg viewBox="-15 5 330 245" class="radar-svg" style="width: 100%; max-width: 290px; height: auto;">
+              <circle cx="150" cy="130" r="75" fill="rgba(11, 37, 69, 0.16)" stroke="rgba(255,255,255,0.45)" stroke-width="1.2" />
+              <circle cx="150" cy="130" r="56.25" fill="rgba(255, 255, 255, 0.04)" stroke="rgba(255,255,255,0.28)" stroke-width="1" stroke-dasharray="3 3" />
+              <circle cx="150" cy="130" r="37.5" fill="rgba(11, 37, 69, 0.10)" stroke="rgba(255,255,255,0.30)" stroke-width="1" />
+              <circle cx="150" cy="130" r="18.75" fill="rgba(255, 255, 255, 0.06)" stroke="rgba(255,255,255,0.22)" stroke-width="1" stroke-dasharray="2 2" />
+
+              @for (axis of radarAxes; track axis.key) {
+                <line x1="150" y1="130" [attr.x2]="axis.lineX" [attr.y2]="axis.lineY" stroke="rgba(255,255,255,0.25)" stroke-width="1" />
+              }
+
+              <polygon 
+                [attr.points]="radarInnerPolygonPoints()" 
+                fill="rgba(255, 255, 255, 0.15)" 
+                stroke="rgba(255, 255, 255, 0.40)" 
+                stroke-width="1" 
+                stroke-dasharray="2 2"
+                stroke-linejoin="round" 
+              />
+
+              <polygon 
+                [attr.points]="radarPolygonPoints()" 
+                fill="rgba(255, 255, 255, 0.4)" 
+                stroke="#ffffff" 
+                stroke-width="2.2" 
+                stroke-linejoin="round" 
+              />
+
+              <circle cx="150" cy="130" r="2.5" fill="#ffffff" />
+
+              @for (dot of radarVertexDots(); track dot.key) {
+                <circle 
+                  [attr.cx]="dot.x" 
+                  [attr.cy]="dot.y" 
+                  [attr.r]="hoveredRadarKey() === dot.key ? 5.5 : 4" 
+                  fill="#ffffff" 
+                  [attr.stroke]="dot.isHigh ? '#65A30D' : '#0284c7'" 
+                  stroke-width="2" 
+                />
+              }
+
+              @for (axis of radarAxes; track axis.key; let i = $index) {
+                @let dot = radarVertexDots()[i];
+                <text 
+                  [attr.x]="axis.textX" 
+                  [attr.y]="axis.textY" 
+                  [attr.text-anchor]="axis.anchor" 
+                  fill="#ffffff" 
+                  font-size="11.5" 
+                  font-weight="700" 
+                  font-family="inherit"
+                >
+                  {{ axis.label }}
+                </text>
+                <text 
+                  [attr.x]="axis.textX" 
+                  [attr.y]="axis.pctY" 
+                  [attr.text-anchor]="axis.anchor" 
+                  [attr.fill]="dot.isHigh ? '#ecfccb' : 'rgba(255, 255, 255, 0.8)'" 
+                  font-size="9.5" 
+                  font-weight="700" 
+                  font-family="inherit"
+                >
+                  {{ dot.pct }}%
+                </text>
+              }
+            </svg>
+          </div>
+
+          <button 
+            type="button" 
+            class="btn btn-light w-100 py-2 rounded-2 fw-bold shadow-sm border-0 mt-3"
+            style="color: #0b2545;"
+            (click)="isMobileDnaSheetOpen.set(false)"
+          >
+            Continuar Quiz
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL DE CADASTRO / LOGIN PARA CONVIDADOS DO QUIZ -->
+@if (showGuestAuthModal()) {
+  <div class="modal-backdrop fade show" style="background: rgba(11, 37, 69, 0.75); z-index: 1055;" (click)="showGuestAuthModal.set(false)"></div>
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" style="z-index: 1060;" (click)="showGuestAuthModal.set(false)">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;" (click)="$event.stopPropagation()">
+      <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden p-4 p-md-5 text-center bg-white">
+        <div class="d-flex justify-content-center mb-3">
+          <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 64px; height: 64px; background-color: #5BA4D8;">
+            <i class="bi bi-person-check-fill fs-2"></i>
+          </div>
+        </div>
+
+        <h3 class="h4 fw-bold text-dark mb-2">Salve o seu perfil de viajante!</h3>
+        <p class="text-secondary small mb-4 lh-base">
+          Você completou o seu quiz com sucesso! Para salvar suas preferências, calcular seu DNA de viajante e desbloquear recomendações personalizadas, crie sua conta ou faça login.
+        </p>
+
+        <div class="d-flex flex-column gap-2 w-100">
+          <button 
+            type="button" 
+            class="btn py-3 rounded-2 fw-bold text-white shadow-sm border-0 fs-6"
+            style="background-color: #5BA4D8;"
+            (click)="goToRegisterAfterQuiz()"
+          >
+            Criar Conta Gratuita
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-outline-secondary py-3 rounded-2 fw-semibold fs-6"
+            (click)="goToLoginAfterQuiz()"
+          >
+            Já tenho conta (Entrar)
+          </button>
+
+          <button 
+            type="button" 
+            class="btn btn-link text-muted text-decoration-none py-1 small"
+            (click)="showGuestAuthModal.set(false)"
+          >
+            Continuar revisando respostas
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
+
+<!-- MODAL CSAT: AVALIAÇÃO DA EXPERIÊNCIA DO QUIZ -->
+<app-feedback-modal
+  [isOpen]="isCsatModalOpen()"
+  [mode]="'CSAT'"
+  [taskContext]="'QUIZ'"
+  (closed)="isCsatModalOpen.set(false)"
+  (feedbackSubmitted)="onQuizCsatSubmitted()"
+></app-feedback-modal>
+
+<app-back-to-top></app-back-to-top>
+
+<!-- Footer -->
+<app-footer></app-footer>

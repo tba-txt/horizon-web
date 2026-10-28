@@ -18,6 +18,7 @@ export interface Quiz {
 }
 
 export interface SubmitQuizRequest {
-  answers: Record<string, number>; // questionId -> answerId
+  answers: Record<string, number | number[]>;
   budgetPerPerson: number;
+  hasPassport?: boolean;
 }

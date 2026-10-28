@@ -1,0 +1,277 @@
+.auth-glass-wrapper {
+      padding: 1rem;
+    }
+
+    .glass-card {
+      max-width: 450px;
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.85);
+      border-radius: 16px;
+      box-shadow: 0 20px 45px -12px rgba(11, 37, 69, 0.14);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .globe-scene {
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .globe-svg {
+      width: 72px;
+      height: 72px;
+      opacity: 0.95;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.12));
+      animation: globeSpin 18s linear infinite;
+    }
+
+    @keyframes globeSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .globe-svg {
+        animation: none;
+      }
+    }
+
+    .globe-plane-container {
+      position: absolute;
+      width: 102px;
+      height: 102px;
+      top: 50%; left: 50%;
+      margin-top: -51px;
+      margin-left: -51px;
+      border-radius: 50%;
+      animation: orbit2D 2.5s linear infinite;
+    }
+
+    .globe-plane-container::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      border-top-color: rgba(91, 164, 216, 0.55);
+      border-left-color: rgba(91, 164, 216, 0.15);
+      transform: rotate(-45deg);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .globe-plane {
+      position: absolute;
+      top: -11px;
+      left: calc(50% - 11px);
+      width: 22px;
+      height: 22px;
+      color: #5BA4D8;
+      transform: rotate(90deg);
+      filter: drop-shadow(0 2px 4px rgba(11, 37, 69, 0.25));
+      z-index: 2;
+    }
+
+    @keyframes orbit2D {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .custom-glass-input-group {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .form-control-glass {
+      width: 100%;
+      background: #ffffff;
+      border: 1.5px solid #dbeafe;
+      border-radius: 10px;
+      padding: 0.6rem 0.85rem;
+      font-size: 0.88rem;
+      color: #1e293b;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      outline: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .form-control-glass::placeholder {
+      color: #94a3b8;
+    }
+
+    .form-control-glass:focus {
+      background: #ffffff;
+      border-color: #5BA4D8;
+      box-shadow: 0 0 0 3px rgba(91, 164, 216, 0.18);
+    }
+
+    .form-control-glass.is-invalid {
+      border-color: #ef4444;
+      background: #fef2f2;
+    }
+
+    /* Botão de Revelar Senha */
+    .btn-toggle-eye {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      border-radius: 6px;
+      transition: color 0.2s ease;
+      z-index: 2;
+    }
+
+    .btn-toggle-eye:hover {
+      color: #5BA4D8;
+    }
+
+    /* Botão de Ação Azul Padrão Horizon */
+    .btn-horizon-action {
+      background-color: #5BA4D8;
+      border: none;
+      border-radius: 10px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      padding: 0.7rem 1rem !important;
+      transition: background-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .btn-horizon-action:hover:not(:disabled) {
+      transform: translateY(-1px);
+      background-color: #4895CC;
+      color: #ffffff;
+    }
+
+    .btn-horizon-action:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-horizon-action:disabled {
+      background-color: #94a3b8;
+      opacity: 0.65;
+      color: #ffffff;
+      cursor: not-allowed;
+    }
+
+    .hover-link {
+      transition: all 0.2s ease;
+    }
+
+    .hover-link:hover {
+      color: #4895CC !important;
+      text-decoration: underline !important;
+    }
+
+    .register-anim-item {
+      opacity: 1;
+    }
+
+    @media (max-width: 767.98px) {
+      .glass-card {
+        max-width: 100%;
+        border-radius: 18px;
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      .auth-glass-wrapper {
+        padding: 0.75rem 0.5rem;
+      }
+      .glass-card {
+        padding: 1.25rem 1rem !important;
+      }
+      .globe-scene {
+        width: 85px;
+        height: 85px;
+        margin-bottom: 0.5rem !important;
+      }
+      .globe-svg {
+        width: 56px;
+        height: 56px;
+      }
+      .globe-plane-container {
+        width: 80px;
+        height: 80px;
+        margin-top: -40px;
+        margin-left: -40px;
+      }
+      .globe-plane {
+        width: 18px;
+        height: 18px;
+        top: -9px;
+        left: calc(50% - 9px);
+      }
+      .form-control-glass {
+        padding: 0.55rem 0.75rem;
+        font-size: 0.84rem;
+        border-radius: 8px;
+      }
+      .btn-horizon-action {
+        padding: 0.6rem 1rem !important;
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Celulares compactos (<= 400px) */
+    @media (max-width: 400px) {
+      .glass-card {
+        padding: 1rem 0.7rem !important;
+      }
+      .row.g-3 {
+        --bs-gutter-y: 0.65rem;
+      }
+    }
+
+    /* Telas de notebook ou telas com altura reduzida (<= 720px) */
+    @media (max-height: 720px) {
+      .auth-glass-wrapper {
+        padding: 0.5rem;
+      }
+      .glass-card {
+        padding: 0.85rem 1.25rem !important;
+      }
+      .globe-scene {
+        width: 65px;
+        height: 65px;
+        margin-bottom: 0.25rem !important;
+      }
+      .globe-svg {
+        width: 44px;
+        height: 44px;
+      }
+      .globe-plane-container {
+        width: 60px;
+        height: 60px;
+        margin-top: -30px;
+        margin-left: -30px;
+      }
+      .globe-plane {
+        width: 16px;
+        height: 16px;
+        top: -8px;
+      }
+      .row.g-3 {
+        --bs-gutter-y: 0.45rem;
+      }
+      .mb-3 {
+        margin-bottom: 0.45rem !important;
+      }
+      .mb-4 {
+        margin-bottom: 0.6rem !important;
+      }
+    }

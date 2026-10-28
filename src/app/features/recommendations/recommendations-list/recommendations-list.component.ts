@@ -4,22 +4,26 @@ import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { RecommendationsService } from '../services/recommendations.service';
+import { TravelerIdentityService } from '../services/traveler-identity.service';
 import { Recommendation } from '../models/recommendation.model';
 import { LOCAL_DESTINATION_IMAGES, findLocalImage } from '../../destinations/services/destinations.service';
 import { Card3dDirective } from '../../../shared/directives/card-3d.directive';
 import { TravelerIdentityComponent } from '../components/traveler-identity/traveler-identity.component';
-
 import { PlaneLoaderComponent } from '../../../shared/components/plane-loader/plane-loader.component';
+import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
 
 @Component({
   selector: 'app-recommendations-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent, Card3dDirective, TravelerIdentityComponent, PlaneLoaderComponent],
+  imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent, Card3dDirective, TravelerIdentityComponent, PlaneLoaderComponent, BackToTopComponent],
   templateUrl: './recommendations-list.component.html',
   styleUrls: ['./recommendations-list.component.scss']
 })
 export class RecommendationsListComponent implements OnInit {
   private recommendationsService = inject(RecommendationsService);
+  private identityService = inject(TravelerIdentityService);
+
+  identity = this.identityService.identityState;
 
   recommendations = signal<Recommendation[]>([]);
   isLoading = signal(true);
@@ -30,6 +34,14 @@ export class RecommendationsListComponent implements OnInit {
 
   topRecommendations = computed(() => this.recommendations().slice(0, 3));
   otherRecommendations = computed(() => this.recommendations().slice(3));
+
+  quizButtonLabel = computed(() => {
+    const id = this.identity();
+    if (!id || id.onboardingStatus === 'NO_QUIZ_NO_FEED' || id.onboardingStatus === 'FEED_ONLY') {
+      return 'Fazer Quiz';
+    }
+    return 'Refazer Quiz';
+  });
 
   handleHeroError(event: any): void {
     event.target.src = this.placeholderHero;
@@ -55,6 +67,10 @@ export class RecommendationsListComponent implements OnInit {
     });
   }
 
+  onAlgorithmReset(): void {
+    this.loadRecommendations();
+  }
+
   getImageUrl(rec: Recommendation): string {
     const localImg = findLocalImage(rec.destinationName, rec.city);
     if (localImg) {
@@ -66,7 +82,7 @@ export class RecommendationsListComponent implements OnInit {
   getRankLabel(index: number): string {
     switch (index) {
       case 0:
-        return 'Escolha mais recomendada';
+        return 'Para você';
       case 1:
         return 'Recomendado';
       case 2:

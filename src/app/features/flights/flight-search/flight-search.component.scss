@@ -1,0 +1,1392 @@
+.hero-container {
+      width: 100%;
+      background: #0b2545;
+      height: 320px;
+      max-height: 320px;
+      overflow: hidden;
+    }
+    .hero-image {
+      width: 100%;
+      height: 320px;
+      max-height: 320px;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+    .flight-card {
+      border-color: #e2e8f0;
+    }
+
+    .flight-selected {
+      border: 1.5px solid rgba(101, 163, 13, 0.45) !important;
+      background-color: #f7faee !important;
+      box-shadow: 0 6px 20px rgba(101, 163, 13, 0.14) !important;
+    }
+
+    .flight-badge-code {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #65A30D;
+      background: rgba(101, 163, 13, 0.1);
+      border: 1px solid rgba(101, 163, 13, 0.25);
+      padding: 0.2rem 0.55rem;
+      border-radius: 0.375rem;
+      letter-spacing: 0.03em;
+    }
+
+    .flight-date-badge {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #334155;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.375rem;
+      display: inline-flex;
+      align-items: center;
+      letter-spacing: 0.02em;
+    }
+
+    .flight-seats-indicator {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #65A30D;
+      background: rgba(101, 163, 13, 0.09);
+      padding: 0.2rem 0.55rem;
+      border-radius: 0.375rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .seats-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #65A30D;
+      display: inline-block;
+    }
+
+    .flight-route-wrap {
+      padding: 0.25rem 0;
+    }
+
+    .flight-time-main {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .flight-airport-code {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.05em;
+      margin-top: 0.2rem;
+    }
+
+    .text-primary-custom {
+      color: #5BA4D8 !important;
+    }
+
+    .flight-track-mid {
+      min-width: 110px;
+      max-width: 180px;
+    }
+
+    .flight-duration-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #94a3b8;
+      display: block;
+      margin-bottom: 0.25rem;
+      white-space: nowrap;
+    }
+
+    .flight-track-line {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 16px;
+    }
+
+    .flight-track-path {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #e2e8f0;
+      border-radius: 2px;
+    }
+
+    .flight-track-plane {
+      position: relative;
+      z-index: 1;
+      font-size: 0.75rem;
+      color: #5BA4D8;
+      background: #ffffff;
+      padding: 0 4px;
+    }
+
+    .flight-class-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.65rem 0.35rem;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 0.65rem;
+      background: #f8fafc;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      min-height: 76px;
+      text-decoration: none;
+      min-width: 0;
+    }
+
+    .flight-class-box:hover:not(:disabled) {
+      border-color: #5BA4D8;
+      background: #ffffff;
+      box-shadow: 0 4px 12px rgba(91, 164, 216, 0.15);
+      transform: translateY(-1px);
+    }
+
+    .flight-class-box:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .flight-class-box-active {
+      border-color: #65A30D !important;
+      background: #65A30D !important;
+      box-shadow: 0 4px 14px rgba(101, 163, 13, 0.35) !important;
+      transform: translateY(-2px);
+    }
+
+    .flight-class-box-active .class-title {
+      color: #ffffff !important;
+      opacity: 0.92;
+    }
+
+    .flight-class-box-active .class-price {
+      color: #ffffff !important;
+    }
+
+    /* Classe Executivo: Azul Padrão Horizon (#5BA4D8) */
+    .flight-class-box.class-executive .class-title {
+      color: #5BA4D8;
+    }
+    .flight-class-box.class-executive:hover:not(:disabled) {
+      border-color: #5BA4D8;
+      box-shadow: 0 4px 12px rgba(91, 164, 216, 0.2);
+    }
+    .flight-class-box.class-executive.flight-class-box-active {
+      border-color: #5BA4D8 !important;
+      background: #5BA4D8 !important;
+      box-shadow: 0 4px 14px rgba(91, 164, 216, 0.35) !important;
+      transform: translateY(-2px);
+    }
+    .flight-class-box.class-executive.flight-class-box-active .class-title {
+      color: #ffffff !important;
+      opacity: 0.92;
+    }
+    .flight-class-box.class-executive.flight-class-box-active .class-price {
+      color: #ffffff !important;
+    }
+
+    /* Classe Premium: Dourado (#D4A359) */
+    .flight-class-box.class-premium .class-title {
+      color: #c48e3a;
+    }
+    .flight-class-box.class-premium:hover:not(:disabled) {
+      border-color: #D4A359;
+      box-shadow: 0 4px 12px rgba(212, 163, 89, 0.2);
+    }
+    .flight-class-box.class-premium.flight-class-box-active {
+      border-color: #D4A359 !important;
+      background: #D4A359 !important;
+      box-shadow: 0 4px 14px rgba(212, 163, 89, 0.35) !important;
+      transform: translateY(-2px);
+    }
+    .flight-class-box.class-premium.flight-class-box-active .class-title {
+      color: #ffffff !important;
+      opacity: 0.92;
+    }
+    .flight-class-box.class-premium.flight-class-box-active .class-price {
+      color: #ffffff !important;
+    }
+
+    .class-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.25rem;
+      transition: color 0.15s ease;
+    }
+
+    .class-price {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+      transition: color 0.15s ease;
+    }
+
+    /* Stacking Context para o Card de Filtro e Popover */
+    .search-card-container {
+      position: relative;
+      z-index: 50;
+    }
+
+    /* Custom Calendar Popover */
+    .calendar-popover-container {
+      position: relative;
+      z-index: 60;
+    }
+
+    .calendar-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: 315px;
+      max-width: calc(100vw - 32px);
+      background: #ffffff;
+      border-radius: 1rem;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 14px 35px rgba(15, 23, 42, 0.22);
+      padding: 1rem;
+      z-index: 1050;
+      animation: calendarFadeIn 0.16s ease-out;
+    }
+
+    @keyframes calendarFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.65rem;
+    }
+
+    .calendar-title {
+      font-weight: 700;
+      font-size: 0.92rem;
+      color: #1e293b;
+    }
+
+    .calendar-nav-btn {
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 1.1rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 0;
+    }
+
+    .calendar-nav-btn:hover:not(:disabled) {
+      background: #5BA4D8;
+      color: #ffffff;
+      border-color: #5BA4D8;
+    }
+
+    .calendar-nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .calendar-legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.2rem;
+      font-size: 0.72rem;
+      padding-bottom: 0.45rem;
+      margin-bottom: 0.55rem;
+    }
+
+    .legend-dot {
+      display: inline-block;
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #94a3b8;
+      margin-bottom: 0.4rem;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .calendar-day-cell {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      border: 1px solid transparent;
+      padding: 0;
+      background: transparent;
+      transition: all 0.15s ease;
+      user-select: none;
+      line-height: 1;
+    }
+
+    /* Green available day */
+    .calendar-day-available {
+      background-color: #d1e7dd;
+      color: #0f5132;
+      border-color: #a3cfbb;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .calendar-day-available:hover {
+      background-color: #65A30D !important;
+      color: #ffffff !important;
+      border-color: #65A30D !important;
+      transform: scale(1.08);
+      box-shadow: 0 3px 8px rgba(101, 163, 13, 0.35);
+      z-index: 2;
+    }
+
+    .calendar-day-available.calendar-day-selected {
+      background-color: #65A30D !important;
+      color: #ffffff !important;
+      border-color: #65A30D !important;
+      box-shadow: 0 4px 12px rgba(101, 163, 13, 0.45);
+    }
+
+    /* Red unavailable day */
+    .calendar-day-unavailable {
+      background-color: #f8d7da;
+      color: #842029;
+      border-color: #f5c2c7;
+      opacity: 0.65;
+      cursor: not-allowed;
+      font-size: 0.76rem;
+    }
+
+    .calendar-day-empty {
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .flight-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: #65A30D;
+      margin-top: 2px;
+    }
+
+    .calendar-day-available:hover .flight-dot,
+    .calendar-day-selected .flight-dot {
+      background-color: #ffffff;
+    }
+
+    .destination-picker { position: relative; }
+    .destination-picker-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 38px; padding: 0.375rem 0.75rem; border: 1px solid #ced4da; border-radius: 0.75rem; background: #ffffff; color: #212529; font-size: 0.95rem; text-align: left; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+    .destination-picker-trigger:hover, .destination-picker-open { border-color: #5BA4D8; }
+    .destination-picker-trigger:focus-visible { outline: 0; border-color: #5BA4D8; box-shadow: 0 0 0 0.2rem rgba(91, 164, 216, 0.2); }
+    .destination-picker-caret { width: 0.5rem; height: 0.5rem; margin-left: 0.75rem; border-right: 2px solid #475569; border-bottom: 2px solid #475569; transform: rotate(45deg) translateY(-2px); transition: transform 0.2s ease; }
+    .destination-picker-open .destination-picker-caret { transform: rotate(225deg) translateY(-2px); }
+    .destination-picker-menu { position: absolute; z-index: 1060; bottom: calc(100% + 0.5rem); left: 0; width: min(21rem, calc(100vw - 2rem)); max-height: 22rem; overflow-y: auto; border: 1px solid #dbe7f0; border-radius: 0.875rem; background: #ffffff; box-shadow: 0 14px 32px rgba(11, 37, 69, 0.16); padding: 0.375rem; }
+    .destination-group-label { margin: 0.25rem 0.25rem 0.375rem; padding: 0.55rem 0.75rem; border-radius: 0.55rem; color: #ffffff; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.01em; }
+    .destination-group-label-common { background: #5BA4D8; }
+    .destination-group-label-eco { background: #65A30D; }
+    .destination-group-options + .destination-group-label { margin-top: 0.5rem; }
+    .destination-option { display: block; width: 100%; border: 0; border-radius: 0.5rem; background: transparent; color: #1e293b; padding: 0.5rem 0.75rem; font-size: 0.9rem; text-align: left; }
+    .destination-option:hover, .destination-option:focus-visible { background: #edf6fc; color: #0B2545; outline: 0; }
+    .destination-option-selected { background: #5BA4D8; color: #ffffff; font-weight: 600; }
+    .destination-option-selected:hover, .destination-option-selected:focus-visible { background: #4b8ebd; color: #ffffff; }
+
+    @media (max-width: 991.98px) {
+      .hero-container, .hero-image {
+        height: 240px;
+        max-height: 240px;
+      }
+    }
+
+    @media (max-width: 767.98px) {
+      .hero-container, .hero-image {
+        height: 180px;
+        max-height: 180px;
+      }
+      .flight-route-wrap {
+        padding: 0.5rem 0;
+      }
+      .flight-time-main {
+        font-size: 1.25rem;
+      }
+      .flight-track-mid {
+        min-width: 80px;
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+      }
+    }
+
+    .selection-summary-shell {
+      --summary-accent: #5BA4D8;
+      --summary-accent-rgb: 91, 164, 216;
+      background: #f8fafc;
+      border: 2px solid rgba(91, 164, 216, 0.28);
+      border-radius: 22px;
+      padding: 1.5rem;
+      box-shadow: 0 12px 32px -10px rgba(15, 23, 42, 0.08);
+    }
+
+    .selection-summary-shell.summary-eco {
+      --summary-accent: #65A30D;
+      --summary-accent-rgb: 101, 163, 13;
+      border-color: rgba(101, 163, 13, 0.32);
+    }
+
+    .summary-dest-card-wrapper {
+      padding-top: 28px;
+    }
+
+    .summary-tourism-top-tab {
+      position: absolute;
+      top: -4px;
+      right: 24px;
+      z-index: 1;
+      background: #5BA4D8;
+      color: #ffffff;
+      font-size: 0.74rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      height: 32px;
+      padding: 0 1.25rem 3px;
+      border-radius: 10px 10px 0 0;
+      box-shadow: 0 -2px 8px rgba(91, 164, 216, 0.25);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+
+      span {
+        color: #ffffff;
+      }
+
+      &.tab-eco {
+        background: #65A30D;
+        box-shadow: 0 -2px 8px rgba(101, 163, 13, 0.25);
+      }
+    }
+
+    .summary-dest-showcase {
+      min-height: 280px;
+      border-radius: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.25rem;
+      background: #0f172a;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.16);
+      z-index: 2; /* Fica acima da aba de fundo, garantindo que o badge não sangre para dentro da foto */
+    }
+
+    .summary-dest-bg-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .summary-dest-showcase:hover .summary-dest-bg-img {
+      transform: scale(1.04);
+    }
+
+    .summary-dest-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        rgba(11, 37, 69, 0.35) 0%,
+        rgba(11, 37, 69, 0.15) 40%,
+        rgba(11, 37, 69, 0.88) 100%
+      );
+    }
+
+    .summary-brand-logo {
+      height: 28px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4));
+    }
+
+    .summary-country-label {
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.45);
+    }
+
+    .summary-dest-title {
+      color: #ffffff;
+      font-size: 1.55rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+    }
+
+    .summary-info-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 0.28rem 0.65rem;
+      border-radius: 6px;
+    }
+
+    .summary-dest-desc {
+      font-size: 0.8rem;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .summary-eyebrow {
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--summary-accent);
+      margin-bottom: 0.15rem;
+    }
+
+    .btn-summary-clear {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.42rem 0.85rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #dc2626;
+      background: #ffffff;
+      border: 1px solid #fecaca;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background: #fef2f2;
+        border-color: #dc2626;
+      }
+    }
+
+    .summary-leg-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 1.25rem 1.35rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(11, 37, 69, 0.04);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+      &:hover {
+        border-color: rgba(91, 164, 216, 0.45);
+        box-shadow: 0 8px 24px rgba(91, 164, 216, 0.12);
+        transform: translateY(-1.5px);
+      }
+    }
+
+    .leg-direction-tag {
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--summary-accent);
+      background: rgba(var(--summary-accent-rgb), 0.1);
+      padding: 0.28rem 0.65rem;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+
+      i {
+        font-size: 0.85rem;
+      }
+    }
+
+    .leg-flight-code {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #65A30D;
+      background: rgba(101, 163, 13, 0.1);
+      border: 1px solid rgba(101, 163, 13, 0.25);
+      padding: 0.22rem 0.55rem;
+      border-radius: 6px;
+    }
+
+    .leg-class-tag {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #334155;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 0.22rem 0.6rem;
+      border-radius: 6px;
+
+      &.tag-executive {
+        color: #2b7bb5;
+        background: #f0f7fc;
+        border-color: rgba(91, 164, 216, 0.4);
+      }
+
+      &.tag-premium {
+        color: #9c6c1f;
+        background: #fdfaf3;
+        border-color: rgba(212, 163, 89, 0.4);
+      }
+    }
+
+    .leg-route-visual {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 0.75rem 0.85rem;
+    }
+
+    .leg-city-thumb {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 2px solid #ffffff;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.14);
+    }
+
+    .leg-time {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+
+    .leg-code {
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #475569;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+
+    .leg-code-accent {
+      color: var(--summary-accent);
+    }
+
+    .leg-city-name {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #64748b;
+      max-width: 95px;
+    }
+
+    .leg-connector {
+      min-width: 70px;
+    }
+
+    .leg-duration {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #64748b;
+      margin-bottom: 2px;
+    }
+
+    .leg-line {
+      position: relative;
+      height: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #cbd5e1;
+        border-radius: 2px;
+      }
+    }
+
+    .leg-plane {
+      position: relative;
+      z-index: 1;
+      font-size: 0.85rem;
+      color: var(--summary-accent);
+      background: #f8fafc;
+      padding: 0 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transform: rotate(90deg);
+    }
+
+    .leg-date {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .leg-price {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .summary-checkout-bar {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+    .summary-total-price {
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.02em;
+    }
+
+    .summary-all-pax-hint {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .btn-summary-checkout {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--summary-accent);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 0.72rem 1.4rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 6px 16px rgba(var(--summary-accent-rgb), 0.32);
+      transition: all 0.2s ease;
+
+      &:hover {
+        filter: brightness(0.94);
+        transform: translateY(-1px);
+        box-shadow: 0 8px 20px rgba(var(--summary-accent-rgb), 0.42);
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      .flight-class-box {
+        padding: 0.45rem 0.2rem;
+        min-height: 64px;
+      }
+      .class-title {
+        font-size: 0.68rem;
+      }
+      .class-price {
+        font-size: 0.78rem;
+      }
+      .class-check {
+        font-size: 0.62rem;
+      }
+      .flight-time-main {
+        font-size: 1.15rem;
+      }
+      .flight-airport-code {
+        font-size: 0.78rem;
+      }
+      .selection-summary-shell {
+        padding: 1rem;
+      }
+      .summary-dest-showcase {
+        min-height: 200px;
+      }
+      .leg-city-thumb {
+        width: 38px;
+        height: 38px;
+      }
+      .btn-summary-checkout {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+
+/* ========================================================
+   BOTÕES E GATILHOS DE INFORMAÇÕES DE CLASSE
+   ======================================================== */
+.flight-classes-info-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: #f8fafc;
+    border-color: #5BA4D8;
+    color: #0f172a;
+    box-shadow: 0 3px 8px rgba(91, 164, 216, 0.15);
+  }
+}
+
+.flight-class-choice-label {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.flight-class-compare-btn {
+  background: transparent;
+  border: none;
+  color: #5BA4D8;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: #266892;
+    text-decoration: underline;
+  }
+}
+
+/* ========================================================
+   MODAL: O QUE CADA CLASSE OFERECE (BÁSICO, EXECUTIVO, PREMIUM)
+   ======================================================== */
+.modal-backdrop-glass {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 1060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  animation: fadeInModal 0.25s ease-out;
+}
+
+.class-info-modal-card {
+  width: 100%;
+  max-width: 880px;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 24px;
+  box-shadow: 0 30px 80px -15px rgba(15, 23, 42, 0.35);
+  overflow: hidden;
+  position: relative;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.glass-close-btn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 25;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.75);
+    transform: scale(1.08);
+  }
+}
+
+.modal-hero-header {
+  position: relative;
+  height: 200px;
+  width: 100%;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.88) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.25rem 1.75rem;
+    color: #ffffff;
+  }
+
+  .hero-meta-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #ffffff;
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 0.22rem 0.6rem;
+    border-radius: 0.375rem;
+    align-self: flex-start;
+  }
+
+  .meta-dot {
+    margin: 0 0.35rem;
+    opacity: 0.7;
+  }
+
+  .hero-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+  }
+
+  .hero-subtitle {
+    font-size: 0.84rem;
+    color: rgba(255, 255, 255, 0.88);
+  }
+}
+
+.modal-scroll-content {
+  overflow-y: auto;
+  flex: 1 1 auto;
+}
+
+.class-modal-nav {
+  background: #f1f5f9;
+}
+
+.class-nav-tab {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #64748b;
+
+  .tab-title {
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: #334155;
+    letter-spacing: 0.01em;
+  }
+
+  .tab-caption {
+    font-size: 0.7rem;
+    color: #64748b;
+    font-weight: 500;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  &.tab-active {
+    background: #ffffff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+
+    &.tab-basic .tab-title {
+      color: #65A30D;
+    }
+    &.tab-executive .tab-title {
+      color: #5BA4D8;
+    }
+    &.tab-premium .tab-title {
+      color: #D97706;
+    }
+  }
+}
+
+.class-detail-card {
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+
+  &.class-basic-card {
+    background: #f7faee;
+    border: 1px solid rgba(101, 163, 13, 0.28);
+  }
+
+  &.class-executive-card {
+    background: #f0f7fc;
+    border: 1px solid rgba(91, 164, 216, 0.32);
+  }
+
+  &.class-premium-card {
+    background: #fffbf2;
+    border: 1px solid rgba(217, 119, 6, 0.32);
+  }
+}
+
+.badge-class-theme {
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+
+  &.basic-badge {
+    background: #65A30D;
+    color: #ffffff;
+  }
+  &.executive-badge {
+    background: #5BA4D8;
+    color: #ffffff;
+  }
+  &.premium-badge {
+    background: #D97706;
+    color: #ffffff;
+  }
+}
+
+.benefit-item {
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  }
+
+  .benefit-icon-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    flex-shrink: 0;
+
+    &.basic-icon-box {
+      background: rgba(101, 163, 13, 0.14);
+      color: #65A30D;
+    }
+    &.executive-icon-box {
+      background: rgba(91, 164, 216, 0.18);
+      color: #5BA4D8;
+    }
+    &.premium-icon-box {
+      background: rgba(217, 119, 6, 0.18);
+      color: #D97706;
+    }
+  }
+
+  .benefit-title {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: #1e293b;
+  }
+
+  .benefit-desc {
+    font-size: 0.8rem;
+    color: #64748b;
+    line-height: 1.45;
+  }
+}
+
+.comparison-matrix-card {
+  border: 1px solid #e2e8f0;
+}
+
+.comparison-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.comparison-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 460px;
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 145px repeat(3, minmax(105px, 1fr));
+  align-items: stretch;
+  padding: 0;
+  margin: 0;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  min-height: 42px;
+
+  &.comparison-header {
+    background-color: #f1f5f9;
+
+    .comp-label {
+      background-color: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+    }
+  }
+}
+
+.comp-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.35rem;
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.comp-label {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  width: 145px;
+  min-width: 145px;
+  max-width: 145px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.78rem;
+  color: #334155;
+  font-weight: 600;
+  background-color: #f8fafc;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  box-shadow: 4px 0 8px -2px rgba(15, 23, 42, 0.08);
+}
+
+.comp-value {
+  flex: 1;
+}
+
+.text-warning-custom {
+  color: #D97706 !important;
+}
+
+@keyframes fadeInModal {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modalPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .class-info-modal-card {
+    max-height: 94vh;
+    border-radius: 20px;
+  }
+
+  .modal-hero-header {
+    height: 155px;
+
+    .hero-overlay {
+      padding: 1rem 1.25rem;
+    }
+
+    .hero-title {
+      font-size: 1.25rem;
+    }
+
+    .hero-subtitle {
+      font-size: 0.8rem;
+    }
+  }
+
+  .class-nav-tab {
+    padding: 0.4rem 0.2rem !important;
+
+    .tab-title {
+      font-size: 0.82rem;
+    }
+
+    .tab-caption {
+      font-size: 0.65rem;
+    }
+  }
+}
+
+@media (max-width: 576px) {
+  .modal-backdrop-glass {
+    padding: 0.5rem;
+  }
+
+  .class-info-modal-card {
+    max-height: 96vh;
+    border-radius: 16px;
+  }
+
+  .glass-close-btn {
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    font-size: 0.88rem;
+  }
+
+  .modal-hero-header {
+    height: 130px;
+
+    .hero-overlay {
+      padding: 0.75rem 0.85rem;
+    }
+
+    .hero-meta-badge {
+      font-size: 0.68rem;
+      padding: 0.18rem 0.45rem;
+    }
+
+    .hero-title {
+      font-size: 1.1rem;
+    }
+
+    .hero-subtitle {
+      font-size: 0.72rem;
+      line-height: 1.2;
+    }
+  }
+
+  .class-nav-tab {
+    padding: 0.35rem 0.15rem !important;
+
+    .tab-title {
+      font-size: 0.8rem;
+    }
+
+    .tab-caption {
+      font-size: 0.62rem;
+      line-height: 1.1;
+    }
+  }
+
+  .benefit-item {
+    padding: 0.6rem 0.7rem !important;
+
+    .benefit-icon-box {
+      width: 28px;
+      height: 28px;
+      font-size: 0.85rem;
+    }
+
+    .benefit-title {
+      font-size: 0.82rem;
+    }
+
+    .benefit-desc {
+      font-size: 0.75rem;
+    }
+  }
+
+  .comparison-grid {
+    min-width: 450px;
+  }
+
+  .comparison-row {
+    grid-template-columns: 140px repeat(3, minmax(100px, 1fr));
+    padding: 0;
+    min-height: 40px;
+  }
+
+  .comp-label {
+    width: 140px;
+    min-width: 140px;
+    max-width: 140px;
+    font-size: 0.76rem;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .comp-col {
+    font-size: 0.74rem;
+  }
+}

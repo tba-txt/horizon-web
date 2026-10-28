@@ -1,0 +1,247 @@
+<app-auth-layout imagePosition="right" imageSrc="assets/cadastro.webp">
+      
+      <div class="auth-glass-wrapper position-relative w-100 d-flex justify-content-center" style="z-index: 1; min-height: 100%;">
+        
+        <!-- Card com Efeito Glassmorphism Padronizado -->
+        <div class="glass-card p-3 p-md-4 w-100 my-auto">
+
+          <!-- Header / Branding -->
+          <div class="text-center mb-3 register-anim-item pt-2">
+            <div class="globe-scene mb-3 mx-auto">
+              <!-- Globo Imagem -->
+              <img src="assets/globo.webp" alt="Globo" class="globe-svg" style="object-fit: contain;" />
+              <!-- Container da Órbita e Avião -->
+              <div class="globe-plane-container">
+                <svg class="globe-plane" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M21,16 L21,14 L13,9 L13,3.5 C13,2.67 12.33,2 11.5,2 C10.67,2 10,2.67 10,3.5 L10,9 L2,14 L2,16 L10,13.5 L10,19 L8,20.5 L8,22 L11.5,21 L15,22 L15,20.5 L13,19 L13,13.5 L21,16 Z"/>
+                </svg>
+              </div>
+            </div>
+            <h2 class="h4 fw-bold mb-1 text-dark" style="letter-spacing: -0.3px;">
+              Crie sua conta no <span style="color: #5BA4D8;">Horizon</span>
+            </h2>
+          </div>
+
+          <!-- Alerta de Erro -->
+          @if (errorMessage()) {
+            <div class="alert alert-danger d-flex align-items-center gap-2 mb-3 py-2 px-3 rounded-3 border-0 shadow-sm" role="alert" style="background: rgba(254, 242, 242, 0.95); color: #991b1b;">
+              <span class="small fw-medium">{{ errorMessage() }}</span>
+            </div>
+          }
+
+          <!-- Alerta de Sucesso -->
+          @if (successMessage()) {
+            <div class="alert alert-success d-flex align-items-center gap-2 mb-3 py-2 px-3 rounded-3 border-0 shadow-sm" role="alert" style="background: rgba(240, 253, 244, 0.95); color: #166534;">
+              <span class="small fw-medium">{{ successMessage() }}</span>
+            </div>
+          }
+
+          <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+            
+            <!-- Linha Dupla: Nome + Nome Social -->
+            <div class="row g-3 mb-3 register-anim-item">
+              <!-- Nome Completo -->
+              <div class="col-12 col-sm-6">
+                <label for="name" class="form-label small fw-semibold text-dark mb-1">Nome completo</label>
+                <input 
+                  id="name" 
+                  type="text" 
+                  formControlName="name"
+                  class="form-control form-control-glass"
+                  [class.is-invalid]="isFieldInvalid('name')"
+                  placeholder="Seu nome completo"
+                  autocomplete="name"
+                  (input)="onNameInput($event, 'name')"
+                />
+                @if (isFieldInvalid('name')) {
+                  <div class="text-danger small mt-1 ms-1 fw-medium">
+                    {{ registerForm.get('name')?.errors?.['message'] || 'O nome completo é obrigatório.' }}
+                  </div>
+                }
+              </div>
+
+              <!-- Nome Social -->
+              <div class="col-12 col-sm-6">
+                <label for="socialName" class="form-label small fw-semibold text-dark mb-1">Nome social</label>
+                <input 
+                  id="socialName" 
+                  type="text" 
+                  formControlName="socialName"
+                  class="form-control form-control-glass"
+                  [class.is-invalid]="isFieldInvalid('socialName')"
+                  placeholder="Opcional"
+                  (input)="onNameInput($event, 'socialName')"
+                />
+                @if (isFieldInvalid('socialName')) {
+                  <div class="text-danger small mt-1 ms-1 fw-medium">
+                    {{ registerForm.get('socialName')?.errors?.['message'] || 'Nome inválido.' }}
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-3 register-anim-item">
+              <label for="email" class="form-label small fw-semibold text-dark mb-1">E-mail</label>
+              <input 
+                id="email" 
+                type="email" 
+                formControlName="email"
+                class="form-control form-control-glass"
+                [class.is-invalid]="isFieldInvalid('email')"
+                placeholder="seu@email.com"
+                autocomplete="email"
+              />
+              @if (isFieldInvalid('email')) {
+                <div class="text-danger small mt-1 ms-1 fw-medium">
+                  {{ registerForm.get('email')?.errors?.['message'] || 'Informe um e-mail válido.' }}
+                </div>
+              }
+            </div>
+
+            <!-- Linha Dupla: CPF + Data de Nascimento -->
+            <div class="row g-3 mb-3 register-anim-item">
+              <!-- CPF -->
+              <div class="col-12 col-sm-6">
+                <label for="cpf" class="form-label small fw-semibold text-dark mb-1">CPF</label>
+                <input 
+                  id="cpf" 
+                  type="text" 
+                  formControlName="cpf"
+                  maxlength="14"
+                  (input)="onCpfInput($event)"
+                  class="form-control form-control-glass"
+                  [class.is-invalid]="isFieldInvalid('cpf')"
+                  placeholder="000.000.000-00"
+                />
+                @if (isFieldInvalid('cpf')) {
+                  <div class="text-danger small mt-1 ms-1 fw-medium">
+                    {{ registerForm.get('cpf')?.errors?.['message'] || 'CPF válido é obrigatório.' }}
+                  </div>
+                }
+              </div>
+
+              <!-- Data de Nascimento -->
+              <div class="col-12 col-sm-6">
+                <label for="birthDate" class="form-label small fw-semibold text-dark mb-1">Data de nascimento</label>
+                <app-date-picker
+                  inputId="birthDate"
+                  formControlName="birthDate"
+                  [invalid]="isFieldInvalid('birthDate')"
+                />
+                @if (isFieldInvalid('birthDate')) {
+                  <div class="text-danger small mt-1 ms-1 fw-medium">
+                    {{ registerForm.get('birthDate')?.errors?.['message'] || 'Data de nascimento obrigatória.' }}
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Linha Dupla: Senha + Confirmar Senha -->
+            <div class="row g-3 mb-4 register-anim-item">
+              <!-- Senha -->
+              <div class="col-12 col-sm-6">
+                <label for="password" class="form-label small fw-semibold text-dark mb-1">Senha</label>
+                <div class="custom-glass-input-group">
+                  <input 
+                    id="password" 
+                    [type]="showPassword() ? 'text' : 'password'" 
+                    formControlName="password"
+                    class="form-control form-control-glass pe-5"
+                    [class.is-invalid]="isFieldInvalid('password')"
+                    placeholder="Mínimo 6 dígitos"
+                    autocomplete="new-password"
+                  />
+                  <button 
+                    type="button" 
+                    class="btn-toggle-eye" 
+                    (click)="togglePasswordVisibility()" 
+                    [attr.aria-label]="showPassword() ? 'Ocultar senha' : 'Ver senha'"
+                  >
+                    @if (showPassword()) {
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
+                        <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
+                        <path d="M3.35 5.47q-.27.24-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
+                      </svg>
+                    } @else {
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                      </svg>
+                    }
+                  </button>
+                </div>
+                @if (isFieldInvalid('password')) {
+                  <div class="text-danger small mt-1 ms-1 fw-medium">Mínimo 6 caracteres.</div>
+                }
+              </div>
+
+              <!-- Confirmar Senha -->
+              <div class="col-12 col-sm-6">
+                <label for="confirmPassword" class="form-label small fw-semibold text-dark mb-1">Confirmar senha</label>
+                <div class="custom-glass-input-group">
+                  <input 
+                    id="confirmPassword" 
+                    [type]="showConfirmPassword() ? 'text' : 'password'" 
+                    formControlName="confirmPassword"
+                    class="form-control form-control-glass pe-5"
+                    [class.is-invalid]="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched"
+                    placeholder="Repita a senha"
+                    autocomplete="new-password"
+                  />
+                  <button 
+                    type="button" 
+                    class="btn-toggle-eye" 
+                    (click)="toggleConfirmPasswordVisibility()" 
+                    [attr.aria-label]="showConfirmPassword() ? 'Ocultar senha' : 'Ver senha'"
+                  >
+                    @if (showConfirmPassword()) {
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
+                        <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
+                        <path d="M3.35 5.47q-.27.24-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
+                      </svg>
+                    } @else {
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                      </svg>
+                    }
+                  </button>
+                </div>
+                @if (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched) {
+                  <div class="text-danger small mt-1 ms-1 fw-medium">As senhas não coincidem.</div>
+                }
+              </div>
+            </div>
+
+            <!-- Botão Criar Conta -->
+            <div class="register-anim-item mb-3">
+              <button 
+                type="submit" 
+                [disabled]="registerForm.invalid || isLoading()"
+                class="btn btn-horizon-action w-100 py-2 fw-bold d-flex align-items-center justify-content-center shadow-sm"
+              >
+                @if (isLoading()) {
+                  <div class="spinner"><div></div><div></div><div></div><div></div><div></div></div>
+                  <span>Cadastrando...</span>
+                } @else {
+                  <span>Criar conta</span>
+                }
+              </button>
+            </div>
+
+            <!-- Voltar para Login -->
+            <div class="text-center register-anim-item pt-1">
+              <span class="text-muted small">Já possui uma conta? </span>
+              <a routerLink="/login" queryParamsHandling="preserve" class="small fw-bold text-decoration-none hover-link" style="color: #5BA4D8;">
+                Fazer login
+              </a>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+    </app-auth-layout>

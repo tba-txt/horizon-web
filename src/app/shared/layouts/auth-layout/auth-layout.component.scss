@@ -1,0 +1,127 @@
+:host {
+      display: block;
+      min-height: 100vh;
+    }
+
+    .auth-viewport-wrapper {
+      background-color: #5BA4D8;
+      padding: clamp(10px, 2.5vw, 28px) !important;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-card-container {
+      max-width: 1680px;
+      height: 92vh;
+      min-height: 600px;
+      border-radius: clamp(24px, 4vw, 56px);
+      overflow: hidden;
+      background-color: #f4f6f9;
+      transition: all 0.3s ease;
+      display: flex;
+    }
+
+    .auth-brand-side {
+      background: linear-gradient(135deg, #0b2545 0%, #134074 50%, #1d2d44 100%);
+      flex: 1.35;
+    }
+
+    .auth-form-side {
+      background-color: #f4f6f9;
+      position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 100%;
+    }
+
+    /* Textura de Ruído Estático e Denso (Film Grain Noise) como na referência */
+    .auth-form-side::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.22'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 140px 140px;
+      pointer-events: none;
+      z-index: 0;
+      mix-blend-mode: multiply;
+    }
+
+    .auth-form-container {
+      width: 100%;
+      min-height: 100%;
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Tablets (iPad, 768px - 1024px): Proporção equilibrada entre arte e formulário */
+    @media (min-width: 768px) and (max-width: 1024px) {
+      .auth-brand-side {
+        flex: 1;
+      }
+      .auth-form-side {
+        flex: 1.15;
+      }
+      .auth-card-container {
+        height: 94vh;
+        min-height: 580px;
+        border-radius: 28px;
+      }
+    }
+
+    /* Ajuste para telas pequenas e celulares */
+    @media (max-width: 767.98px) {
+      .auth-viewport-wrapper {
+        padding: 0 !important;
+        background-color: #ffffff !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        align-items: flex-start !important;
+      }
+
+      .auth-card-container {
+        height: auto;
+        min-height: 100vh;
+        border-radius: 0;
+        box-shadow: none !important;
+        background-color: #ffffff !important;
+        flex-direction: column;
+        overflow: visible !important;
+      }
+
+      .auth-form-side {
+        flex: 1 1 100%;
+        min-height: 100vh;
+        background-color: #ffffff !important;
+        overflow-y: visible !important;
+      }
+
+      .auth-form-side::before {
+        display: none !important;
+      }
+
+      .auth-form-container {
+        min-height: 100vh;
+        justify-content: flex-start !important;
+        align-items: stretch !important;
+        padding: 0 !important;
+      }
+    }
+
+    /* Telas de notebook com altura reduzida (ex: 1366x768) */
+    @media (max-height: 700px) {
+      .auth-card-container {
+        height: 96vh;
+        min-height: 520px;
+      }
+    }

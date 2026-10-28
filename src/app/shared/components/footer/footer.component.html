@@ -1,0 +1,125 @@
+<footer class="footer-horizon position-relative overflow-hidden mt-auto">
+      <!-- Watermark náutica / bússola sutil de fundo -->
+      <div class="footer-watermark pointer-events-none" aria-hidden="true">
+        <i class="bi bi-compass"></i>
+      </div>
+
+      <div class="container position-relative z-1 py-5">
+        
+        <!-- GRID PRINCIPAL DE 3 COLUNAS + CTA -->
+        <div class="row g-4 g-lg-5 pb-3">
+          
+          <!-- COLUNA 1: LOGO, MANIFESTO & REDES -->
+          <div class="col-12 col-md-5 col-lg-4">
+            <div class="d-flex align-items-center mb-3">
+              <img 
+                src="assets/LogoH.png" 
+                alt="Horizon" 
+                class="footer-brand-logo" 
+                loading="lazy" 
+                decoding="async" 
+              />
+            </div>
+
+            <p class="footer-manifesto mb-4">
+              Curadoria inteligente de destinos autênticos pelo mundo, calibradas pelo seu perfil de preferências. Sem roteiros engessados.
+            </p>
+
+            <!-- Redes Sociais -->
+            <div class="d-flex align-items-center gap-2 mb-4 mb-md-0">
+              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram da Horizon">
+                <i class="bi bi-instagram"></i>
+              </a>
+              <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="X (antigo Twitter) da Horizon">
+                <i class="bi bi-twitter-x"></i>
+              </a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook da Horizon">
+                <i class="bi bi-facebook"></i>
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LinkedIn da Horizon">
+                <i class="bi bi-linkedin"></i>
+              </a>
+            </div>
+          </div>
+
+          <!-- COLUNA 2: EXPLORAR -->
+          <div class="col-6 col-md-3 col-lg-2">
+            <h4 class="footer-col-title mb-3">Explorar</h4>
+            <ul class="list-unstyled footer-nav-list mb-0">
+              <li><a routerLink="/destinations/common" class="footer-nav-link">Destinos comuns</a></li>
+              <li><a routerLink="/destinations/ecotourism" class="footer-nav-link">Destinos ecoturismo</a></li>
+              <li><a routerLink="/feed" class="footer-nav-link">Feed</a></li>
+              <li><a routerLink="/quiz" class="footer-nav-link">Quiz / preferências</a></li>
+              <li><a routerLink="/recommendations" class="footer-nav-link">Recomendações</a></li>
+            </ul>
+          </div>
+
+          <!-- COLUNA 3: HORIZON -->
+          <div class="col-6 col-md-4 col-lg-3">
+            <h4 class="footer-col-title mb-3">Horizon</h4>
+            <ul class="list-unstyled footer-nav-list mb-0">
+              <li><a routerLink="/flights" class="footer-nav-link">Comprar viagem</a></li>
+              <li><a routerLink="/faq" class="footer-nav-link">Central de Ajuda & FAQ</a></li>
+              <li><a routerLink="/profile" [queryParams]="{ tab: 'trips' }" class="footer-nav-link">Minhas viagens</a></li>
+              <li><a routerLink="/profile" [queryParams]="{ tab: 'privacy' }" class="footer-nav-link">Política de privacidade</a></li>
+              <li><a routerLink="/profile" [queryParams]="{ tab: 'feedback' }" class="footer-nav-link">Avaliar plataforma</a></li>
+              <li class="mt-2 pt-1">
+                <a href="mailto:horiozonfatecpi@gmail.com" class="footer-email-link">
+                  <i class="bi bi-envelope me-1"></i>
+                  horiozonfatecpi&#64;gmail.com
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <!-- COLUNA 4: DESCUBRA SEU PERFIL -->
+          <div class="col-12 col-md-12 col-lg-3 d-flex flex-column justify-content-center">
+            <div class="footer-cta-box p-3 p-xl-4 rounded-3 text-center text-lg-start">
+              <h5 class="cta-box-title mb-2">Seu próximo destino ideal</h5>
+              <p class="cta-box-desc mb-3">
+                Calibre seus gostos e deixe nosso algoritmo planejar a viagem perfeita.
+              </p>
+              <a routerLink="/quiz" class="btn-footer-cta text-decoration-none d-inline-flex align-items-center justify-content-center gap-2 w-100">
+                <i class="bi bi-compass"></i>
+                <span>Descubra seu Perfil</span>
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- SELEÇÃO DE IDIOMAS (COSMÉTICO ELEGANTE - STRICT: NO PILLS, NO DIVIDERS) -->
+        <div class="footer-languages-container p-3 rounded-3 mt-4 mb-4">
+          <div class="d-flex align-items-center flex-wrap gap-2 gap-md-3">
+            <span class="footer-lang-label me-1 me-md-2">Idiomas</span>
+            
+            @for (lang of languages; track lang.code) {
+              <button 
+                type="button" 
+                class="lang-selector-btn"
+                [class.active]="currentLang() === lang.code"
+                (click)="selectLanguage(lang)"
+                [attr.aria-pressed]="currentLang() === lang.code"
+              >
+                {{ lang.label }}
+              </button>
+            }
+          </div>
+
+          @if (langNotice()) {
+            <div class="lang-notice-toast animate-fade-in mt-2 small">
+              <i class="bi bi-info-circle me-1"></i>
+              <span>{{ langNotice() }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- LINHA FINAL: COPYRIGHT (STRICT: NO DIVIDERS) -->
+        <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3 pt-2 text-center text-sm-start">
+          <div class="footer-copyright-text">
+            © 2026 Horizon. Todos os direitos reservados.
+          </div>
+        </div>
+
+      </div>
+    </footer>

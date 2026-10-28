@@ -14,6 +14,8 @@
   justify-content: center;
   padding: 1.5rem;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: none;
   animation: fadeIn 0.25s ease-out;
 }
 
@@ -32,6 +34,8 @@
   max-height: 90vh;
   display: flex;
   flex-direction: column;
+  overscroll-behavior: contain;
+  touch-action: auto;
   animation: modalPopIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   --destination-accent: #5ba4d8;
   --destination-accent-strong: #266892;
@@ -131,6 +135,8 @@
 .modal-scroll-content {
   flex: 1;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
   padding: 24px 28px;
   background: #f8fafc;
 
@@ -296,11 +302,11 @@
   min-height: 38px;
 
   &.eco-bar {
-    background: linear-gradient(180deg, #65a30d 0%, #3f6600 100%);
-    box-shadow: 0 4px 12px rgba(11, 37, 69, 0.14);
+    background: linear-gradient(180deg, #65a30d 0%, #3f6600 100%) !important;
+    box-shadow: 0 4px 12px rgba(101, 163, 13, 0.25) !important;
   }
 
-  &.polar-bar {
+  &.polar-bar:not(.eco-bar) {
     background: linear-gradient(180deg, #5ba4d8 0%, #266892 100%);
     box-shadow: 0 4px 12px rgba(11, 37, 69, 0.14);
   }
@@ -317,41 +323,174 @@
 @keyframes moving-bars { 0% { transform: translateY(100%); } 100% { transform: translateY(0); } }
 
 .day-metrics {
-  margin-top: 8px;
+  margin-top: 5px;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
-
-  i {
-    font-size: 1.15rem;
-  }
+  justify-content: center;
 
   .hum-text {
-    font-size: 0.72rem;
-    color: #64748b;
-    font-weight: 600;
+    font-size: 0.8rem;
+    color: #475569;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+
+    i {
+      color: #5ba4d8;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+// Dica de Planejamento e Reserva Recomendada (Largura Total)
+.planning-tip-block {
+  width: 100%;
+}
+
+.planning-tip-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(91, 164, 216, 0.09);
+  border: 1px solid rgba(91, 164, 216, 0.3);
+
+  &.eco-planning-card {
+    background: rgba(101, 163, 13, 0.09);
+    border-color: rgba(101, 163, 13, 0.3);
+  }
+}
+
+.planning-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12);
+
+  i {
+    font-size: 1rem;
+    line-height: 1;
+  }
+}
+
+.planning-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+.planning-badges-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.planning-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.planning-amount {
+  font-size: 0.82rem;
+  color: #334155;
+  font-weight: 600;
+
+  strong {
+    color: #0f172a;
+    font-weight: 800;
+  }
+}
+
+.planning-desc {
+  font-size: 0.78rem;
+  color: #475569;
+  line-height: 1.45;
+
+  strong {
+    color: #1e293b;
   }
 }
 
 // Faixa com dados extras do Open-Meteo
 .weather-extra-strip {
-  margin-top: 10px;
-  padding-top: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  font-size: 0.78rem;
-  color: #64748b;
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.85fr) minmax(0, 1.45fr);
+  gap: 6px;
+  width: 100%;
 
   .extra-item {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
+    padding: 6px 7px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    min-width: 0;
+    overflow: hidden;
 
-    strong {
-      color: #1e293b;
+    i {
+      font-size: 0.95rem;
+      width: 14px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .extra-item-texts {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      line-height: 1.15;
+      flex: 1;
+
+      .extra-label {
+        font-size: 0.6rem;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .extra-val {
+        font-size: 0.8rem;
+        color: #0f172a;
+        font-weight: 700;
+        margin-top: 1px;
+        white-space: nowrap;
+
+        &.condition-val {
+          font-size: 0.74rem;
+          white-space: normal;
+          line-height: 1.15;
+          word-break: normal;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      }
     }
   }
 }
@@ -378,20 +517,104 @@
   line-height: 1.3;
 }
 
-.best-time-box {
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  border-radius: 16px;
-  background: var(--destination-accent);
-  border: 1px solid var(--destination-accent-strong);
-  border-radius: 14px;
-  color: var(--destination-accent-ink);
-  font-size: 0.82rem;
-  font-weight: 600;
+.best-time-bar {
+  box-shadow: 0 4px 12px rgba(11, 37, 69, 0.08);
+  transition: all 0.2s ease;
+  word-break: break-word;
+
+  span {
+    color: #ffffff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
 
   i {
-    color: var(--destination-accent-ink);
+    color: #ffffff;
+    font-size: 0.95rem;
+  }
+}
+
+.best-time-calendar-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+.months-bar-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 5px;
+  align-items: center;
+}
+
+.month-pill-col {
+  height: 52px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: default;
+  transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  user-select: none;
+
+  .month-letter {
+    display: inline-block;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  /* Época Comum / Normal (Fundo Bege Suave com Borda Discreta) */
+  &.month-normal {
+    background: #fbf8f3;
+    border: 1px solid #f1ece1;
+    color: #475569;
+  }
+
+  /* Boa Época (Dourado / Mostarda elegante) */
+  &.month-good {
+    background: #d4a359;
+    border: 1px solid #c7964b;
+    color: #ffffff;
+    box-shadow: 0 3px 10px rgba(212, 163, 89, 0.35);
+  }
+
+  /* Melhor Época (Verde Floresta / Esmeralda Profundo) */
+  &.month-best {
+    background: #256344;
+    border: 1px solid #1e5238;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(37, 99, 68, 0.4);
+  }
+}
+
+.months-legend-row {
+  .legend-item {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #334155;
+  }
+
+  .legend-color-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    display: inline-block;
+
+    &.dot-best {
+      background: #256344;
+      box-shadow: 0 2px 6px rgba(37, 99, 68, 0.3);
+    }
+
+    &.dot-good {
+      background: #d4a359;
+      box-shadow: 0 2px 6px rgba(212, 163, 89, 0.3);
+    }
   }
 }
 
@@ -522,7 +745,7 @@
   }
 
   .btn-reserve-glow {
-    background: linear-gradient(135deg, #ff4081 0%, #f50057 100%);
+    background: linear-gradient(135deg, #5BA4D8 0%, #4895CC 100%);
     color: #ffffff;
     font-weight: 700;
     font-size: 0.92rem;
@@ -532,18 +755,29 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    box-shadow: 0 4px 15px rgba(245, 0, 87, 0.35);
+    box-shadow: 0 4px 15px rgba(91, 164, 216, 0.35);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     letter-spacing: 0.5px;
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(245, 0, 87, 0.5);
-      background: linear-gradient(135deg, #f50057 0%, #d81b60 100%);
+      box-shadow: 0 8px 25px rgba(91, 164, 216, 0.5);
+      background: linear-gradient(135deg, #4895CC 0%, #357ebd 100%);
     }
 
     &:active {
       transform: translateY(0);
+    }
+  }
+
+  :host-context(.eco-theme) .btn-reserve-glow,
+  .eco-theme & .btn-reserve-glow {
+    background: linear-gradient(135deg, #65A30D 0%, #558b0a 100%);
+    box-shadow: 0 4px 15px rgba(101, 163, 13, 0.35);
+
+    &:hover {
+      background: linear-gradient(135deg, #558b0a 0%, #457207 100%);
+      box-shadow: 0 8px 25px rgba(101, 163, 13, 0.5);
     }
   }
 }
@@ -578,18 +812,148 @@
   }
 
   .weather-extra-strip {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr;
+    gap: 7px;
+
+    .extra-item {
+      padding: 8px 12px;
+      gap: 10px;
+
+      i {
+        font-size: 1.05rem;
+        width: 18px;
+      }
+
+      .extra-item-texts {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 8px;
+
+        .extra-label {
+          font-size: 0.74rem;
+          letter-spacing: 0.3px;
+        }
+
+        .extra-val {
+          font-size: 0.88rem;
+          white-space: normal;
+          text-align: right;
+
+          &.condition-val {
+            font-size: 0.84rem;
+            line-height: 1.2;
+            white-space: normal;
+            text-align: right;
+          }
+        }
+      }
+    }
   }
 
   .modal-glass-footer {
-    padding: 12px 18px;
+    padding: 10px 14px;
+    gap: 8px;
+
+    .flight-route-icon {
+      display: none !important;
+    }
+
+    strong.text-dark {
+      font-size: 0.88rem !important;
+      line-height: 1.25;
+      white-space: nowrap;
+    }
+
+    .btn-reserve-glow {
+      padding: 8px 14px;
+      font-size: 0.78rem;
+      border-radius: 10px;
+      gap: 4px;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      flex-shrink: 0;
+
+      i {
+        font-size: 0.8rem;
+      }
+    }
   }
 }
 
 @media (max-width: 480px) {
+  .months-bar-grid {
+    gap: 3px;
+  }
+
+  .month-pill-col {
+    height: 42px;
+    font-size: 0.72rem;
+    border-radius: 6px;
+  }
+
+  .best-time-bar {
+    padding: 6px 10px !important;
+    span {
+      font-size: 0.76rem;
+    }
+  }
+
   .attractions-grid {
     grid-template-columns: 1fr;
+  }
+
+  .weather-extra-strip {
+    grid-template-columns: 1fr;
+    gap: 6px;
+
+    .extra-item {
+      padding: 7px 10px;
+      gap: 8px;
+
+      i {
+        font-size: 1rem;
+        width: 16px;
+      }
+
+      .extra-item-texts {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+
+        .extra-label {
+          font-size: 0.7rem;
+        }
+
+        .extra-val {
+          font-size: 0.82rem;
+          white-space: normal;
+          text-align: right;
+
+          &.condition-val {
+            font-size: 0.78rem;
+            line-height: 1.2;
+            white-space: normal;
+            text-align: right;
+          }
+        }
+      }
+    }
+  }
+
+  .modal-glass-footer {
+    padding: 8px 10px;
+
+    strong.text-dark {
+      font-size: 0.8rem !important;
+    }
+
+    .btn-reserve-glow {
+      padding: 7px 10px;
+      font-size: 0.72rem;
+      border-radius: 8px;
+    }
   }
 }
 

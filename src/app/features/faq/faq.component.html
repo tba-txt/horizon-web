@@ -1,0 +1,493 @@
+<app-navbar></app-navbar>
+
+<!-- 1. HERO NO MESMO FORMATO DE FLIGHTS (320PX, IMAGEM EXCLUSIVA DA FAQ, SEM EFEITO ESCURO) -->
+<header class="hero-container position-relative overflow-hidden">
+  <img 
+    src="assets/voo-golden-corrigido.webp" 
+    alt="Central de Ajuda Horizon" 
+    class="w-100 hero-image"
+  />
+  <div class="hero-content-layer">
+    <div class="container text-center">
+      <h1 class="hero-title">Central de ajuda</h1>
+      <p class="hero-subtitle">
+        Tire suas dúvidas sobre reservas, bagagens, classes de voo ou fale com a nossa equipe
+      </p>
+
+      <!-- Barra de Pesquisa Principal -->
+      <div class="hero-search-wrapper mx-auto">
+        <input
+          type="text"
+          class="hero-search-input"
+          placeholder="Pesquise por palavras-chave (ex: passaporte, bagagem, pix, desconto...)"
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+        />
+        @if (searchQuery()) {
+          <button type="button" class="hero-search-clear" (click)="clearSearch()" title="Limpar busca">
+            <i class="bi bi-x-lg"></i>
+          </button>
+        }
+        <span class="hero-search-icon">
+          <i class="bi bi-search"></i>
+        </span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="faq-page">
+  <!-- 2. CONTEÚDOS POPULARES OU RESULTADOS DA BUSCA -->
+  <section class="popular-section">
+    <div class="container">
+      <div class="popular-container mx-auto">
+        @if (!searchQuery().trim()) {
+          <h2 class="popular-heading">Dúvidas mais frequentes</h2>
+          <div class="popular-list">
+            @for (item of popularFaqs(); track item.id) {
+              <div class="popular-item" [class.expanded]="isFaqExpanded(item.id)">
+                <button type="button" class="popular-question-btn" (click)="toggleFaq(item.id)">
+                  <span class="popular-question-text">{{ item.question }}</span>
+                  <i class="bi" [ngClass]="isFaqExpanded(item.id) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                </button>
+                @if (isFaqExpanded(item.id)) {
+                  <div class="popular-answer-box">
+                    <p class="mb-0">{{ item.answer }}</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        } @else {
+          <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+            <h2 class="popular-heading mb-0">
+              Resultados para "{{ searchQuery() }}" ({{ searchResults().length }})
+            </h2>
+            <button type="button" class="btn-clear-filter" (click)="clearSearch()">
+              Limpar pesquisa
+            </button>
+          </div>
+
+          @if (searchResults().length > 0) {
+            <div class="popular-list">
+              @for (item of searchResults(); track item.id) {
+                <div class="popular-item" [class.expanded]="isFaqExpanded(item.id)">
+                  <button type="button" class="popular-question-btn" (click)="toggleFaq(item.id)">
+                    <div class="d-flex flex-column text-start gap-1">
+                      <span class="search-cat-tag">{{ item.category }}</span>
+                      <span class="popular-question-text">{{ item.question }}</span>
+                    </div>
+                    <i class="bi" [ngClass]="isFaqExpanded(item.id) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                  </button>
+                  @if (isFaqExpanded(item.id)) {
+                    <div class="popular-answer-box">
+                      <p class="mb-0">{{ item.answer }}</p>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="empty-search-card text-center">
+              <i class="bi bi-search empty-search-icon"></i>
+              <h4>Nenhum resultado encontrado para "{{ searchQuery() }}"</h4>
+              <p>Tente pesquisar com outros termos ou envie uma mensagem no canal de atendimento abaixo.</p>
+              <button type="button" class="btn-green-action" (click)="scrollToSection('canal-atendimento')">
+                Falar com a nossa equipe
+              </button>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. ESCOLHA O ASSUNTO (GRID 3 COLUNAS) -->
+  <section class="subjects-section" id="assuntos-faq">
+    <div class="container">
+      <div class="text-center mx-auto subjects-header mb-4">
+        <h2 class="subjects-title">Escolha o assunto</h2>
+        <p class="subjects-subtitle">
+          Explore respostas rápidas organizadas por tema para planejar sua viagem com tranquilidade.
+        </p>
+      </div>
+
+      <!-- Grid de Cards de Assunto (Todos os 9 cards diretamente visíveis) -->
+      <div class="row g-4">
+        @for (card of visibleCategoryCards(); track card.id) {
+          <div class="col-12 col-md-6 col-lg-4">
+            <div
+              class="subject-card"
+              [class.expanded]="isCategoryExpanded(card.id)"
+              (click)="toggleCategoryCard(card.id)"
+            >
+              <!-- Cabeçalho do Card (Ícone + Título/Descrição + Chevron) -->
+              <div class="subject-card-main">
+                <div class="subject-card-icon">
+                  <i class="bi" [ngClass]="card.icon"></i>
+                </div>
+                <div class="subject-card-info">
+                  <h3 class="subject-card-title">{{ card.title }}</h3>
+                  <p class="subject-card-desc">{{ card.description }}</p>
+                </div>
+                <div class="subject-card-chevron">
+                  <i class="bi" [ngClass]="isCategoryExpanded(card.id) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                </div>
+              </div>
+
+              <!-- Lista de Perguntas daquele Assunto -->
+              @if (isCategoryExpanded(card.id)) {
+                <div class="subject-card-questions" (click)="$event.stopPropagation()">
+                  @for (q of getFaqsByCategory(card.id); track q.id) {
+                    <div class="inner-faq-item" [class.open]="isFaqExpanded(q.id)">
+                      <button
+                        type="button"
+                        class="inner-faq-question"
+                        (click)="toggleFaq(q.id, $event)"
+                      >
+                        <span>{{ q.question }}</span>
+                        <i class="bi" [ngClass]="isFaqExpanded(q.id) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                      </button>
+                      @if (isFaqExpanded(q.id)) {
+                        <div class="inner-faq-answer">
+                          {{ q.answer }}
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. CANAL DE ATENDIMENTO (BLOCO CENTRALIZADO E UNIDO: IMAGEM LIMPA + FORMULÁRIO COMPACTO) -->
+  <section class="support-form-section" id="canal-atendimento">
+    <div class="container">
+      <div class="support-unified-card mx-auto">
+        <!-- Painel Esquerdo: Imagem Vertical WebP do Horizon -->
+        <div class="support-image-panel">
+          <img 
+            src="assets/horizon-fgm1.webp" 
+            alt="Suporte Horizon" 
+            class="showcase-clean-img"
+          />
+          <div class="image-gradient-overlay"></div>
+          <div class="image-brand-tag">
+            <img src="assets/LogoH.png" alt="Horizon" class="showcase-logo" />
+          </div>
+        </div>
+
+        <!-- Painel Direito: Formulário com Largura Ampla -->
+        <div class="support-form-panel">
+          <div class="form-header-row mb-3">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1">
+              <h3 class="form-card-title mb-0">Como podemos ajudar?</h3>
+              <span class="protocol-preview-badge">
+                <i class="bi bi-patch-check-fill me-1"></i> Protocolo Digital
+              </span>
+            </div>
+            <p class="form-card-subtitle mb-0">
+              Escolha o assunto para ver o prazo de resposta e gerar seu protocolo de atendimento.
+            </p>
+          </div>
+
+          <div class="support-form-scrollable">
+            @if (errorMessage()) {
+              <div class="alert-error-box mb-3">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>{{ errorMessage() }}</span>
+              </div>
+            }
+
+            <form (ngSubmit)="onSubmitTicket()" class="ticket-form">
+            <div class="row g-3">
+              <!-- Nome Cadastrado (Fixo da conta) -->
+              <div class="col-12 col-md-6">
+                <label class="form-label-hz">Nome cadastrado *</label>
+                <div class="input-icon-group">
+                  <i class="bi bi-person input-left-icon"></i>
+                  <input
+                    type="text"
+                    class="form-control-hz with-icon"
+                    [class.readonly-field]="isLoggedIn()"
+                    name="userName"
+                    placeholder="Nome cadastrado na conta"
+                    [ngModel]="userName()"
+                    (ngModelChange)="!isLoggedIn() && userName.set($event)"
+                    [readonly]="isLoggedIn()"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- E-mail de Contato -->
+              <div class="col-12 col-md-6">
+                <label class="form-label-hz">E-mail de contato *</label>
+                <div class="input-icon-group">
+                  <i class="bi bi-envelope input-left-icon"></i>
+                  <input
+                    type="email"
+                    class="form-control-hz with-icon"
+                    name="userEmail"
+                    placeholder="seuemail@exemplo.com"
+                    [ngModel]="userEmail()"
+                    (ngModelChange)="userEmail.set($event)"
+                    required
+                  />
+                </div>
+              </div>
+
+              <!-- Assunto da mensagem -->
+              <div class="col-12">
+                <label class="form-label-hz">Assunto da mensagem *</label>
+                <div class="custom-dropdown-container position-relative" (click)="$event.stopPropagation()">
+                  <button
+                    type="button"
+                    class="custom-dropdown-trigger"
+                    [class.active]="isSubjectDropdownOpen()"
+                    (click)="toggleSubjectDropdown($event)"
+                  >
+                    @if (currentSubjectSla(); as selectedOpt) {
+                      <div class="trigger-selected-content">
+                        <span class="subject-icon-box" [ngClass]="getSlaColorClass(selectedOpt.slaHours)">
+                          <i class="bi" [ngClass]="selectedOpt.icon"></i>
+                        </span>
+                        <span class="trigger-selected-label">{{ selectedOpt.label }}</span>
+                        <span class="sla-pill-badge" [ngClass]="getSlaColorClass(selectedOpt.slaHours)">
+                          <i class="bi bi-clock-fill"></i> {{ selectedOpt.slaDescription }}
+                        </span>
+                      </div>
+                    } @else {
+                      <div class="trigger-placeholder-content">
+                        <span class="subject-icon-box default">
+                          <i class="bi bi-grid-fill"></i>
+                        </span>
+                        <span class="placeholder-text">Selecione o assunto da sua mensagem...</span>
+                      </div>
+                    }
+                    <i class="bi chevron-indicator" [ngClass]="isSubjectDropdownOpen() ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                  </button>
+
+                  @if (isSubjectDropdownOpen()) {
+                    <div class="custom-dropdown-menu">
+                      @for (opt of subjectOptions; track opt.id) {
+                        <div
+                          class="custom-dropdown-item"
+                          [class.selected]="selectedSubject() === opt.label"
+                          (click)="selectSubject(opt.label, $event)"
+                        >
+                          <div class="dropdown-item-left">
+                            <span class="subject-icon-box" [ngClass]="getSlaColorClass(opt.slaHours)">
+                              <i class="bi" [ngClass]="opt.icon"></i>
+                            </span>
+                            <div class="dropdown-item-texts">
+                              <span class="dropdown-item-label">{{ opt.label }}</span>
+                              <small class="dropdown-item-cat">{{ opt.priorityBadge }}</small>
+                            </div>
+                          </div>
+                          <span class="sla-pill-badge" [ngClass]="getSlaColorClass(opt.slaHours)">
+                            <i class="bi bi-clock-fill"></i> {{ opt.slaDescription }}
+                          </span>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+
+              <!-- Card Dinâmico de SLA Colorido -->
+              @if (currentSubjectSla(); as sla) {
+                <div class="col-12">
+                  <div class="sla-dynamic-banner" [ngClass]="getSlaColorClass(sla.slaHours)">
+                    <div class="sla-banner-left">
+                      <span class="sla-banner-icon">
+                        <i class="bi" [ngClass]="sla.icon"></i>
+                      </span>
+                      <div>
+                        <span class="sla-banner-label">Prazo máximo de resposta humana (SLA):</span>
+                        <strong class="sla-banner-value">{{ sla.slaDescription }}</strong>
+                      </div>
+                    </div>
+                    <span class="sla-priority-tag" [ngClass]="getSlaColorClass(sla.slaHours)">
+                      {{ sla.priorityBadge }}
+                    </span>
+                  </div>
+                </div>
+              }
+
+              <!-- Descrição / Mensagem -->
+              <div class="col-12">
+                <label class="form-label-hz">Mensagem *</label>
+                <textarea
+                  class="form-control-hz"
+                  rows="4"
+                  name="description"
+                  placeholder="Descreva o que você precisa. Se já possuir código de reserva ou dados de voo, informe aqui..."
+                  [ngModel]="description()"
+                  (ngModelChange)="description.set($event)"
+                  required
+                ></textarea>
+              </div>
+
+              <!-- Múltiplos Anexos (até 5 MB no total) -->
+              <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                  <label class="form-label-hz mb-0">
+                    Anexos <span class="text-muted fw-normal">(Opcional — até 5 MB no total)</span>
+                  </label>
+                  @if (attachments().length > 0) {
+                    <span class="size-tracker-badge" [class.warning]="totalAttachmentSize() > 4 * 1024 * 1024">
+                      {{ formatFileSize(totalAttachmentSize()) }} / 5 MB
+                    </span>
+                  }
+                </div>
+
+                @if (attachments().length === 0) {
+                  <label class="upload-dropzone">
+                    <input
+                      type="file"
+                      class="d-none"
+                      multiple
+                      accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
+                      (change)="onFilesSelected($event)"
+                    />
+                    <div class="upload-icon-circle">
+                      <i class="bi bi-cloud-arrow-up-fill"></i>
+                    </div>
+                    <div class="upload-texts">
+                      <strong>Anexar comprovantes ou documentos</strong>
+                      <span>Selecione um ou vários arquivos (PDF, PNG ou JPG até 5 MB no total)</span>
+                    </div>
+                  </label>
+                } @else {
+                  <div class="attached-files-container">
+                    <div class="attached-files-list">
+                      @for (file of attachments(); track file.id) {
+                        <div class="attached-file-chip">
+                          <div class="attached-chip-left">
+                            <i class="bi" [ngClass]="getFileIcon(file.name)"></i>
+                            <div class="attached-chip-text">
+                              <span class="file-name" [title]="file.name">{{ file.name }}</span>
+                              <span class="file-size">{{ formatFileSize(file.size) }}</span>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            class="btn-remove-chip"
+                            (click)="removeAttachment(file.id)"
+                            title="Remover anexo"
+                          >
+                            <i class="bi bi-x-lg"></i>
+                          </button>
+                        </div>
+                      }
+                    </div>
+
+                    @if (totalAttachmentSize() < maxTotalSizeBytes) {
+                      <label class="btn-add-more-files mt-2">
+                        <input
+                          type="file"
+                          class="d-none"
+                          multiple
+                          accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
+                          (change)="onFilesSelected($event)"
+                        />
+                        <i class="bi bi-plus-circle me-1"></i> Adicionar mais arquivos
+                      </label>
+                    }
+                  </div>
+                }
+
+                @if (attachmentError()) {
+                  <div class="attachment-error-msg mt-2">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span>{{ attachmentError() }}</span>
+                  </div>
+                }
+              </div>
+
+              <!-- Botão Enviar Mensagem -->
+              <div class="col-12 mt-3">
+                <button
+                  type="submit"
+                  class="btn-submit-ticket w-100"
+                  [disabled]="isSubmitting()"
+                >
+                  @if (isSubmitting()) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Enviando mensagem...
+                  } @else {
+                    <i class="bi bi-send-check-fill me-2"></i>
+                    Enviar mensagem
+                  }
+                </button>
+              </div>
+            </div>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- MODAL DE PROTOCOLO GERADO COM SUCESSO -->
+@if (isSuccessModalOpen() && successTicket(); as ticket) {
+  <div class="ticket-modal-backdrop" (click)="closeSuccessModal()">
+    <div class="ticket-modal-card" (click)="$event.stopPropagation()">
+      <div class="ticket-modal-icon">
+        <i class="bi bi-check2-circle"></i>
+      </div>
+
+      <span class="ticket-modal-tag">SOLICITAÇÃO RECEBIDA</span>
+      <h3 class="ticket-modal-title">Mensagem enviada com sucesso!</h3>
+      <p class="ticket-modal-desc">
+        Enviamos uma confirmação para <strong>{{ ticket.userEmail }}</strong> com o prazo de atendimento. Nossa equipe já está acompanhando seu chamado.
+      </p>
+
+      <div class="ticket-protocol-box">
+        <span class="protocol-label">PROTOCOLO DE ATENDIMENTO</span>
+        <strong class="protocol-code">{{ ticket.ticketCode }}</strong>
+        <span class="protocol-status">Status: Em Atendimento</span>
+      </div>
+
+      <div class="ticket-details-summary">
+        <div class="detail-row">
+          <span>Assunto:</span>
+          <strong>{{ ticket.subject }}</strong>
+        </div>
+        <div class="detail-row">
+          <span>Previsão de retorno:</span>
+          <strong class="sla-highlight">{{ ticket.slaDescription }}</strong>
+        </div>
+        @if (ticket.attachmentName) {
+          <div class="detail-row">
+            <span>Anexos:</span>
+            <strong class="text-truncate" style="max-width: 250px;" [title]="ticket.attachmentName">
+              {{ ticket.attachmentName }}
+              @if (ticket.attachmentSize) {
+                ({{ formatFileSize(ticket.attachmentSize) }})
+              }
+            </strong>
+          </div>
+        }
+      </div>
+
+      <div class="ticket-modal-actions">
+        <button type="button" class="btn-modal-primary" (click)="goToMyTickets()">
+          Acompanhar em Minha Conta
+        </button>
+        <button type="button" class="btn-modal-secondary" (click)="closeSuccessModal()">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+}
+
+<app-footer></app-footer>
+<app-back-to-top></app-back-to-top>

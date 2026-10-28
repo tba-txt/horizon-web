@@ -1,0 +1,1729 @@
+<app-navbar></app-navbar>
+
+    <!-- Top Hero Banner (cima-usuario.png - igual nas outras páginas) -->
+    <header class="hero-container position-relative overflow-hidden">
+      <img 
+        src="assets/cima-usuario.png" 
+        alt="Horizon Usuário" 
+        class="w-100 hero-image"
+        fetchpriority="high"
+      />
+    </header>
+
+    <!-- Floating Toast Notifications (Clean & Modern) -->
+    <div class="toast-container" aria-live="polite" aria-atomic="true">
+      @if (successMessage()) {
+        <div class="custom-toast toast-success shadow-lg">
+          <div class="flex-grow-1">
+            <div class="fw-bold text-dark small">Sucesso</div>
+            <div class="text-secondary small">{{ successMessage() }}</div>
+          </div>
+          <button type="button" class="btn-close btn-sm ms-2" (click)="successMessage.set(null)" aria-label="Fechar"></button>
+        </div>
+      }
+      @if (errorMessage()) {
+        <div class="custom-toast toast-error shadow-lg">
+          <div class="flex-grow-1">
+            <div class="fw-bold text-danger small">Atenção</div>
+            <div class="text-secondary small">{{ errorMessage() }}</div>
+          </div>
+          <button type="button" class="btn-close btn-sm ms-2" (click)="errorMessage.set(null)" aria-label="Fechar"></button>
+        </div>
+      }
+    </div>
+
+    <!-- Container Principal do Usuário (Fundo Suave Inspirado no Figma) -->
+    <div class="user-layout-bg py-4 py-md-5">
+      <div class="container-fluid px-3 px-xl-5">
+        <div class="row g-4">
+
+          <!-- BARRA LATERAL ESQUERDA (FIGMA SPEC) -->
+          
+          <aside class="col-12 col-md-4 col-lg-3">
+            <div class="sidebar-card shadow-sm p-4">
+              
+              <!-- Topo: Avatar e Nome do Usuário -->
+              <div class="text-center pb-2 mb-3">
+                <div class="avatar-wrapper mx-auto mb-3">
+                  <div class="avatar-circle">
+                    @if (user()?.profileImageUrl) {
+                      <img [src]="user()!.profileImageUrl!" [alt]="user()!.name" />
+                    } @else {
+                      <img src="assets/default-avatar.webp" [alt]="user()?.name || 'Usuário'" />
+                    }
+                    @if (isUploadingImage()) {
+                      <div class="avatar-loading-overlay">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                      </div>
+                    }
+                  </div>
+                  <!-- Botão de Upload de Foto com ícone Horizon -->
+                  <button 
+                    type="button" 
+                    class="avatar-camera-btn" 
+                    (click)="heroFileInput.click()" 
+                    [disabled]="isUploadingImage()"
+                    title="Alterar foto de perfil"
+                  >
+                    <img src="assets/avatar-badge.webp?v=2" alt="Alterar foto" class="avatar-badge-icon" />
+                  </button>
+                  <input #heroFileInput type="file" class="d-none" accept="image/*" (change)="onFileSelected($event)" />
+                </div>
+
+                <h2 class="sidebar-user-name mb-1">
+                  {{ user()?.name?.toUpperCase() || 'GABRIEL SANTANA' }}
+                </h2>
+                @if (user()?.socialName) {
+                  <span class="social-name-tag px-3 py-1 fw-semibold d-inline-block">
+                    {{ user()?.socialName }}
+                  </span>
+                }
+              </div>
+
+              <!-- Menu 1: Horizon -->
+              <div class="menu-section mb-3">
+                <button 
+                  type="button" 
+                  class="menu-group-btn d-flex justify-content-between align-items-center w-100"
+                  (click)="toggleHorizonMenu()"
+                >
+                  <span class="fw-bold">Horizon</span>
+                  <i class="bi" [class.bi-chevron-down]="!isHorizonMenuOpen()" [class.bi-chevron-up]="isHorizonMenuOpen()"></i>
+                </button>
+
+                @if (isHorizonMenuOpen()) {
+                  <div class="menu-items-list mt-2 d-flex flex-column gap-1">
+                    <button 
+                      type="button" 
+                      class="menu-item-link text-start" 
+                      [class.active]="activeView() === 'dashboard'"
+                      (click)="setActiveView('dashboard')"
+                    >
+                      Painel Geral
+                    </button>
+
+                    <button 
+                      type="button" 
+                      class="menu-item-link text-start d-flex justify-content-between align-items-center" 
+                      [class.active]="activeView() === 'trips'"
+                      (click)="setActiveView('trips')"
+                    >
+                      <span>Minhas Reservas</span>
+                      @if (pendingCount() > 0) {
+                        <span class="horizon-tag-blue px-2 py-0 small">{{ pendingCount() }}</span>
+                      }
+                    </button>
+
+                    <button 
+                      type="button" 
+                      class="menu-item-link text-start d-flex justify-content-between align-items-center" 
+                      [class.active]="activeView() === 'support'"
+                      (click)="setActiveView('support')"
+                    >
+                      <span>Meus Chamados</span>
+                      @if (activeSupportTicketsCount() > 0) {
+                        <span class="horizon-tag-blue px-2 py-0 small">{{ activeSupportTicketsCount() }}</span>
+                      }
+                    </button>
+
+                    <a routerLink="/destinations" class="menu-item-link">
+                      Conhecer um novo destino
+                    </a>
+
+                    <a routerLink="/quiz" class="menu-item-link">
+                      Quiz
+                    </a>
+
+                    <a routerLink="/recommendations" class="menu-item-link">
+                      Recomendações
+                    </a>
+                  </div>
+                }
+              </div>
+
+              <!-- Menu 2: Dados e preferências -->
+              <div class="menu-section pt-2 mb-3">
+                <button 
+                  type="button" 
+                  class="menu-group-btn d-flex justify-content-between align-items-center w-100"
+                  (click)="toggleDadosMenu()"
+                >
+                  <span class="fw-bold">Dados e preferências</span>
+                  <i class="bi" [class.bi-chevron-down]="!isDadosMenuOpen()" [class.bi-chevron-up]="isDadosMenuOpen()"></i>
+                </button>
+
+                @if (isDadosMenuOpen()) {
+                  <div class="menu-items-list mt-2 d-flex flex-column gap-1">
+                    <button 
+                      type="button" 
+                      class="menu-item-link text-start" 
+                      [class.active]="activeView() === 'personal-info'"
+                      (click)="setActiveView('personal-info')"
+                    >
+                      Informações Pessoais
+                    </button>
+
+                    <button 
+                      type="button" 
+                      class="menu-item-link text-start" 
+                      [class.active]="activeView() === 'payments'"
+                      (click)="setActiveView('payments')"
+                    >
+                      Formas de Pagamento
+                    </button>
+
+                    <button 
+                      type="button" 
+                      class="menu-item-link text-start" 
+                      [class.active]="activeView() === 'privacy'"
+                      (click)="setActiveView('privacy')"
+                    >
+                      Política de Privacidade
+                    </button>
+
+                    <button 
+                      type="button" 
+                      class="menu-item-link text-start text-danger" 
+                      (click)="openDeactivateModal()"
+                    >
+                      Excluir Conta
+                    </button>
+                  </div>
+                }
+              </div>
+
+              <!-- Ações Rápidas no Rodapé da Sidebar -->
+              <div class="pt-2 d-flex flex-column gap-2">
+                <button 
+                  type="button" 
+                  class="sidebar-btn-evaluate w-100 fw-semibold"
+                  (click)="openPlatformFeedback()"
+                >
+                  Avaliar Plataforma
+                </button>
+
+                <button 
+                  type="button" 
+                  class="sidebar-btn-logout w-100 fw-semibold"
+                  (click)="logout()"
+                >
+                  Sair da Conta
+                </button>
+              </div>
+
+            </div>
+          </aside>
+
+          <!-- ÁREA DE CONTEÚDO PRINCIPAL (DIREITA) -->
+          
+          <main class="col-12 col-md-8 col-lg-9" [class.dashboard-main-col]="activeView() === 'dashboard'">
+
+            <!-- VIEW 1: PAINEL GERAL (FIGMA SCREEN 1) -->
+            
+            @if (activeView() === 'dashboard') {
+              <div class="view-container dashboard-top">
+                
+                <h1 class="view-header-title mb-4">Painel</h1>
+
+                <!-- BANNER DO MEIO (meio-usuarios.png) -->
+                <img 
+                  src="assets/meio-usuarios.png" 
+                  alt="Horizon Painel" 
+                  class="dashboard-main-banner mb-2 d-block" 
+                />
+
+              </div>
+            }
+
+            <!-- VIEW 2: INFORMAÇÕES PESSOAIS (FIGMA SCREEN 2) -->
+            
+            @if (activeView() === 'personal-info') {
+              <div class="view-container">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                  <h1 class="view-header-title mb-0">Informações Pessoais</h1>
+                  <button 
+                    type="button" 
+                    class="btn-back-dashboard"
+                    (click)="setActiveView('dashboard')"
+                  >
+                    Voltar ao Painel
+                  </button>
+                </div>
+
+                <!-- CARD TABELA DE DADOS PESSOAIS (REPRODUÇÃO FIEL AO FIGMA SCREEN 2) -->
+                <div class="figma-white-card p-3 p-sm-4 p-md-5 mb-4 shadow-sm">
+                  
+                  <!-- Bloco 1: Suas informações pessoais -->
+                  <h4 class="figma-table-subtitle mb-3">Suas informações pessoais</h4>
+
+                  <div class="info-rows-container mb-4">
+                    <!-- Nome -->
+                    <div class="info-item-row">
+                      <div class="info-item-content">
+                        <span class="info-item-label">Nome</span>
+                        <span class="info-item-value text-uppercase">{{ user()?.name || '-' }}</span>
+                      </div>
+                      <button type="button" class="btn btn-figma-mini-edit" (click)="startEditing()">Editar</button>
+                    </div>
+
+                    <!-- Nome Social (se houver) -->
+                    @if (user()?.socialName) {
+                      <div class="info-item-row">
+                        <div class="info-item-content">
+                          <span class="info-item-label">Nome Social</span>
+                          <span class="info-item-value">{{ user()?.socialName }}</span>
+                        </div>
+                        <button type="button" class="btn btn-figma-mini-edit" (click)="startEditing()">Editar</button>
+                      </div>
+                    }
+
+                    <!-- Endereço de e-mail -->
+                    <div class="info-item-row">
+                      <div class="info-item-content">
+                        <span class="info-item-label">Endereço de e-mail</span>
+                        <span class="info-item-value">{{ user()?.email || '-' }}</span>
+                      </div>
+                      <button type="button" class="btn btn-figma-mini-edit" (click)="startEditing()">Editar</button>
+                    </div>
+
+                    <!-- Data de Nascimento (sem botão de editar) -->
+                    <div class="info-item-row">
+                      <div class="info-item-content">
+                        <span class="info-item-label">Data de Nascimento</span>
+                        <span class="info-item-value">{{ (user()?.birthDate | date:'dd/MM/yyyy') || '-' }}</span>
+                      </div>
+                    </div>
+
+                    <!-- CPF (sem botão de editar) -->
+                    <div class="info-item-row">
+                      <div class="info-item-content">
+                        <span class="info-item-label">CPF</span>
+                        <span class="info-item-value font-monospace">{{ formattedCpf() }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Bloco 2: Seus dados de contato -->
+                  <h4 class="figma-table-subtitle mb-3">Seus dados de contato</h4>
+
+                  <div class="info-rows-container mb-4">
+                    <!-- Endereço de e-mail -->
+                    <div class="info-item-row">
+                      <div class="info-item-content">
+                        <span class="info-item-label">Endereço de e-mail</span>
+                        <span class="info-item-value">{{ user()?.email || '-' }}</span>
+                      </div>
+                      <button type="button" class="btn btn-figma-mini-edit" (click)="startEditing()">Editar</button>
+                    </div>
+
+                    <!-- Telefone -->
+                    <div class="info-item-row">
+                      <div class="info-item-content">
+                        <span class="info-item-label">Telefone</span>
+                        <span class="info-item-value">(11) 98765-4321</span>
+                      </div>
+                      <button type="button" class="btn btn-figma-mini-edit" (click)="startEditing()">Editar</button>
+                    </div>
+
+                    <!-- Endereço / Região -->
+                    <div class="info-item-row">
+                      <div class="info-item-content">
+                        <span class="info-item-label">País de Residência</span>
+                        <span class="info-item-value">Brasil</span>
+                      </div>
+                      <button type="button" class="btn btn-figma-mini-edit" (click)="startEditing()">Editar</button>
+                    </div>
+
+                    <!-- Orçamento cadastrado -->
+                    @if (user()?.budgetPerPerson) {
+                      <div class="info-item-row">
+                        <div class="info-item-content">
+                          <span class="info-item-label">Orçamento por Pessoa</span>
+                          <span class="info-item-value fw-bold text-horizon">{{ formatCurrency(user()?.budgetPerPerson) }}</span>
+                        </div>
+                        <button type="button" class="btn btn-figma-mini-edit" (click)="startEditing()">Editar</button>
+                      </div>
+                    }
+                  </div>
+
+                  <!-- Botão de Ação -->
+                  @if (!isEditingPersonalInfo()) {
+                    <div class="d-flex justify-content-end">
+                      <button type="button" class="btn btn-figma-blue px-4 py-2 rounded-3 fw-semibold shadow-sm" (click)="startEditing()">
+                        <i class="bi bi-pencil-square me-1"></i> Abrir Formulário de Edição
+                      </button>
+                    </div>
+                  }
+
+                </div>
+
+                <!-- FORMULÁRIO COMPLETO COM UPLOAD DE FOTO (SE ATIVO) -->
+                @if (isEditingPersonalInfo()) {
+                  <div class="figma-white-card p-4 p-md-5 mb-4 shadow-sm border-primary">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                      <div>
+                        <h3 class="h5 fw-bold text-dark mb-0">Atualizar Dados</h3>
+                      </div>
+                      <button type="button" class="btn-close" (click)="cancelEditing()" aria-label="Fechar"></button>
+                    </div>
+
+                    <!-- Upload de Foto de Perfil no Formulário -->
+                    <div class="d-flex align-items-center gap-4 p-3 rounded-4 bg-light border mb-4">
+                      <div class="avatar-form-preview shadow-sm">
+                        @if (user()?.profileImageUrl) {
+                          <img [src]="user()!.profileImageUrl!" [alt]="user()!.name" />
+                        } @else {
+                          <img src="assets/default-avatar.webp" [alt]="user()?.name || 'Usuário'" />
+                        }
+                      </div>
+                      <div class="flex-grow-1">
+                        <strong class="d-block text-dark small mb-2">Foto de Perfil</strong>
+                        <div class="d-flex gap-2 flex-wrap">
+                          <input type="file" #formFileInput class="d-none" accept="image/*" (change)="onFileSelected($event)" />
+                          <button 
+                            type="button" 
+                            class="btn btn-horizon btn-sm rounded-2 px-3 shadow-sm" 
+                            (click)="formFileInput.click()" 
+                            [disabled]="isUploadingImage()"
+                          >
+                            @if (isUploadingImage()) {
+                              <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                              Enviando...
+                            } @else {
+                              <i class="bi bi-camera me-1"></i> Escolher Nova Foto
+                            }
+                          </button>
+                          @if (user()?.profileImageUrl) {
+                            <button type="button" class="btn btn-outline-danger btn-sm rounded-2 px-3" (click)="removeProfileImage()">
+                              Remover Foto
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    </div>
+
+                    <form [formGroup]="profileForm" (ngSubmit)="onSaveProfile()">
+                      <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                          <label class="form-label small fw-semibold text-secondary">Nome Completo</label>
+                          <input type="text" formControlName="name" class="form-control rounded-3" />
+                          @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
+                            <div class="text-danger small mt-1">Nome completo é obrigatório (mínimo 3 letras).</div>
+                          }
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <label class="form-label small fw-semibold text-secondary">Nome Social</label>
+                          <input type="text" formControlName="socialName" class="form-control rounded-3" placeholder="Como prefere ser chamado(a)" />
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <label class="form-label small fw-semibold text-secondary">E-mail</label>
+                          <input type="email" formControlName="email" class="form-control rounded-3" />
+                          @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
+                            <div class="text-danger small mt-1">Informe um e-mail válido.</div>
+                          }
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <label class="form-label small fw-semibold text-secondary">CPF</label>
+                          <div class="position-relative">
+                            <input 
+                              type="text" 
+                              formControlName="cpf" 
+                              class="form-control rounded-3 font-monospace input-prohibited" 
+                              readonly 
+                            />
+                            <span class="prohibited-lock-icon" title="Campo bloqueado para edição">
+                              <i class="bi bi-lock-fill"></i>
+                            </span>
+                          </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <label class="form-label small fw-semibold text-secondary">Data de Nascimento</label>
+                          <app-date-picker
+                            inputId="profileBirthDate"
+                            formControlName="birthDate"
+                          />
+                        </div>
+                      </div>
+
+                      <div class="d-flex justify-content-end gap-2 mt-4 pt-3">
+                        <button type="button" class="btn btn-light px-4 rounded-2" (click)="cancelEditing()">
+                          Cancelar
+                        </button>
+                        <button 
+                          type="submit" 
+                          class="btn btn-figma-blue px-4 rounded-2 fw-bold shadow-sm"
+                          [disabled]="profileForm.invalid || isSavingProfile()"
+                        >
+                          @if (isSavingProfile()) {
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Salvando...
+                          } @else {
+                            Salvar Alterações
+                          }
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                }
+
+                <!-- POLÍTICA DE PRIVACIDADE NO RODAPÉ (FIGMA SCREEN 2) -->
+                <div class="figma-white-card p-4 shadow-sm">
+                  <h3 class="figma-box-title mb-2">Política de Privacidade</h3>
+                  <p class="text-secondary small mb-4">
+                    Seus dados pessoais e informações de pagamento são protegidos por criptografia de ponta a ponta e estão em total conformidade com a LGPD.
+                  </p>
+                  <div class="d-flex justify-content-end">
+                    <button 
+                      type="button" 
+                      class="btn btn-figma-blue px-4 py-2 rounded-3 fw-semibold shadow-sm"
+                      (click)="setActiveView('privacy')"
+                    >
+                      Ler política de privacidade
+                    </button>
+                  </div>
+                </div>
+
+                <!-- ZONA DE EXCLUSÃO DE CONTA -->
+                <div class="figma-white-card p-4 shadow-sm border border-danger-subtle mt-4">
+                  <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3">
+                    <div>
+                      <div class="d-flex align-items-center gap-2 mb-1">
+                        <i class="bi bi-shield-exclamation text-danger fs-5"></i>
+                        <h3 class="figma-box-title text-danger mb-0">Excluir Conta Horizon</h3>
+                      </div>
+                      <p class="text-secondary small mb-0">
+                        Encerrar permanentemente seu acesso à Horizon e desativar seu perfil e preferências.
+                      </p>
+                    </div>
+                    <button 
+                      type="button" 
+                      class="btn btn-outline-danger btn-sm px-3 py-2 rounded-3 fw-semibold flex-shrink-0"
+                      (click)="openDeactivateModal()"
+                    >
+                      <i class="bi bi-trash3 me-1"></i> Excluir Conta
+                    </button>
+                  </div>
+                </div>
+
+              </div>
+            }
+
+            <!-- VIEW 3: MINHAS VIAGENS E RESERVAS -->
+            
+            @if (activeView() === 'trips') {
+              <div class="view-container">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                  <h1 class="view-header-title mb-0">Minhas Reservas</h1>
+                  <a routerLink="/flights" class="btn btn-horizon btn-sm px-4 py-2 rounded-2 fw-bold shadow-sm">
+                    Buscar Novos Voos
+                  </a>
+                </div>
+
+                <!-- FILTRO DE STATUS DAS RESERVAS (PADRONIZADO HORIZON) -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                  <div class="d-flex flex-wrap gap-2 p-1 bg-white rounded-3 shadow-sm">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-2 px-3 py-2 fw-semibold border-0"
+                      [class.btn-horizon]="tripsFilter() === 'all'"
+                      [class.btn-light]="tripsFilter() !== 'all'"
+                      (click)="tripsFilter.set('all')"
+                    >
+                      Todas ({{ allTripsCount() }})
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-2 px-3 py-2 fw-semibold border-0"
+                      [class.btn-horizon]="tripsFilter() === 'pending'"
+                      [class.btn-light]="tripsFilter() !== 'pending'"
+                      (click)="tripsFilter.set('pending')"
+                    >
+                      Pendentes ({{ trips()?.pending?.length || 0 }})
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-2 px-3 py-2 fw-semibold border-0"
+                      [class.btn-horizon]="tripsFilter() === 'confirmed'"
+                      [class.btn-light]="tripsFilter() !== 'confirmed'"
+                      (click)="tripsFilter.set('confirmed')"
+                    >
+                      Confirmadas ({{ trips()?.confirmed?.length || 0 }})
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-2 px-3 py-2 fw-semibold border-0"
+                      [class.btn-horizon]="tripsFilter() === 'finished'"
+                      [class.btn-light]="tripsFilter() !== 'finished'"
+                      (click)="tripsFilter.set('finished')"
+                    >
+                      Concluídas ({{ trips()?.finished?.length || 0 }})
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-2 px-3 py-2 fw-semibold border-0"
+                      [class.btn-horizon]="tripsFilter() === 'cancelled'"
+                      [class.btn-light]="tripsFilter() !== 'cancelled'"
+                      (click)="tripsFilter.set('cancelled')"
+                    >
+                      Canceladas ({{ trips()?.cancelled?.length || 0 }})
+                    </button>
+                  </div>
+                </div>
+
+                <!-- LOADING -->
+                @if (isLoadingTrips()) {
+                  <div class="py-5">
+                    <app-plane-loader></app-plane-loader>
+                  </div>
+                }
+
+                <!-- LISTA VAZIA -->
+                @else if (filteredReservations().length === 0) {
+                  <div class="figma-white-card p-5 text-center shadow-sm">
+                    <h3 class="h5 fw-bold mb-2" style="color: #5BA4D8;">Nenhuma viagem encontrada neste filtro</h3>
+                    <p class="text-secondary small mb-4 col-md-6 mx-auto">
+                      Você ainda não possui reservas nesta categoria.
+                    </p>
+                    <div class="d-flex justify-content-center gap-2">
+                      <a routerLink="/flights" class="btn btn-horizon px-4 py-2 rounded-2 fw-bold shadow-sm">
+                        Buscar Voos
+                      </a>
+                    </div>
+                  </div>
+                }
+
+                <!-- CARDS DE RESERVAS COMPACTOS COM FOTO DO DESTINO -->
+                @else {
+                  <div class="d-flex flex-column gap-3">
+                    @for (res of filteredReservations(); track res.reservationId) {
+                      <article class="figma-white-card overflow-hidden shadow-sm trip-clean-card p-0">
+                        <div class="row g-0 align-items-stretch">
+                          
+                          <!-- Esquerda: Foto Real do Destino -->
+                          <div class="col-12 col-md-3">
+                            <div class="trip-card-img-wrap h-100 position-relative overflow-hidden" (click)="openTripDetails(res)">
+                              <img 
+                                [src]="getDestinationImage(res.destinationName)" 
+                                [alt]="res.destinationName || 'Destino'" 
+                                class="w-100 h-100 object-fit-cover d-block"
+                              />
+                            </div>
+                          </div>
+
+                          <!-- Centro: Destino e Rotas Enxutas (Datas e Tipo no Modal) -->
+                          <div class="col-12 col-md-5 p-3 p-md-4 d-flex flex-column justify-content-center">
+                            <h3 class="h5 fw-bold text-dark mb-2">
+                              {{ res.destinationName || 'Destino Horizon' }}
+                            </h3>
+
+                            @if (res.outboundFlight; as out) {
+                              <div class="d-flex align-items-center gap-2 small mb-1">
+                                <span class="fw-bold" style="color: #5BA4D8;">Ida:</span>
+                                <span class="fw-semibold text-dark">{{ out.originAirportCode }} • {{ out.destinationAirportCode }}</span>
+                              </div>
+                            }
+
+                            @if (res.returnFlight; as ret) {
+                              <div class="d-flex align-items-center gap-2 small mb-1">
+                                <span class="fw-bold" style="color: #65A30D;">Volta:</span>
+                                <span class="fw-semibold text-dark">{{ ret.originAirportCode }} • {{ ret.destinationAirportCode }}</span>
+                              </div>
+                            }
+
+                            <div class="mt-2">
+                              <button 
+                                type="button" 
+                                class="btn btn-horizon btn-sm rounded-2 px-3 py-1 fw-semibold shadow-sm"
+                                (click)="openTripDetails(res)"
+                              >
+                                Ver detalhes da viagem
+                              </button>
+                            </div>
+                          </div>
+
+                          <!-- Direita: Status, Valor Total e Pagar Agora x Cancelar -->
+                          <div class="col-12 col-md-4 p-3 p-md-4 d-flex flex-column justify-content-between align-items-md-end bg-light bg-opacity-50">
+                            <div class="text-md-end mb-3 mb-md-0">
+                              <span class="small fw-bold d-block mb-1"
+                                [style.color]="res.status === 'CONFIRMADA' || res.status === 'CONCLUIDA' ? '#65A30D' : (res.status === 'PENDENTE' ? '#5BA4D8' : '#94a3b8')">
+                                {{ getStatusLabel(res.status) }}
+                              </span>
+                              <span class="fw-bold text-dark fs-5">{{ formatCurrency(res.totalAmount) }}</span>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 flex-wrap justify-content-md-end w-100">
+                              @if (res.status === 'PENDENTE') {
+                                <a [routerLink]="['/checkout', res.reservationId]" class="btn btn-horizon btn-sm rounded-2 px-3 py-2 fw-bold shadow-sm">
+                                  Pagar Agora
+                                </a>
+                                <button 
+                                  type="button" 
+                                  class="btn btn-link btn-sm text-danger text-decoration-none fw-semibold px-2"
+                                  (click)="cancelReservation(res.reservationId)"
+                                  [disabled]="isCancelling()[res.reservationId]"
+                                >
+                                  Cancelar
+                                </button>
+                              } @else if (canEvaluateTrip(res)) {
+                                <button 
+                                  type="button" 
+                                  class="btn btn-horizon-green btn-sm rounded-2 px-3 py-2 fw-bold shadow-sm"
+                                  (click)="openTripFeedback(res)"
+                                >
+                                  Avaliar
+                                </button>
+                              }
+                            </div>
+                          </div>
+
+                        </div>
+                      </article>
+                    }
+                  </div>
+                }
+
+              </div>
+            }
+
+            <!-- VIEW 4: FORMAS DE PAGAMENTO -->
+            
+            @if (activeView() === 'payments') {
+              <div class="view-container">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                  <h1 class="view-header-title mb-0">Formas de Pagamento</h1>
+                  <button 
+                    type="button" 
+                    class="btn btn-horizon btn-sm px-3 py-2 rounded-2 fw-semibold shadow-sm"
+                    (click)="openAddCardModal()"
+                  >
+                    Novo Cartão
+                  </button>
+                </div>
+
+                <!-- CARTEIRA SIMPLES E ENXUTA -->
+                <div class="figma-white-card p-4 mb-4 shadow-sm">
+                  <h3 class="figma-box-title mb-4">Meus Cartões</h3>
+
+                  @if (savedCards().length > 0) {
+                    <div class="row g-4 align-items-center">
+                      
+                      <!-- Cartão de Crédito Visual Horizon -->
+                      <div class="col-12 col-lg-6">
+                        @if (activeSavedCard(); as currentCard) {
+                          <div class="horizon-credit-card p-4 text-white position-relative overflow-hidden shadow">
+                            
+                            <!-- Marca d'água de Fundo: Avião Horizon -->
+                            <svg class="horizon-card-watermark" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                              <path d="M21,16 L21,14 L13,9 L13,3.5 C13,2.67 12.33,2 11.5,2 C10.67,2 10,2.67 10,3.5 L10,9 L2,14 L2,16 L10,13.5 L10,19 L8,20.5 L8,22 L11.5,21 L15,22 L15,20.5 L13,19 L13,13.5 L21,16 Z"/>
+                            </svg>
+
+                            <div class="d-flex justify-content-between align-items-start position-relative z-1 mb-4">
+                              <div class="card-chip"></div>
+                              <span class="fw-bold fs-5 tracking-wide">{{ currentCard.brand }}</span>
+                            </div>
+
+                            <div class="card-number-display font-monospace position-relative z-1 my-3">
+                              •••• &nbsp;•••• &nbsp;•••• &nbsp;{{ currentCard.last4 }}
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-end position-relative z-1 mt-4">
+                              <div>
+                                <span class="d-block text-white-50" style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.8px;">Titular</span>
+                                <strong class="text-uppercase" style="font-size: 0.92rem; letter-spacing: 0.5px;">
+                                  {{ currentCard.holder || user()?.name || 'TITULAR' }}
+                                </strong>
+                              </div>
+                              <div class="text-end">
+                                <span class="d-block text-white-50" style="font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.8px;">Validade</span>
+                                <strong class="font-monospace" style="font-size: 0.92rem;">{{ currentCard.expiry }}</strong>
+                              </div>
+                            </div>
+
+                          </div>
+                        }
+                      </div>
+
+                      <!-- Lista Simples de Cartões Salvos -->
+                      <div class="col-12 col-lg-6">
+                        <div class="d-flex flex-column gap-2">
+                          @for (card of savedCards(); track card.id) {
+                            <div 
+                              class="payment-card-selector p-3 rounded-3 d-flex justify-content-between align-items-center"
+                              [class.active]="selectedCardId() === card.id"
+                              (click)="selectSavedCard(card.id)"
+                            >
+                              <div>
+                                <div class="d-flex align-items-center gap-2">
+                                  <strong class="text-white small">{{ card.brand }} •••• {{ card.last4 }}</strong>
+                                  @if (card.isDefault) {
+                                    <span class="horizon-tag-green px-2 py-0" style="font-size: 0.68rem; font-weight: 700;">Padrão</span>
+                                  }
+                                </div>
+                                <span class="text-white text-opacity-75" style="font-size: 0.78rem;">Validade {{ card.expiry }}</span>
+                              </div>
+
+                              <div class="d-flex align-items-center gap-2" (click)="$event.stopPropagation()">
+                                @if (!card.isDefault) {
+                                  <button 
+                                    type="button" 
+                                    class="btn btn-card-default btn-sm rounded-2 px-2 py-1 fw-semibold shadow-sm"
+                                    style="font-size: 0.75rem;"
+                                    (click)="setDefaultCard(card.id)"
+                                  >
+                                    Tornar Padrão
+                                  </button>
+                                }
+                                @if (savedCards().length > 1) {
+                                  <button 
+                                    type="button" 
+                                    class="btn btn-card-remove btn-sm rounded-2 px-2 py-1 fw-semibold shadow-sm"
+                                    style="font-size: 0.75rem;"
+                                    (click)="removeSavedCard(card.id)"
+                                  >
+                                    Remover
+                                  </button>
+                                }
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </div>
+
+                    </div>
+                  } @else {
+                    <!-- Estado Vazio quando não há cartões -->
+                    <div class="text-center py-5 px-3">
+                      <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-3" style="width: 58px; height: 58px; background: rgba(91, 164, 216, 0.12); color: #5BA4D8;">
+                        <i class="bi bi-credit-card-2-front fs-2"></i>
+                      </div>
+                      <h4 class="fw-bold text-dark mb-2" style="font-size: 1.15rem;">Nenhum cartão cadastrado</h4>
+                      <p class="text-secondary mx-auto mb-4" style="max-width: 440px; font-size: 0.9rem; line-height: 1.6;">
+                        Adicione seus cartões de crédito para ter mais agilidade e facilidade nas próximas reservas da Horizon.
+                      </p>
+                      <button 
+                        type="button" 
+                        class="btn btn-horizon px-4 py-2 rounded-2 fw-semibold shadow-sm"
+                        (click)="openAddCardModal()"
+                      >
+                        <i class="bi bi-plus-lg me-1"></i> Cadastrar Cartão
+                      </button>
+                    </div>
+                  }
+                </div>
+
+              </div>
+            }
+
+            <!-- VIEW 5: POLÍTICA DE PRIVACIDADE -->
+            
+            @if (activeView() === 'privacy') {
+              <div class="view-container">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                  <h1 class="view-header-title mb-0">Política de Privacidade</h1>
+                  <button type="button" class="btn-back-dashboard" (click)="setActiveView('dashboard')">
+                    Voltar ao Painel
+                  </button>
+                </div>
+
+                <div class="figma-white-card p-4 p-md-5 mb-4 shadow-sm">
+                  
+                  <!-- Visão Geral de Privacidade -->
+                  <div class="privacy-overview-container mb-4 pb-2">
+                    <p class="privacy-lead-text mb-3">
+                      A Horizon preza pela transparência e pela proteção das suas informações. Este documento detalha de forma objetiva como coletamos e utilizamos seus dados para emissão de passagens e personalização do seu perfil de viagens, em conformidade com a Lei Geral de Proteção de Dados (LGPD).
+                    </p>
+                    <div class="row g-3">
+                      <div class="col-12 col-md-4">
+                        <div class="privacy-principle-card p-3 rounded-3 h-100">
+                          <strong class="d-block text-dark small mb-1">Dados Mínimos Necessários</strong>
+                          <span class="text-secondary small">Processamos apenas as informações exigidas pela aviação civil e para autenticação segura.</span>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-4">
+                        <div class="privacy-principle-card p-3 rounded-3 h-100">
+                          <strong class="d-block text-dark small mb-1">Transparência nas Sugestões</strong>
+                          <span class="text-secondary small">Você tem clareza de como suas respostas do quiz e curtidas no feed influenciam as recomendações.</span>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-4">
+                        <div class="privacy-principle-card p-3 rounded-3 h-100">
+                          <strong class="d-block text-dark small mb-1">Controle do Passageiro</strong>
+                          <span class="text-secondary small">Consulte, altere ou solicite a exclusão de seus dados e histórico a qualquer momento.</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Seção 1: Escopo e Aplicação -->
+                  <h4 class="privacy-section-title">1. Escopo e Abrangência</h4>
+                  <p class="privacy-section-text">
+                    Esta política se aplica a todos os usuários cadastrados e visitantes da plataforma Horizon, cobrindo o uso do nosso website, feed de conteúdos editoriais, quiz interativo de perfil de viajante, motor de recomendações inteligentes, busca e reserva de voos e processamento de pagamentos.
+                  </p>
+
+                  <!-- Seção 2: Dados Coletados -->
+                  <h4 class="privacy-section-title">2. Quais Dados Pessoais Coletamos</h4>
+                  <p class="privacy-section-text">
+                    Para viabilizar a curadoria de destinos, a emissão de bilhetes aéreos e a autenticação segura, processamos as seguintes categorias de dados:
+                  </p>
+                  <ul class="privacy-list">
+                    <li>
+                      <strong>Dados de Cadastro e Identificação:</strong> Nome civil completo, nome social (quando informado), Cadastro de Pessoas Físicas (CPF), data de nascimento e endereço de e-mail. Estes dados são requisitos legais obrigatórios para a emissão de passagens e identificação em aeroportos.
+                    </li>
+                    <li>
+                      <strong>Dados de Perfil Explícito (Quiz Horizon):</strong> Suas escolhas deliberadas no Quiz de Viagens, incluindo estilo preferido (viagem comum ou ecoturismo), preferências climáticas (sol e calor, frio e neve, clima ameno) e estimativa de orçamento por pessoa.
+                    </li>
+                    <li>
+                      <strong>Dados Comportamentais de Interação:</strong> Suas ações no feed editorial Horizon (curtidas e descurtidas em conteúdos e fotos de destinos). Esses dados são convertidos em pesos matemáticos de afinidade para aprimorar as recomendações geradas pelo algoritmo.
+                    </li>
+                    <li>
+                      <strong>Dados de Reservas e Histórico de Viagens:</strong> Registro de trechos aéreos selecionados (ida e volta), classes tarifárias (Básica, Executiva, Premium), assentos, nomes de passageiros acompanhantes e status da reserva.
+                    </li>
+                    <li>
+                      <strong>Dados Financeiros e de Pagamento:</strong> Processados em conformidade com as normas PCI-DSS. Informações sensíveis de cartão de crédito não são salvas em texto puro nos nossos servidores; armazenamos somente tokens seguros fornecidos pelo gateway de pagamento e os 4 últimos dígitos para conferência em sua carteira.
+                    </li>
+                  </ul>
+
+                  <!-- Seção 3: Finalidade do Tratamento -->
+                  <h4 class="privacy-section-title">3. Finalidade do Tratamento de Dados</h4>
+                  <p class="privacy-section-text">
+                    Tratamos seus dados com propósitos legítimos e transparentes:
+                  </p>
+                  <ul class="privacy-list">
+                    <li><strong>Emissão de Bilhetes Aéreos:</strong> Comunicação com as companhias aéreas e geração oficial de bilhetes e e-tickets para embarque.</li>
+                    <li><strong>Personalização Algorítmica (Horizon Engine):</strong> Cálculo do índice de compatibilidade entre destinos e passageiro (combinando 60% do perfil explícito do quiz com 40% do perfil comportamental interativo), respeitando sempre seu teto orçamentário.</li>
+                    <li><strong>Comunicação e Notificações:</strong> Envio de confirmações de reserva, vouchers de bilhete e comunicados operacionais importantes sobre status de voos.</li>
+                    <li><strong>Segurança e Prevenção à Fraude:</strong> Autenticação por tokens criptografados (JWT) e proteção contra acessos não autorizados.</li>
+                  </ul>
+
+                  <!-- Seção 4: Compartilhamento de Dados -->
+                  <h4 class="privacy-section-title">4. Compartilhamento Responsável de Dados</h4>
+                  <p class="privacy-section-text">
+                    O Horizon <strong>jamais vende, comercializa ou cede</strong> seus dados pessoais a empresas terceiras de publicidade ou corretores de dados. O compartilhamento ocorre estritamente quando indispensável para a execução do serviço:
+                  </p>
+                  <ul class="privacy-list">
+                    <li><strong>Companhias Aéreas e Operadores de Transporte:</strong> Para registro do passageiro na malha aérea e emissão do bilhete com validade legal.</li>
+                    <li><strong>Gateways de Pagamento Homologados:</strong> Para liquidação segura das transações financeiras via cartão de crédito ou PIX.</li>
+                    <li><strong>Órgãos Regulatórios e Autoridades:</strong> Quando exigido por ordem judicial ou para cumprimento de obrigações da ANAC e Receita Federal.</li>
+                  </ul>
+
+                  <!-- Seção 5: Segurança e Criptografia -->
+                  <h4 class="privacy-section-title">5. Armazenamento e Segurança da Informação</h4>
+                  <p class="privacy-section-text">
+                    Adotamos medidas técnicas e organizacionais de padrão internacional para salvaguardar suas informações:
+                  </p>
+                  <ul class="privacy-list">
+                    <li><strong>Criptografia em Trânsito:</strong> Toda comunicação entre seu navegador e nossos servidores é protegida por protocolo TLS 1.3 com criptografia de ponta a ponta.</li>
+                    <li><strong>Armazenamento Seguro:</strong> Senhas de usuários são protegidas por funções hash criptográficas irreversíveis com <em>salt</em> (BCrypt).</li>
+                    <li><strong>Isolamento de Sessão:</strong> Autenticação protegida por tokens JWT com tempo de expiração controlado e armazenamento seguro na sessão do navegador.</li>
+                  </ul>
+
+                  <!-- Seção 6: Seus Direitos como Titular (LGPD) -->
+                  <h4 class="privacy-section-title">6. Seus Direitos como Titular (Art. 18 da LGPD)</h4>
+                  <p class="privacy-section-text">
+                    Você possui total autonomia e controle sobre seus dados pessoais na Horizon. É garantido a você:
+                  </p>
+                  <ul class="privacy-list">
+                    <li><strong>Confirmação e Acesso:</strong> Consultar todos os seus dados cadastrais e histórico de viagens a qualquer momento no painel.</li>
+                    <li><strong>Correção e Atualização:</strong> Retificar dados incompletos ou desatualizados diretamente pelo formulário de Informações Pessoais.</li>
+                    <li><strong>Zerar Algoritmo de Preferências:</strong> Redefinir seu histórico comportamental na aba de Recomendações caso queira recomeçar sua experiência do zero.</li>
+                    <li><strong>Eliminação e Exclusão da Conta:</strong> Solicitar o encerramento definitivo de sua conta a qualquer momento na seção "Excluir Conta".</li>
+                    <li><strong>Revogação do Consentimento:</strong> Desativar o processamento opcional de dados sem prejuízo aos bilhetes já adquiridos.</li>
+                  </ul>
+
+                  <!-- Seção 7: Retenção e Exclusão de Dados -->
+                  <h4 class="privacy-section-title">7. Retenção e Descarte de Informações</h4>
+                  <p class="privacy-section-text">
+                    Mantemos seus dados cadastrais ativos enquanto seu perfil permanecer cadastrado. Caso opte por excluir sua conta, os dados de perfil comportamental e preferências de IA serão desativados. Informações fiscais de compras e registros de emissão de passagens serão arquivados exclusivamente pelo período mínimo exigido pela legislação tributária e aeronáutica brasileira, sendo descartados de forma segura após o término dos prazos legais.
+                  </p>
+
+                  <!-- Seção 8: Contato e Encarregado (DPO) -->
+                  <h4 class="privacy-section-title">8. Contato e Encarregado de Dados (DPO)</h4>
+                  <p class="privacy-section-text mb-4">
+                    Para exercer seus direitos de titular, esclarecer dúvidas sobre esta Política de Privacidade ou fazer solicitações relacionadas aos seus dados, entre em contato diretamente com nossa equipe de privacidade e proteção de dados:
+                  </p>
+
+                  <div class="privacy-contact-card mb-4">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                      <i class="bi bi-envelope-at-fill fs-5" style="color: #5BA4D8;"></i>
+                      <strong class="text-dark">Canal Oficial de Privacidade Horizon</strong>
+                    </div>
+                    <span class="text-secondary small d-block">
+                      E-mail: <a href="mailto:horiozonfatecpi@gmail.com" class="text-decoration-none fw-semibold" style="color: #5BA4D8;">horiozonfatecpi&#64;gmail.com</a>
+                    </span>
+                    <span class="text-muted small d-block mt-1">
+                      Horário de atendimento: Segunda a sexta-feira, das 09h às 18h (Horário de Brasília).
+                    </span>
+                  </div>
+
+                  <div class="d-flex justify-content-end">
+                    <button type="button" class="btn-back-dashboard px-4 py-2" (click)="setActiveView('dashboard')">
+                      Entendido, Voltar ao Painel
+                    </button>
+                  </div>
+                </div>
+              </div>
+            }
+
+            <!-- VIEW 6: MEUS CHAMADOS DE ATENDIMENTO -->
+            @if (activeView() === 'support') {
+              <div class="view-container">
+                
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                  <h1 class="view-header-title mb-0">Meus Chamados</h1>
+                  <a routerLink="/faq" fragment="canal-atendimento" class="btn btn-horizon btn-sm px-4 py-2 rounded-2 fw-bold shadow-sm">
+                    Abrir Novo Chamado
+                  </a>
+                </div>
+
+                <!-- FILTRO DE STATUS DOS CHAMADOS (PADRONIZADO IGUAL MINHAS RESERVAS) -->
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                  <div class="d-flex flex-wrap gap-2 p-1 bg-white rounded-3 shadow-sm">
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-2 px-3 py-2 fw-semibold border-0"
+                      [class.btn-horizon]="selectedSupportFilter() === 'ALL'"
+                      [class.btn-light]="selectedSupportFilter() !== 'ALL'"
+                      (click)="setSupportFilter('ALL')"
+                    >
+                      Todos ({{ supportTickets().length }})
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-2 px-3 py-2 fw-semibold border-0"
+                      [class.btn-horizon]="selectedSupportFilter() === 'EM_ATENDIMENTO'"
+                      [class.btn-light]="selectedSupportFilter() !== 'EM_ATENDIMENTO'"
+                      (click)="setSupportFilter('EM_ATENDIMENTO')"
+                    >
+                      Em Atendimento ({{ activeSupportTicketsCount() }})
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn btn-sm rounded-2 px-3 py-2 fw-semibold border-0"
+                      [class.btn-horizon]="selectedSupportFilter() === 'RESOLVIDO'"
+                      [class.btn-light]="selectedSupportFilter() !== 'RESOLVIDO'"
+                      (click)="setSupportFilter('RESOLVIDO')"
+                    >
+                      Resolvidos ({{ resolvedSupportTicketsCount() }})
+                    </button>
+                  </div>
+                </div>
+
+                <!-- LISTA VAZIA (IGUAL MINHAS RESERVAS) -->
+                @if (filteredSupportTickets().length === 0) {
+                  <div class="figma-white-card p-5 text-center shadow-sm">
+                    <h3 class="h5 fw-bold mb-2" style="color: #5BA4D8;">Nenhum chamado encontrado neste filtro</h3>
+                    <p class="text-secondary small mb-4 col-md-6 mx-auto">
+                      Você ainda não possui solicitações de suporte nesta categoria.
+                    </p>
+                    <div class="d-flex justify-content-center gap-2">
+                      <a routerLink="/faq" fragment="canal-atendimento" class="btn btn-horizon px-4 py-2 rounded-2 fw-bold shadow-sm">
+                        Abrir Chamado
+                      </a>
+                    </div>
+                  </div>
+                }
+
+                <!-- CARDS COMPACTOS DE CHAMADOS (PADRÃO MINHAS RESERVAS) -->
+                @else {
+                  <div class="d-flex flex-column gap-3">
+                    @for (ticket of filteredSupportTickets(); track ticket.id) {
+                      <article class="figma-white-card overflow-hidden shadow-sm trip-clean-card p-0">
+                        <div class="row g-0 align-items-stretch">
+                          
+                          <!-- Esquerda: Bloco Visual Horizon do Chamado -->
+                          <div class="col-12 col-md-3">
+                            <div 
+                              class="support-card-visual-wrap h-100 position-relative overflow-hidden d-flex flex-column align-items-center justify-content-center p-3 text-center"
+                              [class.visual-resolved]="ticket.status === 'RESOLVIDO'"
+                              (click)="openTicketDetails(ticket)"
+                            >
+                              <i class="bi {{ getSubjectIcon(ticket.subject) }} support-visual-watermark"></i>
+                              <div class="support-visual-icon-badge mb-2">
+                                <i class="bi {{ getSubjectIcon(ticket.subject) }} fs-4 text-white"></i>
+                              </div>
+                              <span class="text-white fw-bold small d-block">Suporte Horizon</span>
+                            </div>
+                          </div>
+
+                          <!-- Centro: Assunto, Datas e Botão Ver Detalhes -->
+                          <div class="col-12 col-md-5 p-3 p-md-4 d-flex flex-column justify-content-center">
+                            <h3 class="h5 fw-bold text-dark mb-2">
+                              {{ ticket.subject }}
+                            </h3>
+
+                            <div class="d-flex align-items-center gap-2 small mb-1">
+                              <span class="fw-bold" style="color: #5BA4D8;">Aberto em:</span>
+                              <span class="fw-semibold text-dark">{{ ticket.createdAt | date:'dd/MM/yyyy' }} • {{ ticket.createdAt | date:'HH:mm' }}</span>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 small mb-1">
+                              <span class="fw-bold" style="color: #65A30D;">Prazo SLA:</span>
+                              <span class="fw-semibold text-dark">{{ ticket.slaDescription }}</span>
+                            </div>
+
+                            <div class="mt-2">
+                              <button 
+                                type="button" 
+                                class="btn btn-horizon btn-sm rounded-2 px-3 py-1 fw-semibold shadow-sm"
+                                (click)="openTicketDetails(ticket)"
+                              >
+                                Ver detalhes do chamado
+                              </button>
+                            </div>
+                          </div>
+
+                          <!-- Direita: Status, Código do Protocolo e Ação -->
+                          <div class="col-12 col-md-4 p-3 p-md-4 d-flex flex-column justify-content-between align-items-md-end bg-light bg-opacity-50">
+                            <div class="text-md-end mb-3 mb-md-0">
+                              <span class="small fw-bold d-block mb-1"
+                                [style.color]="ticket.status === 'RESOLVIDO' ? '#65A30D' : '#5BA4D8'">
+                                {{ ticket.status === 'RESOLVIDO' ? 'Resolvido' : 'Em Atendimento' }}
+                              </span>
+                              <span class="fw-bold text-dark fs-5">{{ ticket.ticketCode }}</span>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-2 flex-wrap justify-content-md-end w-100">
+                              @if (ticket.status === 'EM_ATENDIMENTO') {
+                                <button 
+                                  type="button" 
+                                  class="btn btn-horizon-green btn-sm rounded-2 px-3 py-2 fw-bold shadow-sm"
+                                  (click)="resolveTicket(ticket)"
+                                >
+                                  Marcar como Resolvido
+                                </button>
+                              }
+                            </div>
+                          </div>
+
+                        </div>
+                      </article>
+                    }
+                  </div>
+                }
+
+              </div>
+            }
+
+          </main>
+
+          <!-- ÁREA LARGURA TOTAL DO PAINEL (OCUPA A ESQUERDA ABAIXO DA SIDEBAR) -->
+          
+          @if (activeView() === 'dashboard') {
+            <div class="col-12">
+
+              <!-- BLOCO DO MEIO ÚNICO E ENXUTO: IMAGEM GRANDE DO DESTINO + BILHETE 3D -->
+              @if (activeConfirmedTrip(); as currentTrip) {
+                <div class="next-trip-showcase-card mb-4 p-4 shadow-sm">
+                  
+                  <!-- Barra Superior Enxuta com Picker Dropdown e Ações -->
+                  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                      <span class="horizon-tag-green px-3 py-1 fw-bold">
+                        <i class="bi bi-check-circle-fill me-1"></i> Embarque Confirmado
+                      </span>
+
+                      <!-- Picker para alternar viagens sem poluir a tela -->
+                      <div class="position-relative">
+                        <button 
+                          type="button" 
+                          class="trip-picker-btn d-flex align-items-center gap-2 px-3 py-1"
+                          (click)="toggleConfirmedPicker()"
+                        >
+                          <i class="bi bi-geo-alt-fill text-horizon"></i>
+                          <span class="fw-bold text-dark">{{ currentTrip.destinationName }}</span>
+                          @if ((trips()?.confirmed?.length || 0) > 1) {
+                            <i class="bi bi-chevron-down small text-horizon ms-1"></i>
+                          }
+                        </button>
+
+                        @if (isConfirmedPickerOpen() && (trips()?.confirmed?.length || 0) > 1) {
+                          <div class="trip-picker-dropdown shadow-lg p-2">
+                            <div class="small fw-bold text-secondary px-2 py-1">Escolher embarque:</div>
+                            @for (cTrip of trips()!.confirmed; track cTrip.reservationId; let idx = $index) {
+                              <button 
+                                type="button" 
+                                class="trip-picker-item w-100 text-start px-3 py-2 d-flex justify-content-between align-items-center"
+                                [class.active]="selectedConfirmedIndex() === idx"
+                                (click)="selectConfirmedTrip(idx)"
+                              >
+                                <span>
+                                  <strong class="d-block">{{ cTrip.destinationName }}</strong>
+                                  <small class="opacity-75">{{ cTrip.outboundFlight?.flightDate | date:'dd/MM/yyyy' }}</small>
+                                </span>
+                                @if (selectedConfirmedIndex() === idx) {
+                                  <i class="bi bi-check2 fw-bold"></i>
+                                }
+                              </button>
+                            }
+                          </div>
+                        }
+                      </div>
+                    </div>
+
+                    <div class="d-flex gap-2 flex-wrap">
+                      @if (currentTrip.tickets && currentTrip.tickets.length > 0) {
+                        <button 
+                          type="button" 
+                          class="btn btn-outline-horizon btn-sm rounded-2 px-3 py-2 fw-semibold"
+                          (click)="downloadTicket(currentTrip.tickets[0].ticketNumber, currentTrip.tickets[0].passengerName, currentTrip.outboundFlight?.flightDate)"
+                        >
+                          <i class="bi bi-download me-1"></i> Baixar PDF
+                        </button>
+                      }
+                      <button 
+                        type="button" 
+                        class="btn btn-horizon btn-sm rounded-2 px-3 py-2 fw-semibold shadow-sm"
+                        (click)="openTripDetails(currentTrip)"
+                      >
+                        Detalhes do Voo
+                      </button>
+                      <button 
+                        type="button" 
+                        class="btn btn-outline-horizon btn-sm rounded-2 px-3 py-2 fw-semibold"
+                        (click)="setActiveView('trips')"
+                      >
+                        Ver Reservas
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- Corpo Visual: Imagem do Destino (-184px no desktop) + Bilhete 3D (Direita) -->
+                  <div class="row align-items-center g-4 showcase-body-row">
+                    
+                    <!-- Imagem do Destino -->
+                    <div class="col-12 col-lg-8 showcase-img-col">
+                      <div class="trip-visual-banner position-relative overflow-hidden rounded-3 shadow-sm" (click)="openTripDetails(currentTrip)">
+                        <img 
+                          [src]="getDestinationImage(currentTrip.destinationName)" 
+                          [alt]="currentTrip.destinationName" 
+                          class="w-100 h-100 object-fit-cover"
+                        />
+                        <div class="trip-visual-overlay p-4 d-flex flex-column justify-content-end">
+                          <div class="text-white">
+                            <h3 class="h3 fw-bold mb-1 text-white">{{ currentTrip.destinationName }}</h3>
+                            <div class="d-flex align-items-center gap-2 small fw-semibold text-white">
+                              <span>
+                                {{ currentTrip.outboundFlight?.originAirportCode || 'GRU' }} • {{ currentTrip.outboundFlight?.destinationAirportCode || 'DEST' }}
+                              </span>
+                              <span>•</span>
+                              <span>{{ (currentTrip.outboundFlight?.flightDate | date:'dd/MM/yyyy') || 'Confirmado' }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Bilhete 3D (Sem Assento) -->
+                    <div class="col-12 col-lg-4 showcase-ticket-col text-center">
+                      <div class="ticket-3d-wrapper">
+                        <app-ticket 
+                          [passengerName]="(currentTrip.tickets && currentTrip.tickets[0]?.passengerName) || user()?.name || 'Passageiro'"
+                          [ticketNumber]="(currentTrip.tickets && currentTrip.tickets[0]?.ticketNumber) || ('HZ-' + currentTrip.reservationId)"
+                          [origin]="currentTrip.outboundFlight?.originAirportCode || 'GRU'"
+                          [destination]="currentTrip.outboundFlight?.destinationAirportCode || 'GIG'"
+                          [flightNumber]="currentTrip.outboundFlight?.flightNumber || 'HZ-402'"
+                          [departureTime]="currentTrip.outboundFlight?.departureTime || '08:30'"
+                          [arrivalTime]="currentTrip.outboundFlight?.arrivalTime || '17:45'"
+                          [gate]="'B08'"
+                          [date]="(currentTrip.outboundFlight?.flightDate | date:'dd/MM/yyyy') || ''">
+                        </app-ticket>
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+              }
+
+              <!-- CARD 2 (FIGMA SPEC): RESUMO DO USUÁRIO -->
+              <div class="figma-white-card p-4 p-md-4 mb-4 shadow-sm">
+                <h2 class="figma-profile-name mb-3">
+                  {{ user()?.name?.toUpperCase() || 'GABRIEL SANTANA' }}
+                </h2>
+
+                <div class="d-flex flex-column gap-2 mb-4">
+                  <div class="d-flex align-items-center gap-2 text-secondary small">
+                    <i class="bi bi-phone text-horizon fs-5"></i>
+                    <span>(11) 98765-4321</span>
+                  </div>
+                  <div class="d-flex align-items-center gap-2 text-secondary small">
+                    <i class="bi bi-envelope text-horizon fs-5"></i>
+                    <span>{{ user()?.email }}</span>
+                  </div>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                  <button 
+                    type="button" 
+                    class="btn btn-figma-blue px-4 py-2 rounded-3 fw-semibold shadow-sm"
+                    (click)="setActiveView('personal-info')"
+                  >
+                    Editar minhas informações
+                  </button>
+                </div>
+              </div>
+
+              <!-- CARD 3 (FIGMA SPEC): POLÍTICA DE PRIVACIDADE -->
+              <div class="figma-white-card p-4 mb-4 shadow-sm">
+                <h3 class="figma-box-title mb-2">Política de Privacidade</h3>
+                <p class="text-secondary small mb-4">
+                  Seus dados pessoais e informações de pagamento são protegidos com criptografia de ponta a ponta e estão em total conformidade com a Lei Geral de Proteção de Dados (LGPD).
+                </p>
+                <div class="d-flex justify-content-end">
+                  <button 
+                    type="button" 
+                    class="btn btn-figma-blue px-4 py-2 rounded-3 fw-semibold shadow-sm"
+                    (click)="setActiveView('privacy')"
+                  >
+                    Ler política de privacidade
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          }
+
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL 1: DETALHES DA VIAGEM & BILHETES (COMPACTO E LIMPO) -->
+    
+    @if (selectedTripForDetails(); as trip) {
+      <div class="modal-backdrop fade show" (click)="closeTripDetails()"></div>
+      <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" (click)="closeTripDetails()">
+        <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+          <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            
+            <!-- Header com Imagem do Destino -->
+            <div class="modal-header border-0 p-0 position-relative overflow-hidden" style="height: 125px;">
+              <img 
+                [src]="getDestinationImage(trip.destinationName)" 
+                [alt]="trip.destinationName" 
+                class="w-100 h-100 object-fit-cover"
+              />
+              <div class="position-absolute inset-0 w-100 h-100 d-flex justify-content-between align-items-end p-4" style="background: linear-gradient(to top, rgba(91, 164, 216, 0.92), rgba(91, 164, 216, 0.25)); top: 0; left: 0;">
+                <div class="text-white">
+                  <h3 class="h4 fw-bold mb-0 text-white">{{ trip.destinationName }}</h3>
+                  <span class="small text-white opacity-75">
+                    {{ trip.returnFlight ? 'Ida e Volta' : 'Somente Ida' }} • Classe {{ trip.outboundFlight?.seatClass || 'Básico' }}
+                  </span>
+                </div>
+                <button type="button" class="btn-close btn-close-white mb-auto" (click)="closeTripDetails()" aria-label="Fechar"></button>
+              </div>
+            </div>
+
+            <div class="modal-body p-4">
+              
+              <!-- Bloco Unificado de Voos (Ida e Volta) -->
+              <div class="p-3 rounded-3 bg-light mb-3">
+                @if (trip.outboundFlight; as out) {
+                  <div class="d-flex justify-content-between align-items-center" [class.mb-3]="!!trip.returnFlight">
+                    <div>
+                      <span class="small fw-bold d-block" style="color: #5BA4D8; font-size: 0.75rem;">IDA • VOO {{ out.flightNumber }}</span>
+                      <strong class="text-dark fs-6">{{ out.originAirportCode }} • {{ out.destinationAirportCode }}</strong>
+                    </div>
+                    <div class="text-end">
+                      <strong class="text-dark small d-block">{{ out.flightDate | date:'dd/MM/yyyy' }}</strong>
+                      <span class="text-secondary small">{{ (out.departureTime || '').slice(0, 5) }} às {{ (out.arrivalTime || '').slice(0, 5) }}</span>
+                    </div>
+                  </div>
+                }
+
+                @if (trip.returnFlight; as ret) {
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                      <span class="small fw-bold d-block" style="color: #65A30D; font-size: 0.75rem;">VOLTA • VOO {{ ret.flightNumber }}</span>
+                      <strong class="text-dark fs-6">{{ ret.originAirportCode }} • {{ ret.destinationAirportCode }}</strong>
+                    </div>
+                    <div class="text-end">
+                      <strong class="text-dark small d-block">{{ ret.flightDate | date:'dd/MM/yyyy' }}</strong>
+                      <span class="text-secondary small">{{ (ret.departureTime || '').slice(0, 5) }} às {{ (ret.arrivalTime || '').slice(0, 5) }}</span>
+                    </div>
+                  </div>
+                }
+
+                <div class="mt-3 text-secondary" style="font-size: 0.78rem;">
+                  Portão B08 • Terminal 3 • Bagagem de mão 10kg inclusa
+                </div>
+              </div>
+
+              <!-- Passageiros e Download de PDF -->
+              <div class="d-flex flex-column gap-2 mb-3">
+                @if ((trip.status === 'CONFIRMADA' || trip.status === 'CONCLUIDA') && trip.tickets && trip.tickets.length > 0) {
+                  @for (t of trip.tickets; track t.id) {
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-light">
+                      <div>
+                        <strong class="text-dark d-block small">{{ t.passengerName }}</strong>
+                        <span class="font-monospace small fw-semibold" style="color: #5BA4D8; font-size: 0.8rem;">{{ t.ticketNumber }}</span>
+                      </div>
+                      <button 
+                        type="button" 
+                        class="btn btn-horizon btn-sm rounded-2 px-3 py-2 fw-bold shadow-sm" 
+                        (click)="downloadTicket(t.ticketNumber, t.passengerName, trip.outboundFlight?.flightDate)"
+                      >
+                        Baixar PDF
+                      </button>
+                    </div>
+                  }
+                } @else if (trip.passengers && trip.passengers.length > 0) {
+                  @for (p of trip.passengers; track $index) {
+                    <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-light">
+                      <div>
+                        <strong class="text-dark d-block small">{{ p.name }}</strong>
+                        <span class="text-secondary small" style="font-size: 0.78rem;">
+                          @if (trip.status === 'PENDENTE') {
+                            Bilhete liberado após pagamento
+                          } @else if (trip.status === 'CANCELADA') {
+                            Reserva cancelada
+                          } @else {
+                            Comprovante e Cartão de Embarque
+                          }
+                        </span>
+                      </div>
+                      @if (trip.status === 'CONFIRMADA' || trip.status === 'CONCLUIDA') {
+                        <button 
+                          type="button" 
+                          class="btn btn-horizon btn-sm rounded-2 px-3 py-2 fw-bold shadow-sm" 
+                          (click)="downloadTicket('RES-' + trip.reservationId, p.name, trip.outboundFlight?.flightDate)"
+                        >
+                          Baixar PDF
+                        </button>
+                      } @else if (trip.status === 'PENDENTE') {
+                        <span class="small fw-bold" style="color: #5BA4D8;">Aguardando pagamento</span>
+                      } @else {
+                        <span class="small fw-semibold text-secondary">Indisponível</span>
+                      }
+                    </div>
+                  }
+                } @else {
+                  <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-light">
+                    <div>
+                      <strong class="text-dark d-block small">Passagem da Viagem</strong>
+                      <span class="text-secondary small" style="font-size: 0.78rem;">
+                        @if (trip.status === 'PENDENTE') {
+                          Bilhete liberado após pagamento
+                        } @else if (trip.status === 'CANCELADA') {
+                          Reserva cancelada
+                        } @else {
+                          Cartão de Embarque em PDF
+                        }
+                      </span>
+                    </div>
+                    @if (trip.status === 'CONFIRMADA' || trip.status === 'CONCLUIDA') {
+                      <button 
+                        type="button" 
+                        class="btn btn-horizon btn-sm rounded-2 px-3 py-2 fw-bold shadow-sm" 
+                        (click)="downloadTicket('RES-' + trip.reservationId, trip.passengers?.[0]?.name, trip.outboundFlight?.flightDate)"
+                      >
+                        Baixar PDF
+                      </button>
+                    } @else if (trip.status === 'PENDENTE') {
+                      <span class="small fw-bold" style="color: #5BA4D8;">Aguardando pagamento</span>
+                    } @else {
+                      <span class="small fw-semibold text-secondary">Indisponível</span>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="d-flex justify-content-between align-items-center pt-2">
+                <button type="button" class="btn btn-light rounded-2 px-4 fw-semibold text-secondary" (click)="closeTripDetails()">
+                  Fechar
+                </button>
+                @if (trip.status === 'PENDENTE') {
+                  <a [routerLink]="['/checkout', trip.reservationId]" class="btn btn-horizon rounded-2 px-4 fw-bold shadow-sm" (click)="closeTripDetails()">
+                    Pagar Agora
+                  </a>
+                } @else if (canEvaluateTrip(trip)) {
+                  <button type="button" class="btn btn-horizon-green rounded-2 px-4 fw-bold shadow-sm" (click)="openTripFeedback(trip)">
+                    Avaliar Viagem
+                  </button>
+                }
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- MODAL DE DETALHES DO CHAMADO (PADRÃO MINHAS RESERVAS) -->
+    @if (selectedTicketForDetails(); as ticket) {
+      <div class="modal-backdrop fade show" (click)="closeTicketDetails()"></div>
+      <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" (click)="closeTicketDetails()">
+        <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+          <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+            
+            <!-- Header com Visual Horizon -->
+            <div class="modal-header border-0 p-0 position-relative overflow-hidden" style="height: 125px; background: #5BA4D8;">
+              <div class="position-absolute inset-0 w-100 h-100 d-flex justify-content-between align-items-end p-4" style="background: linear-gradient(to top, rgba(91, 164, 216, 0.96), rgba(91, 164, 216, 0.75)); top: 0; left: 0;">
+                <div class="text-white">
+                  <h3 class="h5 fw-bold mb-1 text-white">{{ ticket.subject }}</h3>
+                  <span class="small text-white opacity-75">
+                    Protocolo {{ ticket.ticketCode }} • {{ ticket.status === 'RESOLVIDO' ? 'Resolvido' : 'Em Atendimento' }}
+                  </span>
+                </div>
+                <button type="button" class="btn-close btn-close-white mb-auto" (click)="closeTicketDetails()" aria-label="Fechar"></button>
+              </div>
+            </div>
+
+            <div class="modal-body p-4">
+              
+              <!-- Bloco Unificado de Dados do Protocolo -->
+              <div class="p-3 rounded-3 bg-light mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <div>
+                    <span class="small fw-bold d-block" style="color: #5BA4D8; font-size: 0.75rem;">ABERTURA DO CHAMADO</span>
+                    <strong class="text-dark fs-6">{{ ticket.createdAt | date:'dd/MM/yyyy' }} às {{ ticket.createdAt | date:'HH:mm' }}</strong>
+                  </div>
+                  <div class="text-end">
+                    <span class="small fw-bold d-block" style="color: #65A30D; font-size: 0.75rem;">PRAZO SLA</span>
+                    <strong class="text-dark small d-block">{{ ticket.slaDescription }}</strong>
+                  </div>
+                </div>
+
+                <div class="mt-2 text-secondary" style="font-size: 0.78rem;">
+                  Canal de retorno: <strong class="text-dark">{{ ticket.userEmail }}</strong>
+                </div>
+              </div>
+
+              <!-- Mensagem do Passageiro -->
+              <div class="p-3 rounded-3 bg-light mb-3">
+                <span class="small fw-bold d-block mb-1" style="color: #5BA4D8; font-size: 0.75rem;">DESCRIÇÃO DA SOLICITAÇÃO</span>
+                <p class="text-dark small mb-0" style="white-space: pre-wrap; line-height: 1.6;">{{ ticket.description }}</p>
+              </div>
+
+              <!-- Anexo e Download -->
+              @if (ticket.attachmentName) {
+                <div class="d-flex flex-column gap-2 mb-3">
+                  <div class="d-flex justify-content-between align-items-center p-3 rounded-3 bg-light">
+                    <div class="text-truncate me-2">
+                      <strong class="text-dark d-block small text-truncate">{{ ticket.attachmentName }}</strong>
+                      @if (ticket.attachmentSize) {
+                        <span class="font-monospace small fw-semibold" style="color: #5BA4D8; font-size: 0.8rem;">
+                          {{ (ticket.attachmentSize / 1024) | number:'1.0-1' }} KB
+                        </span>
+                      }
+                    </div>
+                    @if (ticket.attachmentData) {
+                      <button 
+                        type="button" 
+                        class="btn btn-horizon btn-sm rounded-2 px-3 py-2 fw-bold shadow-sm flex-shrink-0" 
+                        (click)="downloadAttachment(ticket)"
+                      >
+                        Baixar Anexo
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+
+              <div class="d-flex justify-content-between align-items-center pt-2">
+                <button type="button" class="btn btn-light rounded-2 px-4 fw-semibold text-secondary" (click)="closeTicketDetails()">
+                  Fechar
+                </button>
+                @if (ticket.status === 'EM_ATENDIMENTO') {
+                  <button type="button" class="btn btn-horizon-green rounded-2 px-4 fw-bold shadow-sm" (click)="resolveTicket(ticket); closeTicketDetails()">
+                    Marcar como Resolvido
+                  </button>
+                }
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- MODAL 2: CONFIRMAÇÃO DE EXCLUSÃO DE CONTA (PERSONALIZADO COM FUNDO DESFOCADO) -->
+    
+    @if (isDeactivateModalOpen()) {
+      <div class="deactivate-modal-backdrop" (click)="closeDeactivateModal()"></div>
+      <div class="deactivate-modal-wrapper" (click)="closeDeactivateModal()" role="dialog" aria-modal="true" aria-labelledby="deactivate-modal-title">
+        <div class="deactivate-modal-card" (click)="$event.stopPropagation()">
+          
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 id="deactivate-modal-title" class="h5 fw-bold text-dark mb-0">Excluir conta</h2>
+            <button 
+              type="button" 
+              class="btn-close small" 
+              (click)="closeDeactivateModal()" 
+              [disabled]="isDeactivating()"
+              aria-label="Fechar"
+            ></button>
+          </div>
+
+          <p class="text-secondary small mb-3">
+            Tem certeza de que deseja excluir sua conta no Horizon? Esta ação desativará permanentemente o seu acesso e o histórico do seu perfil.
+          </p>
+
+          <div class="p-3 rounded-3 bg-light mb-4">
+            <div class="d-flex align-items-start gap-2">
+              <i class="bi bi-info-circle text-secondary mt-1 flex-shrink-0"></i>
+              <span class="text-secondary small">
+                Caso tenha viagens futuras reservadas, certifique-se de salvar ou baixar seus bilhetes antes de continuar.
+              </span>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center justify-content-end gap-2">
+            <button 
+              type="button" 
+              class="btn btn-light btn-sm px-3 py-2 rounded-2 fw-semibold text-secondary" 
+              (click)="closeDeactivateModal()"
+              [disabled]="isDeactivating()"
+            >
+              Cancelar
+            </button>
+            <button 
+              type="button" 
+              class="btn btn-danger btn-sm px-3 py-2 rounded-2 fw-semibold"
+              [disabled]="isDeactivating()"
+              (click)="onConfirmDeactivate()"
+            >
+              @if (isDeactivating()) {
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                <span>Excluindo...</span>
+              } @else {
+                <span>Excluir conta</span>
+              }
+            </button>
+          </div>
+
+        </div>
+      </div>
+    }
+
+    <!-- MODAL: CONFIRMAÇÃO DE CANCELAMENTO DE RESERVA -->
+    
+    @if (reservationIdToCancel(); as cancelResId) {
+      <div class="modal-backdrop fade show" (click)="closeCancelReservationModal()"></div>
+      <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" (click)="closeCancelReservationModal()">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 400px;" (click)="$event.stopPropagation()">
+          <div class="modal-content border-0 shadow-lg rounded-3 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h2 class="h6 fw-bold text-dark mb-0">Cancelar reserva?</h2>
+              <button type="button" class="btn-close small" (click)="closeCancelReservationModal()" aria-label="Fechar"></button>
+            </div>
+            <p class="text-secondary small mb-4">
+              Deseja realmente cancelar esta reserva e liberar os assentos selecionados?
+            </p>
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-light btn-sm px-3 py-2 rounded-2 fw-semibold text-secondary" (click)="closeCancelReservationModal()">
+                Voltar
+              </button>
+              <button 
+                type="button" 
+                class="btn btn-danger btn-sm px-3 py-2 rounded-2 fw-semibold"
+                [disabled]="isCancelling()[cancelResId]"
+                (click)="confirmCancelReservation()"
+              >
+                @if (isCancelling()[cancelResId]) {
+                  <span class="spinner-border spinner-border-sm me-1" role="status"></span> Cancelando...
+                } @else {
+                  Cancelar reserva
+                }
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- MODAL 3: FEEDBACK / NPS -->
+    <app-feedback-modal 
+      [isOpen]="isFeedbackModalOpen()"
+      [reservationId]="feedbackReservationId()"
+      [destinationName]="feedbackDestinationName()"
+      [initialTargetType]="feedbackTargetType()"
+      [mode]="'NPS'"
+      (closed)="closeFeedbackModal()"
+      (feedbackSubmitted)="onFeedbackSubmitted()"
+    ></app-feedback-modal>
+
+    <!-- MODAL 4: ADICIONAR NOVO CARTÃO -->
+    
+    @if (isAddCardModalOpen()) {
+      <div class="modal-backdrop fade show" (click)="closeAddCardModal()"></div>
+      <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
+            <div class="modal-header border-0 px-4 py-3 text-white" style="background-color: #5BA4D8;">
+              <h2 class="h6 fw-bold mb-0"><i class="bi bi-credit-card-2-front me-2"></i>Adicionar Cartão</h2>
+              <button type="button" class="btn-close btn-close-white" (click)="closeAddCardModal()" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body p-4">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label small fw-semibold text-secondary">Bandeira</label>
+                  <select class="form-select horizon-select" [value]="newCardBrand()" (change)="onNewCardBrandChange($event)">
+                    <option value="Mastercard">Mastercard</option>
+                    <option value="Visa">Visa</option>
+                    <option value="Elo">Elo</option>
+                    <option value="Amex">American Express</option>
+                  </select>
+                </div>
+
+                <div class="col-12">
+                  <label class="form-label small fw-semibold text-secondary">Número do Cartão</label>
+                  <input 
+                    type="text" 
+                    class="form-control rounded-2 font-monospace" 
+                    placeholder="0000 0000 0000 0000" 
+                    maxlength="19"
+                    [value]="newCardNumber()"
+                    (input)="onCardNumberInput($event)"
+                  />
+                </div>
+
+                <div class="col-12 col-sm-7">
+                  <label class="form-label small fw-semibold text-secondary">Nome no Cartão</label>
+                  <input 
+                    type="text" 
+                    class="form-control rounded-2 text-uppercase" 
+                    placeholder="GABRIEL SANTANA"
+                    [value]="newCardHolder()"
+                    (input)="onCardHolderInput($event)"
+                  />
+                </div>
+
+                <div class="col-12 col-sm-5">
+                  <label class="form-label small fw-semibold text-secondary">Validade (MM/AA)</label>
+                  <input 
+                    type="text" 
+                    class="form-control rounded-2 font-monospace" 
+                    placeholder="08/29" 
+                    maxlength="5"
+                    [value]="newCardExpiry()"
+                    (input)="onCardExpiryInput($event)"
+                  />
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end gap-2 mt-4 pt-2">
+                <button type="button" class="btn btn-light px-4 rounded-2 fw-semibold" (click)="closeAddCardModal()">
+                  Cancelar
+                </button>
+                <button type="button" class="btn btn-horizon-green px-4 rounded-2 fw-bold shadow-sm" (click)="saveNewCard()">
+                  Salvar Cartão
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <app-back-to-top></app-back-to-top>
+
+    <!-- Rodapé -->
+    <app-footer></app-footer>

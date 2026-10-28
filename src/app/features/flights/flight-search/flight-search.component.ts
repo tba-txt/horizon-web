@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NavbarComponent } from '../../../shared/components/navbar/navbar.component';
 import { FooterComponent } from '../../../shared/components/footer/footer.component';
 import { FlightsService } from '../services/flights.service';
-import { DestinationsService } from '../../destinations/services/destinations.service';
+import { DestinationsService, findLocalImage } from '../../destinations/services/destinations.service';
 import { Flight, FlightSearchParams, FlightSeatClass, SelectedFlightBooking } from '../models/flight.model';
 import { Destination } from '../../destinations/models/destination.model';
 import { ReservationService } from '../../../core/reservations/services/reservation.service';
@@ -21,984 +21,14 @@ export interface CalendarDay {
 }
 
 import { PlaneLoaderComponent } from '../../../shared/components/plane-loader/plane-loader.component';
+import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
 
 @Component({
   selector: 'app-flight-search',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, FooterComponent, PlaneLoaderComponent, DatePipe],
-  template: `
-    <app-navbar></app-navbar>
-
-    <!-- Hero Section -->
-    <header class="hero-container position-relative overflow-hidden">
-      <img 
-        src="assets/viagem.webp" 
-        alt="Consulta de Voos Hero" 
-        class="w-100 hero-image"
-        (error)="handleHeroError($event)"
-      />
-    </header>
-
-    <main class="container py-5">
-      
-      <!-- Header da Pagina -->
-      <div class="mb-4">
-        <h1 class="h2 fw-bold text-dark mb-1">Consulta de Voos</h1>
-      </div>
-
-      <!-- Card do Filtro / Busca -->
-      <div class="card border shadow-sm rounded-4 p-4 mb-5 bg-white search-card-container">
-        <form (ngSubmit)="onSearch()" class="row g-3 align-items-end">
-          
-          <!-- Origem -->
-          <div class="col-12 col-md-2">
-            <label class="form-label small fw-semibold text-secondary">
-              Origem
-            </label>
-            <input 
-              type="text" 
-              class="form-control bg-light"
-              value="São Paulo (SAO)"
-              disabled
-            />
-          </div>
-
-          <!-- Destino -->
-          <div class="col-12 col-md-2">
-            <label for="destinationSelect" class="form-label small fw-semibold text-secondary">
-              Destino *
-            </label>
-            <div class="destination-picker">
-              <button id="destinationSelect" type="button" class="destination-picker-trigger" [class.destination-picker-open]="isDestinationDropdownOpen()" (click)="toggleDestinationDropdown($event)" [attr.aria-expanded]="isDestinationDropdownOpen()" aria-haspopup="listbox">
-                <span [class.text-muted]="!selectedDestination()">{{ selectedDestinationLabel() }}</span>
-                <span class="destination-picker-caret" aria-hidden="true"></span>
-              </button>
-              @if (isDestinationDropdownOpen()) {
-                <div class="destination-picker-menu" role="listbox" aria-label="Selecione um destino" (click)="$event.stopPropagation()">
-                  <div class="destination-group-label destination-group-label-common">Itinerário Comum</div>
-                  <div class="destination-group-options">
-                    @for (dest of commonDestinations(); track dest.id) {
-                      <button type="button" role="option" class="destination-option" [attr.aria-selected]="selectedDestinationId() === dest.id" [class.destination-option-selected]="selectedDestinationId() === dest.id" (click)="selectDestination(dest, $event)">{{ formatDestinationOption(dest) }}</button>
-                    }
-                  </div>
-                  <div class="destination-group-label destination-group-label-eco">Ecoturismo</div>
-                  <div class="destination-group-options">
-                    @for (dest of ecotourismDestinations(); track dest.id) {
-                      <button type="button" role="option" class="destination-option" [attr.aria-selected]="selectedDestinationId() === dest.id" [class.destination-option-selected]="selectedDestinationId() === dest.id" (click)="selectDestination(dest, $event)">{{ formatDestinationOption(dest) }}</button>
-                    }
-                  </div>
-                </div>
-              }
-            </div>
-          </div>
-
-          <!-- Data de Ida -->
-          <div class="col-12 col-sm-6 col-md-2 position-relative calendar-popover-container">
-            <label class="form-label small fw-semibold text-secondary d-flex justify-content-between align-items-center mb-1">
-              <span>Data de Ida *</span>
-              @if (isLoadingFlightDates()) {
-                <span class="spinner-border spinner-border-sm text-primary" role="status" style="width: 12px; height: 12px;"></span>
-              }
-            </label>
-            <button 
-              type="button" 
-              class="form-control text-start d-flex justify-content-between align-items-center bg-white shadow-none"
-              [class.border-primary]="isOutboundCalendarOpen()"
-              [class.bg-light]="!selectedDestinationId() || isLoadingFlightDates()"
-              [disabled]="!selectedDestinationId() || isLoadingFlightDates()"
-              (click)="toggleOutboundCalendar($event)"
-              style="height: 38px;"
-            >
-              <span class="small text-truncate" [class.text-dark]="startDate()" [class.text-muted]="!startDate()">
-                @if (!selectedDestinationId()) {
-                  <span class="text-secondary opacity-75">1º Escolha o destino</span>
-                } @else if (isLoadingFlightDates()) {
-                  <span>Buscando datas...</span>
-                } @else if (startDate()) {
-                  <span class="fw-semibold text-dark">{{ formatDisplayDate(startDate()) }}</span>
-                } @else {
-                  <span>Selecione a data</span>
-                }
-              </span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-secondary flex-shrink-0 ms-1">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-            </button>
-
-            <!-- Popover Ida -->
-            @if (isOutboundCalendarOpen()) {
-              <div class="calendar-dropdown" (click)="$event.stopPropagation()">
-                
-                <!-- Popover Header -->
-                <div class="calendar-header">
-                  <button 
-                    type="button" 
-                    class="calendar-nav-btn" 
-                    [disabled]="!canPrevMonth('outbound')"
-                    (click)="prevMonth('outbound', $event)"
-                    title="Mês anterior"
-                  >
-                    ‹
-                  </button>
-                  <span class="calendar-title text-capitalize">
-                    {{ getMonthYearLabel(calendarMonth()) }}
-                  </span>
-                  <button 
-                    type="button" 
-                    class="calendar-nav-btn" 
-                    (click)="nextMonth('outbound', $event)"
-                    title="Próximo mês"
-                  >
-                    ›
-                  </button>
-                </div>
-
-                <!-- Legenda -->
-                <div class="calendar-legend">
-                  <span class="d-flex align-items-center gap-1">
-                    <span class="legend-dot" style="background-color: #198754;"></span>
-                    <span class="text-success fw-semibold">Disponível</span>
-                  </span>
-                  <span class="d-flex align-items-center gap-1">
-                    <span class="legend-dot" style="background-color: #dc3545;"></span>
-                    <span class="text-danger fw-semibold">Indisponível</span>
-                  </span>
-                </div>
-
-                <!-- Dias da Semana -->
-                <div class="calendar-weekdays">
-                  <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
-                </div>
-
-                <!-- Grade de Dias -->
-                <div class="calendar-grid">
-                  @for (day of calendarDaysOutbound(); track $index) {
-                    @if (day) {
-                      <button 
-                        type="button"
-                        class="calendar-day-cell"
-                        [class.calendar-day-available]="day.isAvailable"
-                        [class.calendar-day-unavailable]="!day.isAvailable"
-                        [class.calendar-day-selected]="day.isSelected"
-                        [disabled]="!day.isAvailable"
-                        (click)="selectOutboundDate(day, $event)"
-                        [title]="day.isAvailable ? 'Voo de ida disponível (' + day.dateStr + ')' : 'Sem voo de ida nesta data'"
-                      >
-                        <span>{{ day.dayNumber }}</span>
-                        @if (day.isAvailable) {
-                          <span class="flight-dot"></span>
-                        }
-                      </button>
-                    } @else {
-                      <div class="calendar-day-cell calendar-day-empty"></div>
-                    }
-                  }
-                </div>
-
-                <!-- Footer do Popover -->
-                <div class="d-flex justify-content-between align-items-center pt-2 mt-2 border-top">
-                  <span class="text-muted" style="font-size: 0.7rem;">Datas verdes têm voos</span>
-                  <button 
-                    type="button" 
-                    class="btn btn-sm btn-outline-secondary py-0 px-2" 
-                    style="font-size: 0.72rem;"
-                    (click)="closeCalendars($event)"
-                  >
-                    Fechar
-                  </button>
-                </div>
-
-              </div>
-            }
-          </div>
-
-          <!-- Data de Volta -->
-          <div class="col-12 col-sm-6 col-md-2 position-relative calendar-popover-container">
-            <label class="form-label small fw-semibold text-secondary d-flex justify-content-between align-items-center mb-1">
-              <span>Data de Volta</span>
-              @if (endDate()) {
-                <span 
-                  class="text-danger small" 
-                  style="cursor: pointer; font-size: 0.72rem;"
-                  (click)="clearReturnDate($event)"
-                  title="Remover volta (Somente ida)"
-                >
-                  ✕ Limpar
-                </span>
-              }
-            </label>
-            <button 
-              type="button" 
-              class="form-control text-start d-flex justify-content-between align-items-center bg-white shadow-none"
-              [class.border-primary]="isReturnCalendarOpen()"
-              [class.bg-light]="!startDate()"
-              [disabled]="!startDate()"
-              (click)="toggleReturnCalendar($event)"
-              style="height: 38px;"
-            >
-              <span class="small text-truncate" [class.text-dark]="endDate()" [class.text-muted]="!endDate()">
-                @if (!startDate()) {
-                  <span class="text-secondary opacity-75">2º Escolha a ida</span>
-                } @else if (endDate()) {
-                  <span class="fw-semibold text-dark">{{ formatDisplayDate(endDate()) }}</span>
-                } @else {
-                  <span>Opcional (Somente ida)</span>
-                }
-              </span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-secondary flex-shrink-0 ms-1">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-            </button>
-
-            <!-- Popover Volta -->
-            @if (isReturnCalendarOpen()) {
-              <div class="calendar-dropdown" (click)="$event.stopPropagation()">
-                
-                <!-- Popover Header -->
-                <div class="calendar-header">
-                  <button 
-                    type="button" 
-                    class="calendar-nav-btn" 
-                    [disabled]="!canPrevMonth('return')"
-                    (click)="prevMonth('return', $event)"
-                    title="Mês anterior"
-                  >
-                    ‹
-                  </button>
-                  <span class="calendar-title text-capitalize">
-                    {{ getMonthYearLabel(returnCalendarMonth()) }}
-                  </span>
-                  <button 
-                    type="button" 
-                    class="calendar-nav-btn" 
-                    (click)="nextMonth('return', $event)"
-                    title="Próximo mês"
-                  >
-                    ›
-                  </button>
-                </div>
-
-                <!-- Legenda -->
-                <div class="calendar-legend">
-                  <span class="d-flex align-items-center gap-1">
-                    <span class="legend-dot" style="background-color: #198754;"></span>
-                    <span class="text-success fw-semibold">Disponível</span>
-                  </span>
-                  <span class="d-flex align-items-center gap-1">
-                    <span class="legend-dot" style="background-color: #dc3545;"></span>
-                    <span class="text-danger fw-semibold">Indisponível</span>
-                  </span>
-                </div>
-
-                <!-- Dias da Semana -->
-                <div class="calendar-weekdays">
-                  <span>D</span><span>S</span><span>T</span><span>Q</span><span>Q</span><span>S</span><span>S</span>
-                </div>
-
-                <!-- Grade de Dias -->
-                <div class="calendar-grid">
-                  @for (day of calendarDaysReturn(); track $index) {
-                    @if (day) {
-                      <button 
-                        type="button"
-                        class="calendar-day-cell"
-                        [class.calendar-day-available]="day.isAvailable"
-                        [class.calendar-day-unavailable]="!day.isAvailable"
-                        [class.calendar-day-selected]="day.isSelected"
-                        [disabled]="!day.isAvailable"
-                        (click)="selectReturnDate(day, $event)"
-                        [title]="day.isAvailable ? 'Voo de retorno disponível (' + day.dateStr + ')' : 'Sem voo de retorno nesta data'"
-                      >
-                        <span>{{ day.dayNumber }}</span>
-                        @if (day.isAvailable) {
-                          <span class="flight-dot"></span>
-                        }
-                      </button>
-                    } @else {
-                      <div class="calendar-day-cell calendar-day-empty"></div>
-                    }
-                  }
-                </div>
-
-                <!-- Footer do Popover -->
-                <div class="d-flex justify-content-between align-items-center pt-2 mt-2 border-top">
-                  <button 
-                    type="button" 
-                    class="btn btn-link btn-sm text-danger text-decoration-none p-0" 
-                    style="font-size: 0.72rem;"
-                    (click)="clearReturnDate($event)"
-                  >
-                    Somente ida (Sem volta)
-                  </button>
-                  <button 
-                    type="button" 
-                    class="btn btn-sm btn-outline-secondary py-0 px-2" 
-                    style="font-size: 0.72rem;"
-                    (click)="closeCalendars($event)"
-                  >
-                    Fechar
-                  </button>
-                </div>
-
-              </div>
-            }
-          </div>
-
-          <!-- Passageiros -->
-          <div class="col-12 col-sm-6 col-md-2">
-            <label for="passengers" class="form-label small fw-semibold text-secondary">
-              Passageiros
-            </label>
-            <select 
-              id="passengers" 
-              class="form-select"
-              [ngModel]="passengers()" 
-              (ngModelChange)="passengers.set($event)"
-              name="passengers"
-            >
-              <option [ngValue]="1">1 adulto</option>
-              <option [ngValue]="2">2 adultos</option>
-              <option [ngValue]="3">3 adultos</option>
-              <option [ngValue]="4">4 adultos</option>
-              <option [ngValue]="5">5 adultos</option>
-            </select>
-          </div>
-
-          <!-- Botão de Busca -->
-          <div class="col-12 col-md-2">
-            <button 
-              type="submit" 
-              [disabled]="!isValidToSearch() || isLoading()"
-              class="btn text-white w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2"
-              style="background-color: #4895CC;"
-            >
-              @if (isLoading()) {
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-              } @else {
-                <span>Buscar</span>
-              }
-            </button>
-          </div>
-
-        </form>
-      </div>
-
-      <!-- Resumo dos Voos Selecionados -->
-      @if (selectedOutbound() || selectedReturn()) {
-        <div class="card border-0 bg-light rounded-4 p-4 mb-5 shadow-sm">
-          <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
-            <h5 class="fw-bold text-dark mb-0">Resumo da Seleção</h5>
-            <button class="btn btn-outline-danger btn-sm px-3" (click)="clearSelection()">
-              Limpar Seleção
-            </button>
-          </div>
-          
-          <div class="row g-3 mb-3">
-            @if (selectedOutbound()) {
-              <div class="col-12 col-md-6">
-                <div class="p-3 bg-white border rounded-3 h-100">
-                  <div class="text-uppercase small fw-bold mb-2" style="color: #4895CC;">Voo de Ida</div>
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                      <div class="fw-bold fs-5 text-dark mb-1">
-                        {{ selectedOutbound()!.flight.originAirportCode }} ➔ {{ selectedOutbound()!.flight.destinationAirportCode }}
-                      </div>
-                      <div class="text-secondary small">
-                        {{ selectedOutbound()!.flight.flightDate | date:'dd/MM/yyyy' }} às {{ selectedOutbound()!.flight.departureTime }}
-                      </div>
-                      <div class="text-secondary small">
-                        Voo {{ selectedOutbound()!.flight.flightNumber }}
-                      </div>
-                    </div>
-                    <div class="text-end">
-                      <div class="fw-semibold small mb-1" style="color: #4895CC;">
-                        Classe {{ getClassName(selectedOutbound()!.seatClass) }}
-                      </div>
-                      <div class="fw-bold text-dark">
-                        {{ formatPrice(selectedOutbound()!.price) }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
-
-            @if (selectedReturn()) {
-              <div class="col-12 col-md-6">
-                <div class="p-3 bg-white border rounded-3 h-100">
-                  <div class="text-uppercase small fw-bold mb-2" style="color: #4895CC;">Voo de Volta</div>
-                  <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                      <div class="fw-bold fs-5 text-dark mb-1">
-                        {{ selectedReturn()!.flight.originAirportCode }} ➔ {{ selectedReturn()!.flight.destinationAirportCode }}
-                      </div>
-                      <div class="text-secondary small">
-                        {{ selectedReturn()!.flight.flightDate | date:'dd/MM/yyyy' }} às {{ selectedReturn()!.flight.departureTime }}
-                      </div>
-                      <div class="text-secondary small">
-                        Voo {{ selectedReturn()!.flight.flightNumber }}
-                      </div>
-                    </div>
-                    <div class="text-end">
-                      <div class="fw-semibold small mb-1" style="color: #4895CC;">
-                        Classe {{ getClassName(selectedReturn()!.seatClass) }}
-                      </div>
-                      <div class="fw-bold text-dark">
-                        {{ formatPrice(selectedReturn()!.price) }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            }
-          </div>
-
-          <div class="d-flex justify-content-between align-items-center pt-3 border-top mt-3">
-            <div>
-              <span class="text-secondary small d-block">{{ selectionTotalLabel() }}</span>
-              <span class="fs-4 fw-bold text-dark">{{ formatTotalPrice() }}</span>
-            </div>
-            <button class="btn btn-primary px-4 py-2 fw-semibold" (click)="proceedToCheckout()">
-              Prosseguir para Reserva
-            </button>
-          </div>
-        </div>
-      }
-
-      <!-- Estado: Loading -->
-      @if (isLoading()) {
-        <div class="py-5">
-          <app-plane-loader></app-plane-loader>
-        </div>
-      }
-
-      <!-- Estado: Erro -->
-      @else if (errorMessage()) {
-        <div class="alert alert-danger p-4 rounded-3 text-center" role="alert">
-          <p class="mb-3">{{ errorMessage() }}</p>
-          <button class="btn btn-outline-danger px-4" (click)="onSearch()">
-            Tentar novamente
-          </button>
-        </div>
-      }
-
-      <!-- Estado: Não pesquisou ainda -->
-      @else if (!hasSearched()) {
-        <div class="text-center py-5 bg-light rounded-4 border">
-          <h4 class="fw-bold text-secondary mb-1">Selecione um destino e data de ida para pesquisar</h4>
-        </div>
-      }
-
-      <!-- Estado: Lista Vazia -->
-      @else if (outboundFlights().length === 0 && returnFlights().length === 0) {
-        <div class="text-center py-5 bg-light rounded-4 border">
-          <h4 class="fw-bold text-secondary mb-2">Nenhum voo disponível para os critérios selecionados</h4>
-          <p class="text-muted mb-0">Tente selecionar outro período ou outro destino.</p>
-        </div>
-      }
-
-      <!-- Estado: Voos Encontrados -->
-      @else {
-        
-        <!-- SEÇÃO: VOOS DE IDA -->
-        <section class="mb-5">
-          <h3 class="h5 fw-bold text-dark mb-3 d-flex align-items-center gap-2">
-            <span>Voos de Ida</span>
-            <span class="text-secondary fs-6 ms-1">({{ outboundFlights().length }})</span>
-          </h3>
-
-          @if (outboundFlights().length === 0) {
-            <div class="p-3 bg-light rounded-3 text-muted small">
-              Nenhum voo de ida encontrado na data selecionada.
-            </div>
-          } @else {
-            <div class="d-flex flex-column gap-3">
-              @for (flight of outboundFlights(); track flight.id) {
-                <div 
-                  class="card border shadow-sm rounded-4 p-4 flight-card bg-white"
-                  [class.flight-selected]="isFlightSelected(flight.id, 'outbound')"
-                >
-                  <div class="row align-items-center g-3">
-                    
-                    <div class="col-12 col-md-3">
-                      <div class="text-secondary fw-bold small mb-1">
-                        {{ flight.flightNumber }}
-                      </div>
-                      <div class="d-flex align-items-center gap-2 mt-1">
-                        <span class="fs-5 fw-bold text-dark">{{ flight.originAirportCode }}</span>
-                        <span class="text-muted">➔</span>
-                        <span class="fs-5 fw-bold text-primary">{{ flight.destinationAirportCode }}</span>
-                      </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-md-2">
-                      <span class="text-muted small d-block">Data e Horário</span>
-                      <span class="fw-bold text-dark d-block">
-                        {{ flight.flightDate | date:'dd/MM/yyyy' }}
-                      </span>
-                      <span class="small text-secondary">
-                        {{ flight.departureTime }} ➔ {{ flight.arrivalTime }}
-                      </span>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-md-2">
-                      <span class="text-muted small d-block">Disponibilidade</span>
-                      @if (flight.availableSeats > 0) {
-                        <div class="text-success fw-bold small">
-                          {{ flight.availableSeats }} assentos
-                        </div>
-                      } @else {
-                        <div class="text-danger fw-bold small">Esgotado</div>
-                      }
-                      <span class="text-muted small d-block mt-1">Total: {{ flight.totalSeats }}</span>
-                    </div>
-
-                    <div class="col-12 col-md-5">
-                      <span class="text-muted small d-block mb-2">Selecione a classe · preço por trecho e passageiro:</span>
-                      <div class="d-flex flex-column gap-1">
-                        
-                        <!-- Básico -->
-                        <button 
-                          type="button"
-                          class="btn btn-sm d-flex justify-content-between align-items-center px-3 py-2 rounded-3 border"
-                          [class.btn-primary]="isClassSelected(flight.id, 'BASIC', 'outbound')"
-                          [class.text-white]="isClassSelected(flight.id, 'BASIC', 'outbound')"
-                          [class.btn-light]="!isClassSelected(flight.id, 'BASIC', 'outbound')"
-                          [disabled]="flight.availableSeats <= 0"
-                          (click)="selectFlight(flight, 'BASIC', 'outbound')"
-                        >
-                          <span class="d-flex align-items-center gap-1">
-                            <span class="fw-semibold">Básico</span>
-                            @if (isClassSelected(flight.id, 'BASIC', 'outbound')) {
-                              <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
-                            }
-                          </span>
-                          <span class="fw-bold">{{ formatPrice(flight.pricePerPerson) }}</span>
-                        </button>
-
-                        <!-- Executivo -->
-                        @if (flight.priceExecutive) {
-                          <button 
-                            type="button"
-                            class="btn btn-sm d-flex justify-content-between align-items-center px-3 py-2 rounded-3 border"
-                            [class.btn-primary]="isClassSelected(flight.id, 'EXECUTIVE', 'outbound')"
-                            [class.text-white]="isClassSelected(flight.id, 'EXECUTIVE', 'outbound')"
-                            [class.btn-light]="!isClassSelected(flight.id, 'EXECUTIVE', 'outbound')"
-                            [disabled]="flight.availableSeats <= 0"
-                            (click)="selectFlight(flight, 'EXECUTIVE', 'outbound')"
-                          >
-                            <span class="d-flex align-items-center gap-1">
-                              <span class="fw-semibold">Executivo</span>
-                              @if (isClassSelected(flight.id, 'EXECUTIVE', 'outbound')) {
-                                <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
-                              }
-                            </span>
-                            <span class="fw-bold">{{ formatPrice(flight.priceExecutive) }}</span>
-                          </button>
-                        }
-
-                        <!-- Premium -->
-                        @if (flight.pricePremium) {
-                          <button 
-                            type="button"
-                            class="btn btn-sm d-flex justify-content-between align-items-center px-3 py-2 rounded-3 border"
-                            [class.btn-primary]="isClassSelected(flight.id, 'PREMIUM', 'outbound')"
-                            [class.text-white]="isClassSelected(flight.id, 'PREMIUM', 'outbound')"
-                            [class.btn-light]="!isClassSelected(flight.id, 'PREMIUM', 'outbound')"
-                            [disabled]="flight.availableSeats <= 0"
-                            (click)="selectFlight(flight, 'PREMIUM', 'outbound')"
-                          >
-                            <span class="d-flex align-items-center gap-1">
-                              <span class="fw-semibold">Premium</span>
-                              @if (isClassSelected(flight.id, 'PREMIUM', 'outbound')) {
-                                <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
-                              }
-                            </span>
-                            <span class="fw-bold">{{ formatPrice(flight.pricePremium) }}</span>
-                          </button>
-                        }
-
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              }
-            </div>
-          }
-        </section>
-
-        <!-- SEÇÃO: VOOS DE VOLTA (APENAS SE DATA DE VOLTA FOR SELECIONADA) -->
-        @if (endDate()) {
-          <section class="mt-4">
-            <h3 class="h5 fw-bold text-dark mb-3 d-flex align-items-center gap-2">
-              <span>Voos de Volta</span>
-              <span class="text-secondary fs-6 ms-1">({{ returnFlights().length }})</span>
-            </h3>
-
-          @if (returnFlights().length === 0) {
-            <div class="p-3 bg-light rounded-3 text-muted small">
-              Nenhum voo de retorno programado para este destino no período.
-            </div>
-          } @else {
-            <div class="d-flex flex-column gap-3">
-              @for (flight of returnFlights(); track flight.id) {
-                <div 
-                  class="card border shadow-sm rounded-4 p-4 flight-card bg-white"
-                  [class.flight-selected]="isFlightSelected(flight.id, 'return')"
-                >
-                  <div class="row align-items-center g-3">
-                    
-                    <div class="col-12 col-md-3">
-                      <div class="text-secondary fw-bold small mb-1">
-                        {{ flight.flightNumber }}
-                      </div>
-                      <div class="d-flex align-items-center gap-2 mt-1">
-                        <span class="fs-5 fw-bold text-dark">{{ flight.originAirportCode }}</span>
-                        <span class="text-muted">➔</span>
-                        <span class="fs-5 fw-bold text-primary">{{ flight.destinationAirportCode }}</span>
-                      </div>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-md-2">
-                      <span class="text-muted small d-block">Data e Horário</span>
-                      <span class="fw-bold text-dark d-block">
-                        {{ flight.flightDate | date:'dd/MM/yyyy' }}
-                      </span>
-                      <span class="small text-secondary">
-                        {{ flight.departureTime }} ➔ {{ flight.arrivalTime }}
-                      </span>
-                    </div>
-
-                    <div class="col-12 col-sm-6 col-md-2">
-                      <span class="text-muted small d-block">Disponibilidade</span>
-                      @if (flight.availableSeats > 0) {
-                        <div class="text-success fw-bold small">
-                          {{ flight.availableSeats }} assentos
-                        </div>
-                      } @else {
-                        <div class="text-danger fw-bold small">Esgotado</div>
-                      }
-                      <span class="text-muted small d-block mt-1">Total: {{ flight.totalSeats }}</span>
-                    </div>
-
-                    <div class="col-12 col-md-5">
-                      <span class="text-muted small d-block mb-2">Selecione a classe · preço por trecho e passageiro:</span>
-                      <div class="d-flex flex-column gap-1">
-                        
-                        <!-- Básico -->
-                        <button 
-                          type="button"
-                          class="btn btn-sm d-flex justify-content-between align-items-center px-3 py-2 rounded-3 border"
-                          [class.btn-primary]="isClassSelected(flight.id, 'BASIC', 'return')"
-                          [class.text-white]="isClassSelected(flight.id, 'BASIC', 'return')"
-                          [class.btn-light]="!isClassSelected(flight.id, 'BASIC', 'return')"
-                          [disabled]="flight.availableSeats <= 0"
-                          (click)="selectFlight(flight, 'BASIC', 'return')"
-                        >
-                          <span class="d-flex align-items-center gap-1">
-                            <span class="fw-semibold">Básico</span>
-                            @if (isClassSelected(flight.id, 'BASIC', 'return')) {
-                              <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
-                            }
-                          </span>
-                          <span class="fw-bold">{{ formatPrice(flight.pricePerPerson) }}</span>
-                        </button>
-
-                        <!-- Executivo -->
-                        @if (flight.priceExecutive) {
-                          <button 
-                            type="button"
-                            class="btn btn-sm d-flex justify-content-between align-items-center px-3 py-2 rounded-3 border"
-                            [class.btn-primary]="isClassSelected(flight.id, 'EXECUTIVE', 'return')"
-                            [class.text-white]="isClassSelected(flight.id, 'EXECUTIVE', 'return')"
-                            [class.btn-light]="!isClassSelected(flight.id, 'EXECUTIVE', 'return')"
-                            [disabled]="flight.availableSeats <= 0"
-                            (click)="selectFlight(flight, 'EXECUTIVE', 'return')"
-                          >
-                            <span class="d-flex align-items-center gap-1">
-                              <span class="fw-semibold">Executivo</span>
-                              @if (isClassSelected(flight.id, 'EXECUTIVE', 'return')) {
-                                <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
-                              }
-                            </span>
-                            <span class="fw-bold">{{ formatPrice(flight.priceExecutive) }}</span>
-                          </button>
-                        }
-
-                        <!-- Premium -->
-                        @if (flight.pricePremium) {
-                          <button 
-                            type="button"
-                            class="btn btn-sm d-flex justify-content-between align-items-center px-3 py-2 rounded-3 border"
-                            [class.btn-primary]="isClassSelected(flight.id, 'PREMIUM', 'return')"
-                            [class.text-white]="isClassSelected(flight.id, 'PREMIUM', 'return')"
-                            [class.btn-light]="!isClassSelected(flight.id, 'PREMIUM', 'return')"
-                            [disabled]="flight.availableSeats <= 0"
-                            (click)="selectFlight(flight, 'PREMIUM', 'return')"
-                          >
-                            <span class="d-flex align-items-center gap-1">
-                              <span class="fw-semibold">Premium</span>
-                              @if (isClassSelected(flight.id, 'PREMIUM', 'return')) {
-                                <span class="text-white fw-bold ms-1 small">✓ Selecionada</span>
-                              }
-                            </span>
-                            <span class="fw-bold">{{ formatPrice(flight.pricePremium) }}</span>
-                          </button>
-                        }
-
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              }
-            </div>
-          }
-        </section>
-      }
-
-    }
-
-    </main>
-
-    <!-- Footer -->
-    <app-footer></app-footer>
-  `,
-  styles: [`
-    .hero-container {
-      width: 100%;
-      background: #0b2545;
-      height: 320px;
-      max-height: 320px;
-      overflow: hidden;
-    }
-    .hero-image {
-      width: 100%;
-      height: 320px;
-      max-height: 320px;
-      object-fit: cover;
-      object-position: center;
-      display: block;
-    }
-    .flight-card {
-      border-color: #e2e8f0;
-      transition: all 0.2s ease-in-out;
-    }
-
-    .flight-card:hover {
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06) !important;
-    }
-
-    .flight-selected {
-      border-color: #198754 !important;
-      background-color: #f0fdf4 !important;
-    }
-
-    /* Stacking Context para o Card de Filtro e Popover */
-    .search-card-container {
-      position: relative;
-      z-index: 50;
-    }
-
-    /* Custom Calendar Popover */
-    .calendar-popover-container {
-      position: relative;
-      z-index: 60;
-    }
-
-    .calendar-dropdown {
-      position: absolute;
-      top: calc(100% + 6px);
-      left: 0;
-      width: 315px;
-      max-width: calc(100vw - 32px);
-      background: #ffffff;
-      border-radius: 1rem;
-      border: 1px solid #e2e8f0;
-      box-shadow: 0 14px 35px rgba(15, 23, 42, 0.22);
-      padding: 1rem;
-      z-index: 1050;
-      animation: calendarFadeIn 0.16s ease-out;
-    }
-
-    @keyframes calendarFadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-6px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .calendar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.65rem;
-    }
-
-    .calendar-title {
-      font-weight: 700;
-      font-size: 0.92rem;
-      color: #1e293b;
-    }
-
-    .calendar-nav-btn {
-      width: 26px;
-      height: 26px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      border: 1px solid #e2e8f0;
-      background: #f8fafc;
-      color: #475569;
-      font-size: 1.1rem;
-      line-height: 1;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      padding: 0;
-    }
-
-    .calendar-nav-btn:hover:not(:disabled) {
-      background: #4895CC;
-      color: #ffffff;
-      border-color: #4895CC;
-    }
-
-    .calendar-nav-btn:disabled {
-      opacity: 0.35;
-      cursor: not-allowed;
-    }
-
-    .calendar-legend {
-      display: flex;
-      justify-content: center;
-      gap: 1.2rem;
-      font-size: 0.72rem;
-      padding-bottom: 0.45rem;
-      margin-bottom: 0.55rem;
-      border-bottom: 1px solid #f1f5f9;
-    }
-
-    .legend-dot {
-      display: inline-block;
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-    }
-
-    .calendar-weekdays {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-      text-align: center;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #94a3b8;
-      margin-bottom: 0.4rem;
-    }
-
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 4px;
-    }
-
-    .calendar-day-cell {
-      aspect-ratio: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      border: 1px solid transparent;
-      padding: 0;
-      background: transparent;
-      transition: all 0.15s ease;
-      user-select: none;
-      line-height: 1;
-    }
-
-    /* Green available day */
-    .calendar-day-available {
-      background-color: #d1e7dd;
-      color: #0f5132;
-      border-color: #a3cfbb;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .calendar-day-available:hover {
-      background-color: #198754 !important;
-      color: #ffffff !important;
-      border-color: #198754 !important;
-      transform: scale(1.08);
-      box-shadow: 0 3px 8px rgba(25, 135, 84, 0.35);
-      z-index: 2;
-    }
-
-    .calendar-day-available.calendar-day-selected {
-      background-color: #198754 !important;
-      color: #ffffff !important;
-      border-color: #198754 !important;
-      box-shadow: 0 4px 12px rgba(25, 135, 84, 0.45);
-    }
-
-    /* Red unavailable day */
-    .calendar-day-unavailable {
-      background-color: #f8d7da;
-      color: #842029;
-      border-color: #f5c2c7;
-      opacity: 0.65;
-      cursor: not-allowed;
-      font-size: 0.76rem;
-    }
-
-    .calendar-day-empty {
-      visibility: hidden;
-      pointer-events: none;
-    }
-
-    .flight-dot {
-      width: 4px;
-      height: 4px;
-      border-radius: 50%;
-      background-color: #0f5132;
-      margin-top: 2px;
-    }
-
-    .calendar-day-available:hover .flight-dot,
-    .calendar-day-selected .flight-dot {
-      background-color: #ffffff;
-    }
-
-    .destination-picker { position: relative; }
-    .destination-picker-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 38px; padding: 0.375rem 0.75rem; border: 1px solid #ced4da; border-radius: 0.75rem; background: #ffffff; color: #212529; font-size: 0.95rem; text-align: left; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-    .destination-picker-trigger:hover, .destination-picker-open { border-color: #4895CC; }
-    .destination-picker-trigger:focus-visible { outline: 0; border-color: #4895CC; box-shadow: 0 0 0 0.2rem rgba(72, 149, 204, 0.2); }
-    .destination-picker-caret { width: 0.5rem; height: 0.5rem; margin-left: 0.75rem; border-right: 2px solid #475569; border-bottom: 2px solid #475569; transform: rotate(45deg) translateY(-2px); transition: transform 0.2s ease; }
-    .destination-picker-open .destination-picker-caret { transform: rotate(225deg) translateY(-2px); }
-    .destination-picker-menu { position: absolute; z-index: 1060; bottom: calc(100% + 0.5rem); left: 0; width: min(21rem, calc(100vw - 2rem)); max-height: 22rem; overflow-y: auto; border: 1px solid #dbe7f0; border-radius: 0.875rem; background: #ffffff; box-shadow: 0 14px 32px rgba(11, 37, 69, 0.16); padding: 0.375rem; }
-    .destination-group-label { margin: 0.25rem 0.25rem 0.375rem; padding: 0.55rem 0.75rem; border-radius: 0.55rem; color: #ffffff; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.01em; }
-    .destination-group-label-common { background: #4895CC; }
-    .destination-group-label-eco { background: #63B921; }
-    .destination-group-options + .destination-group-label { margin-top: 0.25rem; border-top: 1px solid #e2e8f0; }
-    .destination-option { display: block; width: 100%; border: 0; border-radius: 0.5rem; background: transparent; color: #1e293b; padding: 0.5rem 0.75rem; font-size: 0.9rem; text-align: left; }
-    .destination-option:hover, .destination-option:focus-visible { background: #edf6fc; color: #0B2545; outline: 0; }
-    .destination-option-selected { background: #4895CC; color: #ffffff; font-weight: 600; }
-    .destination-option-selected:hover, .destination-option-selected:focus-visible { background: #357fad; color: #ffffff; }
-  `]
+  imports: [CommonModule, FormsModule, NavbarComponent, FooterComponent, PlaneLoaderComponent, DatePipe, BackToTopComponent],
+  templateUrl: './flight-search.component.html',
+  styleUrls: ['./flight-search.component.scss']
 })
 export class FlightSearchComponent implements OnInit {
   private flightsService = inject(FlightsService);
@@ -1027,6 +57,30 @@ export class FlightSearchComponent implements OnInit {
   selectedDestinationId = signal<number | null>(null);
   isDestinationDropdownOpen = signal(false);
   selectedDestination = computed(() => this.destinations().find(dest => dest.id === this.selectedDestinationId()) ?? null);
+  isSelectedDestinationEco = computed(() => (this.selectedDestination()?.tourismType || '').trim().toUpperCase() === 'ECOTURISMO');
+
+  getSelectedDestinationImage(): string {
+    const dest = this.selectedDestination();
+    if (dest) {
+      const localImg = findLocalImage(dest.name, dest.city);
+      if (localImg) return localImg;
+      if (dest.imageUrl) return dest.imageUrl;
+    }
+    return this.placeholderImage;
+  }
+
+  formatAllPassengersTotal(): string {
+    let totalPerPax = 0;
+    if (this.selectedOutbound()) {
+      totalPerPax += this.selectedOutbound()!.price;
+    }
+    if (this.selectedReturn()) {
+      totalPerPax += this.selectedReturn()!.price;
+    }
+    const pax = this.passengers() || 1;
+    return this.formatPrice(totalPerPax * pax);
+  }
+
   selectedDestinationLabel = computed(() => {
     const destination = this.selectedDestination();
     return destination ? this.formatDestinationOption(destination) : 'Selecione';
@@ -1058,13 +112,43 @@ export class FlightSearchComponent implements OnInit {
   selectedReturn = signal<SelectedFlightBooking | null>(null);
   preferredSeatClass = signal<FlightSeatClass>('BASIC');
 
+  // Modal com detalhes sobre o que cada classe oferece (Básico, Executivo, Premium)
+  isClassInfoModalOpen = signal<boolean>(false);
+  activeClassModalTab = signal<FlightSeatClass>('BASIC');
+
   selectedOutboundFlight = computed(() => this.selectedOutbound()?.flight ?? null);
   selectedReturnFlight = computed(() => this.selectedReturn()?.flight ?? null);
 
   // Restrição de data: Primeira data permitida = Hoje + 3 dias
   minDepartureDate: string = this.calculateMinDate(3);
+
+  // Identifica se o destino pertence à América do Sul
+  isDestinationSouthAmerica = computed(() => {
+    const dest = this.selectedDestination();
+    if (!dest) return false;
+    const country = (dest.country || '').trim().toLowerCase();
+    return country.includes('brasil') || country.includes('argentina') ||
+           country.includes('chile') || country.includes('peru') ||
+           country.includes('colômbia') || country.includes('colombia') ||
+           country.includes('equador') || country.includes('uruguai') ||
+           country.includes('paraguai') || country.includes('bolívia') ||
+           country.includes('bolivia');
+  });
+
+  // Dias mínimos de permanência antes do voo de retorno:
+  // América do Sul: mínimo 1 dia de estadia (ida 21, volta pode ser 22).
+  // Internacional fora da América do Sul: mínimo 3 dias (ex: Japão, Europa, EUA).
+  minDaysBetweenFlights = computed(() => {
+    return this.isDestinationSouthAmerica() ? 1 : 3;
+  });
+
   minReturnDate = computed(() => {
-    return this.startDate() || this.minDepartureDate;
+    const start = this.startDate();
+    if (!start) return this.minDepartureDate;
+    const [y, m, d] = start.split('-').map(Number);
+    const dateObj = new Date(y, m - 1, d);
+    dateObj.setDate(dateObj.getDate() + this.minDaysBetweenFlights());
+    return this.formatDateToIso(dateObj);
   });
 
   // Conjunto de datas disponíveis para IDA (voos saindo de SP com vagas)
@@ -1081,14 +165,14 @@ export class FlightSearchComponent implements OnInit {
     return dates;
   });
 
-  // Conjunto de datas disponíveis para VOLTA (voos retornando a SP com vagas e >= data de ida)
+  // Conjunto de datas disponíveis para VOLTA (voos retornando a SP com vagas e >= minReturnDate)
   availableReturnDates = computed(() => {
     const dates = new Set<string>();
-    const start = this.startDate();
+    const minReturn = this.minReturnDate();
     for (const f of this.destinationFlights()) {
       if (f.destinationAirportCode === 'GRU' && f.availableSeats > 0) {
         const dStr = f.flightDate.substring(0, 10);
-        if (!start || dStr >= start) {
+        if (dStr >= minReturn) {
           dates.add(dStr);
         }
       }
@@ -1257,7 +341,7 @@ export class FlightSearchComponent implements OnInit {
       if (type === 'outbound') {
         isBeforeMin = dateStr < this.minDepartureDate;
       } else {
-        isBeforeMin = !this.startDate() || dateStr < this.startDate();
+        isBeforeMin = !this.startDate() || dateStr < this.minReturnDate();
       }
 
       const hasFlight = availableSet.has(dateStr);
@@ -1293,6 +377,32 @@ export class FlightSearchComponent implements OnInit {
     return dateStr;
   }
 
+  formatTime(time?: string): string {
+    if (!time) return '';
+    const parts = time.split(':');
+    if (parts.length >= 2) {
+      return `${parts[0]}:${parts[1]}`;
+    }
+    return time;
+  }
+
+  getFlightDuration(dep?: string, arr?: string, durationMinutes?: number): string {
+    if (durationMinutes !== undefined && durationMinutes !== null && durationMinutes > 0) {
+      const h = Math.floor(durationMinutes / 60);
+      const m = durationMinutes % 60;
+      return m > 0 ? `${h}h ${m}m` : `${h}h`;
+    }
+    if (!dep || !arr) return '';
+    const [dh, dm] = dep.split(':').map(Number);
+    const [ah, am] = arr.split(':').map(Number);
+    if (isNaN(dh) || isNaN(ah)) return '';
+    let diffMinutes = (ah * 60 + (am || 0)) - (dh * 60 + (dm || 0));
+    if (diffMinutes < 0) diffMinutes += 24 * 60;
+    const h = Math.floor(diffMinutes / 60);
+    const m = diffMinutes % 60;
+    return m > 0 ? `${h}h ${m}m` : `${h}h`;
+  }
+
   getMonthYearLabel(date: Date): string {
     const months = [
       'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -1321,7 +431,7 @@ export class FlightSearchComponent implements OnInit {
     this.startDate.set(day.dateStr);
     this.isOutboundCalendarOpen.set(false);
 
-    if (this.endDate() && this.endDate() < day.dateStr) {
+    if (this.endDate() && this.endDate() < this.minReturnDate()) {
       this.endDate.set('');
       this.selectedReturn.set(null);
     }
@@ -1586,5 +696,25 @@ export class FlightSearchComponent implements OnInit {
 
     this.reservationService.setCheckoutDraft(draft);
     this.router.navigate(['/checkout']);
+  }
+
+  openClassInfoModal(initialClass: FlightSeatClass = 'BASIC'): void {
+    this.activeClassModalTab.set(initialClass);
+    this.isClassInfoModalOpen.set(true);
+  }
+
+  closeClassInfoModal(): void {
+    this.isClassInfoModalOpen.set(false);
+  }
+
+  setActiveClassModalTab(seatClass: FlightSeatClass): void {
+    this.activeClassModalTab.set(seatClass);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscapeKey(): void {
+    if (this.isClassInfoModalOpen()) {
+      this.closeClassInfoModal();
+    }
   }
 }

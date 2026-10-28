@@ -1,0 +1,1191 @@
+/* ========================================================
+       HORIZON USER PANEL - CORES PADRÃO (#5BA4D8 e #65A30D)
+       ======================================================== */
+    .user-layout-bg {
+      background-color: #eaf2f8;
+      min-height: calc(100vh - 70px);
+    }
+
+    .text-horizon {
+      color: #5BA4D8 !important;
+    }
+
+    .btn-horizon {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      border: 1px solid #5BA4D8;
+      transition: all 0.2s ease;
+    }
+
+    .btn-horizon:hover {
+      background-color: #4895CC;
+      border-color: #4895CC;
+      color: #ffffff;
+    }
+
+    .btn-horizon-green {
+      background-color: #65A30D;
+      color: #ffffff;
+      border: 1px solid #65A30D;
+      transition: all 0.2s ease;
+    }
+
+    .btn-horizon-green:hover {
+      background-color: #558b0a;
+      border-color: #558b0a;
+      color: #ffffff;
+    }
+
+    .btn-outline-horizon {
+      color: #5BA4D8;
+      border: 1.5px solid #5BA4D8;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .btn-outline-horizon:hover {
+      background-color: #5BA4D8;
+      color: #ffffff;
+    }
+
+    /* Tags Retangulares Padrão Horizon (Zero Pills) */
+    .horizon-tag-blue {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .horizon-tag-green {
+      background-color: #65A30D;
+      color: #ffffff;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    /* Botão Azul Oficial do Figma */
+    .btn-figma-blue {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      border: none;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn-figma-blue:hover {
+      background-color: #4895CC;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-figma-mini-edit {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      border: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.85rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-figma-mini-edit:hover {
+      background-color: #4895CC;
+      color: #ffffff;
+    }
+
+    /* ========================================================
+       SIDEBAR ESQUERDA (FIGMA SPEC)
+       ======================================================== */
+    .sidebar-card {
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 16px;
+      position: relative;
+    }
+
+    .sidebar-user-name {
+      color: #5BA4D8;
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    .social-name-tag {
+      background-color: #5BA4D8 !important;
+      color: #ffffff !important;
+      font-size: 0.82rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(91, 164, 216, 0.25);
+    }
+
+    .menu-group-btn {
+      background-color: #5BA4D8;
+      border: none;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      color: #ffffff;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-align: left;
+      transition: background-color 0.2s ease;
+    }
+
+    .menu-group-btn:hover {
+      background-color: #4895CC;
+      color: #ffffff;
+    }
+
+    .menu-item-link {
+      background: transparent;
+      border: none;
+      color: #475569;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .menu-item-link:hover {
+      background: #f0f7fd;
+      color: #0f172a;
+    }
+
+    .menu-item-link.active {
+      background: #e1effa;
+      color: #5BA4D8;
+      font-weight: 700;
+    }
+
+    .sidebar-btn-evaluate {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.88rem;
+      transition: background-color 0.2s ease, transform 0.15s ease;
+    }
+
+    .sidebar-btn-evaluate:hover {
+      background-color: #4895CC;
+      color: #ffffff;
+    }
+
+    .sidebar-btn-logout {
+      background-color: #fef2f2;
+      color: #dc2626;
+      border: none;
+      border-radius: 8px;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.88rem;
+      transition: background-color 0.2s ease;
+    }
+
+    .sidebar-btn-logout:hover {
+      background-color: #fee2e2;
+      color: #b91c1c;
+    }
+
+    /* Avatar Elements */
+    .avatar-wrapper {
+      position: relative;
+      width: 84px;
+      height: 84px;
+    }
+
+    .avatar-circle {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: #f0f7fd;
+      color: #5BA4D8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      box-shadow: 0 4px 14px rgba(91, 164, 216, 0.2);
+      border: 3px solid #ffffff;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .avatar-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .avatar-loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .avatar-camera-btn {
+      position: absolute;
+      bottom: 0;
+      right: -2px;
+      width: 24px;
+      height: 24px;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .avatar-camera-btn:hover {
+      transform: scale(1.12);
+    }
+
+    .avatar-badge-icon {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .avatar-form-preview {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: #f0f7fd;
+      color: #5BA4D8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      font-weight: 700;
+      border: 3px solid #e2e8f0;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .avatar-form-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ========================================================
+       ÁREA DE CONTEÚDO PRINCIPAL (FIGMA SPEC)
+       ======================================================== */
+    .view-header-title {
+      color: #5BA4D8;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+
+    /* Hero Section do Topo (cima-usuario.png - idêntico às outras páginas) */
+    .hero-container {
+      width: 100%;
+      background: #0b2545;
+      height: 320px;
+      max-height: 320px;
+      overflow: hidden;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 320px;
+      max-height: 320px;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .hero-container {
+        max-height: 240px;
+      }
+      .hero-image {
+        height: 240px;
+      }
+    }
+
+    /* Banner do Meio do Painel */
+    .dashboard-main-banner {
+      width: calc(100% * 1171 / 1107) !important;
+      max-width: none !important;
+      margin-left: calc(-100% * 32 / 1107) !important;
+      margin-right: calc(-100% * 32 / 1107) !important;
+      height: auto;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      border: none !important;
+      display: block;
+      /* Corta a margem com sombra que vem embutida no próprio PNG (32px de cada lado em 1171px) */
+      clip-path: inset(0 calc(100% * 32 / 1171) round 12px);
+    }
+
+    /* Imagem do Painel alinhada à altura da barra lateral esquerda (desktop) */
+    @media (min-width: 768px) {
+      .dashboard-main-col {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .dashboard-main-col > .dashboard-top {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+      }
+
+      .dashboard-top .dashboard-main-banner {
+        flex: 1 1 0;
+        height: 0;
+        min-height: 0;
+        object-fit: cover;
+        object-position: center;
+        margin-bottom: 0 !important;
+      }
+    }
+
+    /* Card de Destaque da Próxima Viagem (Visual + Bilhete 3D) */
+    .next-trip-showcase-card {
+      background: #ffffff;
+      border: 1.5px solid #5BA4D8;
+      border-radius: 16px;
+      transition: all 0.2s ease;
+    }
+
+    .trip-picker-btn {
+      background: #f0f7fd;
+      border: 1.5px solid #5BA4D8;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .trip-picker-btn:hover {
+      background: #e1effa;
+    }
+
+    .trip-picker-dropdown {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      min-width: 260px;
+      background: #ffffff;
+      border: 1.5px solid #5BA4D8;
+      border-radius: 10px;
+      z-index: 50;
+    }
+
+    .trip-picker-item {
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: #1e293b;
+      transition: all 0.15s ease;
+    }
+
+    .trip-picker-item:hover {
+      background: #f0f7fd;
+    }
+
+    .trip-picker-item.active {
+      background: #5BA4D8;
+      color: #ffffff;
+    }
+
+    .trip-visual-banner {
+      height: 320px;
+      cursor: pointer;
+      border: 1.5px solid #5BA4D8;
+    }
+
+    @media (min-width: 992px) {
+      .showcase-img-col {
+        flex: 0 0 calc(66.666667% - 184px) !important;
+        width: calc(66.666667% - 184px) !important;
+        max-width: calc(66.666667% - 184px) !important;
+      }
+
+      .showcase-ticket-col {
+        flex: 1 1 0 !important;
+        width: auto !important;
+        max-width: none !important;
+      }
+    }
+
+    .trip-visual-banner img {
+      transition: transform 0.35s ease;
+    }
+
+    .trip-visual-banner:hover img {
+      transform: scale(1.04);
+    }
+
+    .trip-visual-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(11, 37, 69, 0.85) 0%, rgba(11, 37, 69, 0.18) 60%, rgba(11, 37, 69, 0.35) 100%);
+    }
+
+    .ticket-3d-wrapper {
+      perspective: 1000px;
+      display: flex;
+      justify-content: center;
+      padding: 0.25rem 0;
+    }
+
+    .horizon-select {
+      border: 1.5px solid #5BA4D8;
+      border-radius: 8px;
+      font-weight: 600;
+      color: #1e293b;
+      box-shadow: none !important;
+    }
+
+    .horizon-select:focus {
+      border-color: #65A30D;
+    }
+
+    .quick-res-preview {
+      border-color: #dbeafe !important;
+    }
+
+    .quick-res-thumb {
+      width: 88px;
+      height: 76px;
+      flex-shrink: 0;
+    }
+
+    .discover-visual-card {
+      height: 136px;
+      border: 1.5px solid #5BA4D8;
+    }
+
+    .discover-visual-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(11, 37, 69, 0.82) 0%, rgba(11, 37, 69, 0.1) 100%);
+    }
+
+    .spec-label {
+      display: block;
+      font-size: 0.72rem;
+      color: #64748b;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      margin-bottom: 2px;
+    }
+
+    .spec-value {
+      display: block;
+      font-size: 0.95rem;
+      color: #0f172a;
+      font-weight: 700;
+    }
+
+    /* Cards Brancos do Figma */
+    .figma-white-card {
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 16px;
+    }
+
+    .trip-clean-card {
+      transition: all 0.2s ease;
+    }
+
+    .trip-clean-card:hover {
+      border-color: #5BA4D8;
+      box-shadow: 0 6px 18px rgba(91, 164, 216, 0.1) !important;
+    }
+
+    .trip-card-img-wrap {
+      height: 155px;
+      min-height: 150px;
+      cursor: pointer;
+      background: #0b2545;
+    }
+
+    .trip-card-img-wrap img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.35s ease;
+    }
+
+    @media (min-width: 768px) {
+      .trip-card-img-wrap {
+        height: 100%;
+      }
+    }
+
+    .trip-card-img-wrap:hover img {
+      transform: scale(1.04);
+    }
+
+    .figma-box-title {
+      color: #5BA4D8;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .figma-profile-name {
+      color: #5BA4D8;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .figma-table-subtitle {
+      color: #5BA4D8;
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    /* Botão Voltar ao Painel (Padrão Horizon) */
+    .btn-back-dashboard {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      border: 1px solid #5BA4D8;
+      border-radius: 10px;
+      padding: 0.52rem 1.25rem;
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 14px rgba(91, 164, 216, 0.35);
+
+      &:hover {
+        background-color: #4895CC;
+        border-color: #4895CC;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(91, 164, 216, 0.45);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(91, 164, 216, 0.25);
+      }
+    }
+
+    /* Linhas da Tabela de Informações Pessoais */
+    .info-rows-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .info-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.75rem 0.5rem;
+      border-radius: 8px;
+      transition: background-color 0.15s ease;
+
+      &:hover {
+        background-color: #f8fafc;
+      }
+    }
+
+    .info-item-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .info-item-label {
+      color: #64748b;
+      font-size: 0.76rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .info-item-value {
+      color: #0f172a;
+      font-size: 0.95rem;
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .btn-figma-mini-edit {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      border: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.35rem 0.9rem;
+      border-radius: 8px;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 6px rgba(91, 164, 216, 0.2);
+
+      &:hover {
+        background-color: #4895CC;
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 10px rgba(91, 164, 216, 0.35);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .info-item-content {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+      }
+
+      .info-item-label {
+        width: 170px;
+        flex-shrink: 0;
+        font-size: 0.88rem;
+        text-transform: none;
+        letter-spacing: normal;
+        color: #475569;
+        font-weight: 600;
+      }
+
+      .info-item-value {
+        flex: 1;
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Modal Hero */
+    .modal-hero-header {
+      background: #5BA4D8;
+    }
+
+    .next-trip-banner {
+      background: #5BA4D8;
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      top: 5rem;
+      right: 1.5rem;
+      z-index: 2050;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 400px;
+      pointer-events: none;
+    }
+
+    .custom-toast {
+      pointer-events: auto;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+      padding: 0.9rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      border: 1px solid #e2e8f0;
+      animation: slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    .custom-toast.toast-success {
+      border-left: 5px solid #65A30D;
+    }
+
+    .custom-toast.toast-error {
+      border-left: 5px solid #ef4444;
+    }
+
+    @keyframes slideInToast {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .input-prohibited,
+    .input-prohibited:disabled,
+    .input-prohibited[readonly] {
+      background-color: #f1f5f9 !important;
+      border-color: #cbd5e1 !important;
+      color: #64748b !important;
+      cursor: not-allowed !important;
+      padding-right: 2.25rem;
+      box-shadow: none !important;
+    }
+
+    .prohibited-lock-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+      font-size: 0.85rem;
+      pointer-events: none;
+    }
+
+    /* ========================================================
+       FORMAS DE PAGAMENTO (VISUAL CARD + SELETORES HORIZON)
+       ======================================================== */
+    .horizon-credit-card {
+      background-color: #5BA4D8;
+      border-radius: 16px;
+      min-height: 205px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .horizon-credit-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(91, 164, 216, 0.32) !important;
+    }
+
+    .horizon-card-watermark {
+      position: absolute;
+      right: -18px;
+      bottom: -22px;
+      width: 175px;
+      height: 175px;
+      color: rgba(255, 255, 255, 0.14);
+      transform: rotate(-28deg);
+      pointer-events: none;
+    }
+
+    .card-chip {
+      width: 42px;
+      height: 30px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #fde047 0%, #eab308 100%);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+    }
+
+    .card-number-display {
+      font-size: 1.25rem;
+      letter-spacing: 2px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .payment-card-selector {
+      background: #5BA4D8;
+      border: 1.5px solid #5BA4D8;
+      color: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .payment-card-selector:hover {
+      background: #4895CC;
+      border-color: #4895CC;
+      transform: translateY(-1px);
+    }
+
+    .payment-card-selector.active {
+      background: #5BA4D8;
+      border-color: #ffffff;
+      box-shadow: 0 6px 18px rgba(91, 164, 216, 0.35);
+    }
+
+    .btn-card-default {
+      background-color: #ffffff !important;
+      color: #5BA4D8 !important;
+      border: 1.5px solid #5BA4D8 !important;
+      transition: all 0.2s ease;
+    }
+
+    .btn-card-default:hover {
+      background-color: #f0f7fd !important;
+      color: #4895CC !important;
+      border-color: #4895CC !important;
+      transform: translateY(-1px);
+    }
+
+    .btn-card-remove {
+      background-color: #dc2626 !important;
+      color: #ffffff !important;
+      border: 1px solid #dc2626 !important;
+      transition: all 0.2s ease;
+    }
+
+    .btn-card-remove:hover {
+      background-color: #b91c1c !important;
+      border-color: #b91c1c !important;
+      color: #ffffff !important;
+      transform: translateY(-1px);
+    }
+
+    .payment-icon-box {
+      width: 40px;
+      height: 40px;
+      background: #e1effa;
+      color: #5BA4D8;
+    }
+
+    .method-choice-card {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .method-choice-card:hover {
+      background: #ffffff;
+      border-color: #5BA4D8;
+    }
+
+    .method-choice-card.selected-blue {
+      background: #f0f7fd;
+      border-color: #5BA4D8;
+      box-shadow: 0 4px 12px rgba(91, 164, 216, 0.14);
+    }
+
+    .method-choice-card.selected-green {
+      background: #f4fce8;
+      border-color: #65A30D;
+      box-shadow: 0 4px 12px rgba(101, 163, 13, 0.14);
+    }
+
+    .method-badge-blue {
+      width: 46px;
+      height: 46px;
+      background: #5BA4D8;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .method-badge-green {
+      width: 46px;
+      height: 46px;
+      background: #65A30D;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    /* =========================================================
+       RESPONSIVIDADE ESPECÍFICA (PROFILE)
+       ========================================================= */
+    @media (max-width: 767.98px) {
+      .hero-container, .hero-image {
+        height: 180px;
+        max-height: 180px;
+      }
+      .user-layout-bg {
+        padding-top: 1rem !important;
+        padding-bottom: 1.5rem !important;
+      }
+      .sidebar-card {
+        padding: 1.25rem !important;
+        border-radius: 14px;
+      }
+      .trip-visual-banner {
+        height: 220px;
+      }
+      .card-number-display {
+        font-size: 1rem;
+        letter-spacing: 1px;
+      }
+      .horizon-credit-card {
+        min-height: 180px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .toast-container {
+        right: 0.5rem;
+        left: 0.5rem;
+        max-width: none;
+      }
+      .ticket-3d-wrapper {
+        transform: scale(0.85);
+      }
+      .figma-profile-name {
+        font-size: 1.15rem;
+      }
+      .figma-box-title {
+        font-size: 1.05rem;
+      }
+    }
+    /* ========================================================
+       MODAL DE EXCLUSÃO DE CONTA (PERSONALIZADO COM FUNDO DESFOCADO)
+       ======================================================== */
+    .deactivate-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background-color: rgba(11, 37, 69, 0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 1055;
+      animation: deactivateFadeIn 0.22s ease-out forwards;
+    }
+
+    .deactivate-modal-wrapper {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 1056;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+      overflow-y: auto;
+    }
+
+    .deactivate-modal-card {
+      width: 100%;
+      max-width: 440px;
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.75rem 2rem;
+      box-shadow: 0 20px 50px -10px rgba(11, 37, 69, 0.25);
+      animation: deactivateScaleUp 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      position: relative;
+    }
+
+    @keyframes deactivateFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes deactivateScaleUp {
+      from {
+        opacity: 0;
+        transform: scale(0.95) translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+    /* ========================================================
+       SEÇÃO: POLÍTICA DE PRIVACIDADE COMPLETA & ESTRUTURADA
+       ======================================================== */
+    .privacy-overview-container {
+      margin-bottom: 1.5rem;
+    }
+
+    .privacy-lead-text {
+      color: #334155;
+      font-size: 0.96rem;
+      line-height: 1.65;
+    }
+
+    .privacy-principle-card {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+
+      &:hover {
+        border-color: rgba(91, 164, 216, 0.5);
+        background-color: #f0f7fc;
+      }
+    }
+
+    .privacy-section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0b2545;
+      margin-top: 1.75rem;
+      margin-bottom: 0.6rem;
+    }
+
+    .privacy-section-text {
+      color: #475569;
+      font-size: 0.92rem;
+      line-height: 1.65;
+      margin-bottom: 0.85rem;
+    }
+
+    .privacy-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin-bottom: 1.25rem;
+
+      li {
+        position: relative;
+        padding-left: 1.5rem;
+        margin-bottom: 0.75rem;
+        color: #475569;
+        font-size: 0.9rem;
+        line-height: 1.6;
+
+        &::before {
+          content: '•';
+          position: absolute;
+          left: 0.35rem;
+          color: #5BA4D8;
+          font-weight: bold;
+          font-size: 1.25rem;
+          line-height: 1;
+        }
+
+        strong {
+          color: #0b2545;
+        }
+      }
+    }
+
+    .privacy-contact-card {
+      background-color: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.15rem 1.35rem;
+    }
+
+    /* ==================== MEUS CHAMADOS (SUPORTE) ==================== */
+    .support-filter-btn {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      color: #475569;
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 7px 14px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+
+      &:hover {
+        border-color: #5BA4D8;
+        color: #5BA4D8;
+        background: #f0f7fc;
+      }
+
+      &.active {
+        background: #5BA4D8;
+        border-color: #5BA4D8;
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(91, 164, 216, 0.3);
+      }
+    }
+
+    .ticket-item-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-left: 4px solid #5BA4D8;
+      transition: all 0.2s ease;
+
+      &:hover {
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.05);
+      }
+
+      &.is-resolved {
+        border-left-color: #65A30D;
+        background: #fafcfb;
+      }
+    }
+
+    .ticket-code-tag {
+      background: #f0f7fc;
+      color: #1e6498;
+      font-size: 0.82rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .ticket-subject-title {
+      font-size: 0.96rem;
+    }
+
+    .status-badge-progress {
+      background: rgba(91, 164, 216, 0.15);
+      color: #1e6498;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .status-badge-resolved {
+      background: rgba(101, 163, 13, 0.15);
+      color: #487508;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .ticket-desc-box {
+      background: #f8fafc;
+      border: 1px solid #f1f5f9;
+    }
+
+    .ticket-attachment-box {
+      background: #f0f7fc;
+      border: 1px solid rgba(91, 164, 216, 0.3);
+    }
+
+
+/* ==================== SUPORTE E CHAMADOS ==================== */
+/* ========================================================
+   ESTILOS PERSONALIZADOS: MEUS CHAMADOS (PADRÃO MINHAS RESERVAS)
+   ======================================================== */
+
+.support-card-visual-wrap {
+  height: 155px;
+  min-height: 150px;
+  cursor: pointer;
+  background: #5BA4D8;
+
+  &.visual-resolved {
+    background: #65A30D;
+  }
+}
+
+@media (min-width: 768px) {
+  .support-card-visual-wrap {
+    height: 100%;
+  }
+}
+
+.support-visual-watermark {
+  position: absolute;
+  right: -12px;
+  bottom: -18px;
+  font-size: 5.5rem;
+  color: rgba(255, 255, 255, 0.14);
+  transform: rotate(-18deg);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.support-visual-icon-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}

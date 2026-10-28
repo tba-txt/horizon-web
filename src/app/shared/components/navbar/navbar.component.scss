@@ -1,0 +1,342 @@
+.navbar-glass-home {
+      background: rgba(255, 255, 255, 0.15) !important;
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .navbar-glass-other {
+      background: rgba(255, 255, 255, 0.2) !important;
+      backdrop-filter: blur(20px) saturate(160%);
+      -webkit-backdrop-filter: blur(20px) saturate(160%);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .nav-link {
+      position: relative;
+      font-size: 1.12rem;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.92) !important;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+      transition: all 0.2s ease-in-out;
+      padding: 0.55rem 1.1rem;
+      border-radius: 8px;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        left: 1.1rem;
+        right: 1.1rem;
+        height: 2.5px;
+        background: #ffffff;
+        border-radius: 2px;
+        transform: scaleX(0);
+        transform-origin: center;
+        opacity: 0;
+        transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.2s ease;
+        box-shadow: 0 1px 4px rgba(255, 255, 255, 0.4);
+      }
+
+      &:hover, &.active {
+        color: #ffffff !important;
+        font-weight: 700;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+
+        &::after {
+          transform: scaleX(1);
+          opacity: 1;
+        }
+      }
+    }
+
+    /* Estilos Desktop para Auth */
+    .btn-nav-desktop-account {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 16px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #ffffff !important;
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      transition: all 0.2s ease-in-out;
+      backdrop-filter: blur(8px);
+
+      &:hover {
+        background: #5BA4D8;
+        border-color: #5BA4D8;
+        box-shadow: 0 4px 14px rgba(91, 164, 216, 0.35);
+        color: #ffffff !important;
+      }
+    }
+
+    .btn-nav-desktop-logout {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 10px;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: rgba(255, 255, 255, 0.92) !important;
+      font-weight: 600;
+      font-size: 0.92rem;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background: rgba(220, 38, 38, 0.18);
+        border-color: rgba(220, 38, 38, 0.4);
+        color: #ff8585 !important;
+      }
+    }
+
+    .nav-guest-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-nav-login {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
+      background: rgba(15, 23, 42, 0.26);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 7px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      text-decoration: none;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.55);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background: rgba(15, 23, 42, 0.42);
+        border-color: #ffffff;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.38);
+        transform: translateY(-1px);
+      }
+    }
+
+    .btn-nav-register {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #5BA4D8;
+      border: 1px solid #5BA4D8;
+      color: #ffffff !important;
+      padding: 7px 18px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.92rem;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(91, 164, 216, 0.3);
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        background: #4895CC;
+        border-color: #4895CC;
+      }
+    }
+
+    .navbar-logo {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    @media (max-width: 991.98px) {
+      .navbar-collapse {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(25px) saturate(190%);
+        -webkit-backdrop-filter: blur(25px) saturate(190%);
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 16px;
+        padding: 1.25rem 1rem;
+        margin-top: 0.75rem;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(11, 37, 69, 0.06);
+      }
+      .nav-link {
+        color: #0b2545 !important;
+        text-shadow: none !important;
+        padding: 0.7rem 1rem;
+        font-size: 1.05rem;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.2s ease-in-out;
+
+        &::after {
+          display: none !important;
+        }
+      }
+      .nav-link:hover {
+        color: #5BA4D8 !important;
+        background: rgba(91, 164, 216, 0.12);
+        font-weight: 600;
+        text-shadow: none !important;
+      }
+      .nav-link.active {
+        color: #5BA4D8 !important;
+        background: rgba(91, 164, 216, 0.16);
+        font-weight: 700;
+        text-shadow: none !important;
+      }
+      .nav-auth-container {
+        padding-top: 0.75rem;
+        width: 100%;
+      }
+      .nav-mobile-profile {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        width: 100%;
+      }
+      .nav-user-mobile-card {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(91, 164, 216, 0.22);
+        text-decoration: none;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+
+        &:hover, &:active {
+          background: #ffffff;
+          border-color: #5BA4D8;
+          box-shadow: 0 6px 18px rgba(91, 164, 216, 0.18);
+          transform: translateY(-1px);
+        }
+
+        .nav-user-avatar {
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          background: rgba(91, 164, 216, 0.15);
+          color: #5BA4D8;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.25rem;
+          flex-shrink: 0;
+        }
+
+        .nav-user-details {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.2;
+
+          .nav-user-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #0b2545;
+            letter-spacing: -0.01em;
+          }
+
+          .nav-user-hint {
+            font-size: 0.76rem;
+            font-weight: 500;
+            color: #64748b;
+            margin-top: 2px;
+          }
+        }
+
+        .nav-user-arrow {
+          margin-left: auto;
+          color: #94a3b8;
+          font-size: 0.85rem;
+          transition: transform 0.2s ease;
+        }
+
+        &:hover .nav-user-arrow {
+          transform: translateX(2px);
+          color: #5BA4D8;
+        }
+      }
+
+      .btn-nav-logout-text {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 8px 12px;
+        border-radius: 10px;
+        background: transparent;
+        border: none;
+        color: #64748b;
+        font-size: 0.86rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+
+        i {
+          font-size: 0.95rem;
+          transition: transform 0.2s ease;
+        }
+
+        &:hover {
+          background: rgba(220, 38, 38, 0.08);
+          color: #dc2626;
+
+          i {
+            transform: translateX(2px);
+          }
+        }
+      }
+
+      .nav-guest-actions {
+        display: flex;
+        gap: 12px;
+        width: 100%;
+
+        .btn-nav-login {
+          flex: 1;
+          background: #ffffff !important;
+          border: 1px solid #cbd5e1 !important;
+          color: #0b2545 !important;
+          padding: 10px 14px;
+          border-radius: 10px;
+          text-shadow: none !important;
+          box-shadow: 0 2px 8px rgba(11, 37, 69, 0.08) !important;
+
+          &:hover {
+            background: #f8fafc !important;
+          }
+        }
+
+        .btn-nav-register {
+          flex: 1;
+          background: #5BA4D8 !important;
+          border: 1px solid #5BA4D8 !important;
+          color: #ffffff !important;
+          padding: 10px 14px;
+          border-radius: 10px;
+          box-shadow: 0 4px 14px rgba(91, 164, 216, 0.35);
+
+          &:hover {
+            background: #4895CC !important;
+          }
+        }
+      }
+
+      .navbar-glass-home {
+        margin-top: 0.75rem !important;
+      }
+    }
+
+    @media (max-width: 575.98px) {
+      .navbar-logo {
+        height: 32px;
+      }
+    }

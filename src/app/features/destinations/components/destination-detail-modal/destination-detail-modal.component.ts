@@ -1,12 +1,15 @@
-import { Component, Input, Output, EventEmitter, HostListener, computed, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener, computed, signal, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Destination } from '../../models/destination.model';
 import { DestinationWeather } from '../../models/weather.model';
+
+export type MonthRating = 'BEST' | 'GOOD' | 'NORMAL';
 
 export interface DestinationCuratedContent {
   headline: string;
   description: string;
   bestTime: string;
+  bestTimeMonths?: MonthRating[]; // 12 meses: Jan a Dez
   topAttractions: string[];
   gallery: { url: string; title: string }[];
 }
@@ -16,6 +19,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'A Cidade Maravilhosa entre o oceano atlântico e montanhas imponentes',
     description: 'O Rio de Janeiro é uma celebração de sol, cultura vibrante e natureza colossal. De Copacabana e Ipanema ao topo do Corcovado, cada recanto respira música, arte e hospitalidade. Conheça a Floresta da Tijuca, o lendário pôr do sol no Arpoador e a efervescência noturna da Lapa.',
     bestTime: 'Maio a Outubro (clima ameno, céu límpido e pouca chuva)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Cristo Redentor', 'Pão de Açúcar', 'Praia de Ipanema', 'Jardim Botânico', 'Arcos da Lapa', 'Escadaria Selarón'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?q=80&w=800&auto=format&fit=crop', title: 'Cristo Redentor e Baía de Guanabara' },
@@ -28,6 +32,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'A capital mundial da elegância, alta gastronomia e história milenar',
     description: 'Paris encanta em cada esquina com seus boulevards monumentais, cafés charmosos e tesouros artísticos incomparáveis. Da silhueta inesquecível da Torre Eiffel às galerias infinitas do Louvre, caminhar às margens do Sena é vivenciar séculos de cultura refinada.',
     bestTime: 'Abril a Junho e Setembro a Novembro (primavera e outono com clima agradável)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'GOOD', 'GOOD', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Torre Eiffel', 'Museu do Louvre', 'Catedral de Notre-Dame', 'Basílica de Sacré-Cœur', 'Palácio de Versalhes', 'Panteão'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=800&auto=format&fit=crop', title: 'Torre Eiffel' },
@@ -40,6 +45,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'Santuário ecológico de águas cristalinas e vida marinha protegida',
     description: 'Considerado um dos arquipélagos mais preservados do mundo, Noronha oferece praias eleitas entre as mais bonitas do planeta, como a Baía do Sancho e a Baía dos Porcos. Um refúgio singular para mergulho entre tartarugas, arraias e golfinhos sob estrito cuidado ambiental.',
     bestTime: 'Agosto a Fevereiro (mar espelhado e visibilidade aquática de até 50 metros)',
+    bestTimeMonths: ['BEST', 'BEST', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST'],
     topAttractions: ['Baía do Sancho', 'Baía dos Porcos', 'Praia do Leão', 'Projeto Tamar', 'Forte de Nossa Senhora dos Remédios', 'Cacimba do Padre'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?q=80&w=800&auto=format&fit=crop', title: 'Morro Dois Irmãos' },
@@ -52,6 +58,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'A capital brasileira do ecoturismo e nascentes de transparência absoluta',
     description: 'Bonito é mundialmente consagrado por rios de calcário tão límpidos que parecem aquários naturais gigantescos. Flutue ao lado de dezenas de espécies de peixes, aventure-se em grutas com lagos azul-turquesa e encante-se com cachoeiras de tirar o fôlego.',
     bestTime: 'Maio a Agosto (águas com máxima transparência) ou Dezembro a Março (cachoeiras caudalosas)',
+    bestTimeMonths: ['GOOD', 'GOOD', 'GOOD', 'GOOD', 'BEST', 'BEST', 'BEST', 'BEST', 'GOOD', 'GOOD', 'GOOD', 'GOOD'],
     topAttractions: ['Gruta do Lago Azul', 'Flutuação no Rio Sucuri', 'Aquário Natural', 'Abismo Anhumas', 'Parque das Cachoeiras', 'Buraco das Araras'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?q=80&w=800&auto=format&fit=crop', title: 'Flutuação em Águas Cristalinas' },
@@ -64,6 +71,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'A terra do gelo e do fogo iluminada pelas cores da Aurora Boreal',
     description: 'Reykjavik é a porta de entrada para paisagens míticas: campos de lava cobertos por musgo ancestral, fontes termais fumegantes, vulcões ativos, cascatas gigantescas e o balé luminoso da Aurora Boreal no céu do norte ártico.',
     bestTime: 'Setembro a Março (temporada de Aurora Boreal) ou Junho a Agosto (Sol da Meia-Noite)',
+    bestTimeMonths: ['GOOD', 'GOOD', 'GOOD', 'NORMAL', 'NORMAL', 'BEST', 'BEST', 'BEST', 'GOOD', 'GOOD', 'GOOD', 'GOOD'],
     topAttractions: ['Blue Lagoon (Lagoa Azul)', 'Igreja Hallgrímskirkja', 'Harpa Concert Hall', 'Cachoeira Gullfoss', 'Gêiseres de Haukadalur', 'Parque Nacional Thingvellir'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1517411032315-54ef2cb783bb?q=80&w=800&auto=format&fit=crop', title: 'Aurora Boreal na Islândia' },
@@ -76,6 +84,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'A cidade sagrada dos Incas erguida entre as nuvens dos Andes',
     description: 'Empoleirada a mais de 2.400 metros de altitude, Machu Picchu transcende o tempo com sua engenharia milenar de pedra e sua aura de mistério. Cercada por desfiladeiros vertiginosos e florestas nebulares, é uma experiência transformadora.',
     bestTime: 'Maio a Outubro (período seco com trilhas límpidas e dias ensolarados)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Templo do Sol', 'Pico Huayna Picchu', 'Intihuatana (Pedra Sagrada)', 'Templo do Condor', 'Porta do Sol (Inti Punku)', 'Aguan Calientes'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?q=80&w=800&auto=format&fit=crop', title: 'Cidadela de Machu Picchu' },
@@ -88,6 +97,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'Oásis ultramoderno onde a imaginação desafia as dunas do deserto',
     description: 'Dubai é o epicentro da ousadia arquitetônica global: o edifício mais alto do planeta, arquipélagos artificiais em formato de palmeira, alta gastronomia internacional e safáris mágicos em meio ao deserto árabe sob estrelas infinitas.',
     bestTime: 'Novembro a Março (temperaturas amenas ideais para passeios ao ar livre)',
+    bestTimeMonths: ['BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST'],
     topAttractions: ['Burj Khalifa', 'Dubai Mall', 'Burj Al Arab', 'Dubai Miracle Garden', 'The Dubai Fountain', 'Safari no Deserto Safari'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=800&auto=format&fit=crop', title: 'Burj Khalifa e Skyline' },
@@ -100,6 +110,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'A metrópole fascinante onde templos milenares convivem com o futuro',
     description: 'Tóquio surpreende pelo contraste entre a serenidade dos templos xintoístas e a pulsação tecnológica de Shibuya e Akihabara. Uma capital mundial da gastronomia de precisão, hospitalidade e inovação.',
     bestTime: 'Março a Maio (Florada das Cerejeiras) e Outubro a Novembro (Outono de folhas vermelhas)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'BEST', 'BEST', 'BEST', 'NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'GOOD'],
     topAttractions: ['Cruzamento de Shibuya', 'Templo Senso-ji', 'Santuário Meiji', 'Tokyo Skytree', 'Mercado de Tsukiji/Toyosu', 'Jardins Nacionais Shinjuku Gyoen'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=800&auto=format&fit=crop', title: 'Skyline de Tóquio e Torre de Tóquio' },
@@ -112,6 +123,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'Geleiras colossais e horizontes selvagens nos confins do planeta',
     description: 'No extremo sul do continente, a Patagônia reúne montanhas de granito dramáticas, lagos azul-leitosos alimentados pelo degelo e a estrondosa Geleira Perito Moreno. Um território lendário para caminhantes e apaixonados pela natureza pura.',
     bestTime: 'Novembro a Março (verão austral com dias mais longos e temperaturas agradáveis)',
+    bestTimeMonths: ['BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST'],
     topAttractions: ['Glaciar Perito Moreno', 'Parque Nacional Torres del Paine', 'Cerro Fitz Roy', 'Canal Beagle', 'Parque Nacional Los Glaciares', 'Cueva de las Manos'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1527004013197-933c4bb611b3?q=80&w=800&auto=format&fit=crop', title: 'Glaciar Perito Moreno' },
@@ -124,6 +136,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'O berço da democracia ocidental e da filosofia sob a imponente Acrópole',
     description: 'Atenas respira história viva a cada passo. Com mais de três milênios de civilização, a capital grega fascina com a majestosa Acrópole e o Partenon dominando o horizonte, ruelas pitorescas em Plaka repletas de tabernas tradicionais, gastronomia mediterrânea deliciosa e um pôr do sol inesquecível no Monte Licabeto.',
     bestTime: 'Abril a Junho e Setembro a Novembro (primavera e outono)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'GOOD', 'GOOD', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Acrópole de Atenas', 'Templo do Partenon', 'Bairro de Plaka', 'Museu da Acrópole', 'Templo de Zeus Olímpico', 'Monte Licabeto'],
     gallery: [
       { url: 'assets/atenas.webp', title: 'Acrópole de Atenas' },
@@ -136,6 +149,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'O berço da democracia ocidental e da filosofia sob a imponente Acrópole',
     description: 'Atenas respira história viva a cada passo. Com mais de três milênios de civilização, a capital grega fascina com a majestosa Acrópole e o Partenon dominando o horizonte, ruelas pitorescas em Plaka repletas de tabernas tradicionais, gastronomia mediterrânea deliciosa e um pôr do sol inesquecível no Monte Licabeto.',
     bestTime: 'Abril a Junho e Setembro a Novembro (primavera e outono)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'GOOD', 'GOOD', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Acrópole de Atenas', 'Templo do Partenon', 'Bairro de Plaka', 'Museu da Acrópole', 'Templo de Zeus Olímpico', 'Monte Licabeto'],
     gallery: [
       { url: 'assets/atenas.webp', title: 'Acrópole de Atenas' },
@@ -148,6 +162,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'O pulsar de aromas, templos dourados e a vida intensa das ruas tailandesas',
     description: 'Bangkok é um deleite para os sentidos. Uma metrópole vibrante onde os mercados flutuantes e os majestosos palácios convivem em perfeita harmonia. Aproveite os maravilhosos sabores dos mercados noturnos e a espiritualidade profunda dos templos budistas.',
     bestTime: 'Novembro a Março (clima mais seco e ameno)',
+    bestTimeMonths: ['BEST', 'BEST', 'BEST', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST'],
     topAttractions: ['Grande Palácio Real', 'Templo do Buda de Esmeralda (Wat Phra Kaew)', 'Wat Arun (Templo do Amanhecer)', 'Mercado Chatuchak', 'Khaosan Road', 'Mercado Flutuante Damnoen Saduak'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1583491470869-2782ccfbbaac?q=80&w=800&auto=format&fit=crop', title: 'Wat Arun' },
@@ -160,6 +175,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'Capital da altitude com uma rica história colonial e renascimento artístico',
     description: 'Situada a 2.640 metros de altitude, Bogotá é uma cidade de contrastes deslumbrantes. Encante-se com o charmoso bairro histórico de La Candelaria, o impressionante Museu do Ouro e a vibrante cultura artística de rua, além da deslumbrante vista do topo do Cerro Monserrate.',
     bestTime: 'Dezembro a Março (estação seca)',
+    bestTimeMonths: ['BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'GOOD', 'BEST'],
     topAttractions: ['Cerro Monserrate', 'La Candelaria', 'Museo del Oro', 'Plaza de Bolívar', 'Museo Botero', 'Jardín Botánico de Bogotá'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1583531352515-8884af319dc1?q=80&w=800&auto=format&fit=crop', title: 'La Candelaria' },
@@ -172,6 +188,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'A mágica ponte que une o oriente e o ocidente em esplendor histórico',
     description: 'Banhada pelo Bósforo, Istambul é onde Europa e Ásia se encontram. Uma metrópole inebriante repleta de mesquitas impressionantes, palácios otomanos, o labirinto de aromas e cores do Grande Bazar e o chamado melodioso à oração ao entardecer.',
     bestTime: 'Abril a Maio e Setembro a Outubro (clima agradável)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'GOOD', 'GOOD', 'GOOD', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Hagia Sophia (Santa Sofia)', 'Mesquita Azul', 'Palácio Topkapi', 'Grande Bazar', 'Cisterna da Basílica', 'Torre de Gálata'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=800&auto=format&fit=crop', title: 'Mesquita Azul' },
@@ -184,6 +201,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'Coração pulsante da Espanha, famosa por sua energia vibrante e praças grandiosas',
     description: 'A capital espanhola é apaixonante e interminável. Repleta de coleções de arte espetaculares no Triângulo de Ouro, parques frondosos, e uma vida noturna contagiante regada a tapas deliciosas e espetáculos de flamenco inesquecíveis.',
     bestTime: 'Maio a Junho e Setembro a Outubro (primavera e outono espanhol)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'GOOD', 'GOOD', 'BEST', 'BEST', 'NORMAL', 'NORMAL', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Museu do Prado', 'Parque do Retiro', 'Palácio Real de Madri', 'Plaza Mayor', 'Puerta del Sol', 'Estádio Santiago Bernabéu'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1539037116277-4db20889f2d4?q=80&w=800&auto=format&fit=crop', title: 'Palácio Real' },
@@ -196,6 +214,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'A beleza estonteante do porto mais icônico da Austrália',
     description: 'Sydney combina a vibração de uma grande metrópole com praias espetaculares. As silhuetas inconfundíveis da Opera House e da Harbour Bridge complementam dias de surf em Bondi Beach, caminhadas na costa e cruzeiros ao entardecer no cintilante porto.',
     bestTime: 'Setembro a Novembro e Março a Maio (primavera e outono com ótimo clima)',
+    bestTimeMonths: ['GOOD', 'GOOD', 'BEST', 'BEST', 'BEST', 'NORMAL', 'NORMAL', 'NORMAL', 'BEST', 'BEST', 'BEST', 'GOOD'],
     topAttractions: ['Sydney Opera House', 'Sydney Harbour Bridge', 'Bondi Beach', 'Darling Harbour', 'Royal Botanic Garden', 'Taronga Zoo'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?q=80&w=800&auto=format&fit=crop', title: 'Opera House e Harbour Bridge' },
@@ -208,6 +227,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'A grandiosa e multicultural capital econômica do Canadá',
     description: 'Dinâmica e diversificada, Toronto encanta com seu incrível skyline dominado pela CN Tower e seu multiculturalismo vibrante. Uma cidade de bairros distintos, museus de ponta, as incríveis Ilhas de Toronto e um cenário gastronômico de excelência mundial.',
     bestTime: 'Maio a Setembro (clima ameno e agradável para passeios e festivais)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL', 'NORMAL'],
     topAttractions: ['CN Tower', 'Royal Ontario Museum (ROM)', 'Toronto Islands', 'St. Lawrence Market', 'Distillery District', 'Aquário Ripley'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?q=80&w=800&auto=format&fit=crop', title: 'Skyline e CN Tower' },
@@ -220,6 +240,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'Joia das Montanhas Rochosas canadenses com cenários de tirar o fôlego',
     description: 'O Parque Nacional de Banff é a definição de espetáculo natural. Lagos de um azul turquesa impressionante, como o Lake Louise e Moraine Lake, emoldurados por picos nevados e florestas de coníferas. É o destino perfeito para caminhadas de verão e esqui no inverno.',
     bestTime: 'Junho a Agosto (para os lagos derretidos) e Dezembro a Março (para esportes de inverno)',
+    bestTimeMonths: ['GOOD', 'GOOD', 'GOOD', 'NORMAL', 'NORMAL', 'BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL', 'NORMAL', 'GOOD'],
     topAttractions: ['Lake Louise', 'Moraine Lake', 'Banff Gondola', 'Icefields Parkway', 'Peyto Lake', 'Johnston Canyon'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1510255909249-16f39f1c7136?q=80&w=800&auto=format&fit=crop', title: 'Moraine Lake' },
@@ -232,6 +253,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'O coração verdejante e colossal das trilhas baianas',
     description: 'Um impressionante oásis montanhoso encravado no sertão da Bahia. A Chapada Diamantina é palco de formações geológicas grandiosas, cachoeiras deslumbrantes como a da Fumaça, vales verdejantes, poços de águas cristalinas azuladas e infinitas trilhas desafiadoras.',
     bestTime: 'Abril a Outubro (menos chuvas e trilhas mais seguras)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
     topAttractions: ['Morro do Pai Inácio', 'Cachoeira da Fumaça', 'Poço Azul', 'Cachoeira do Buracão', 'Gruta da Lapa Doce', 'Vale do Pati'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1601614838634-118029c79e60?q=80&w=800&auto=format&fit=crop', title: 'Morro do Pai Inácio' },
@@ -244,6 +266,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'Onde o princípio de "Pura Vida" e a biodiversidade reinam absolutos',
     description: 'A Costa Rica é um paraíso tropical autêntico. De praias banhadas por ondas perfeitas do Pacífico a florestas úmidas repletas de tucanos, preguiças e sapos coloridos, até o espetacular vulcão Arenal. Uma imersão profunda na conservação ecológica.',
     bestTime: 'Dezembro a Abril (estação seca, ideial para explorar florestas e praias)',
+    bestTimeMonths: ['BEST', 'BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST'],
     topAttractions: ['Parque Nacional Manuel Antonio', 'Vulcão Arenal', 'Reserva Biológica Monteverde', 'Parque Nacional Tortuguero', 'Tamarindo', 'Catarata La Fortuna'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1518182170546-076616fdcbca?q=80&w=800&auto=format&fit=crop', title: 'Vulcão Arenal' },
@@ -256,6 +279,7 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
     headline: 'O primeiro parque nacional do mundo, famoso por gêiseres e vida selvagem indomável',
     description: 'Yellowstone é uma maravilha geológica singular no oeste dos Estados Unidos. Um supervulcão ativo que exibe fumarolas, piscinas termais incrivelmente coloridas como a Grand Prismatic Spring e os potentes jorros do Old Faithful, tudo emoldurado por rebanhos de bisões errantes.',
     bestTime: 'Maio a Setembro (quando todas as estradas estão abertas e a fauna é ativa)',
+    bestTimeMonths: ['NORMAL', 'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'BEST', 'BEST', 'GOOD', 'NORMAL', 'NORMAL'],
     topAttractions: ['Grand Prismatic Spring', 'Old Faithful Geyser', 'Yellowstone Grand Canyon', 'Mammoth Hot Springs', 'Lago Yellowstone', 'Lamar Valley'],
     gallery: [
       { url: 'https://images.unsplash.com/photo-1504913210419-70a2ea9c7d4d?q=80&w=800&auto=format&fit=crop', title: 'Grand Prismatic Spring' },
@@ -273,8 +297,22 @@ const DESTINATION_DETAILS_MAP: Record<string, DestinationCuratedContent> = {
   templateUrl: './destination-detail-modal.component.html',
   styleUrls: ['./destination-detail-modal.component.scss']
 })
-export class DestinationDetailModalComponent {
+export class DestinationDetailModalComponent implements OnInit, OnDestroy {
   @Input({ required: true }) destination!: Destination;
+  
+  ngOnInit(): void {
+    if (typeof document !== 'undefined') {
+      document.body.classList.add('modal-open');
+      document.documentElement.classList.add('modal-open');
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (typeof document !== 'undefined') {
+      document.body.classList.remove('modal-open');
+      document.documentElement.classList.remove('modal-open');
+    }
+  }
   
   private _weather: DestinationWeather | null = null;
   readonly weatherData = signal<DestinationWeather | null>(null);
@@ -315,6 +353,7 @@ export class DestinationDetailModalComponent {
         ? `${name} é um refúgio ecológico imperdível em ${country}, repleto de paisagens preservadas, biodiversidade fascinante e ar puro. Uma oportunidade única de reconexão profunda com a natureza e experiências ao ar livre inesquecíveis.`
         : `${name} convida você a explorar as riquezas culturais, históricas e urbanas de ${country}. Descubra ruas históricas, alta gastronomia, museus de renome e momentos memoráveis pensados para o seu estilo de viagem.`,
       bestTime: 'Primavera e Outono (temperaturas amenas e melhor circulação)',
+      bestTimeMonths: ['NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'GOOD', 'GOOD', 'BEST', 'BEST', 'GOOD', 'NORMAL'],
       topAttractions: isEco
         ? [
             `Parque natural de ${city}`,
@@ -339,6 +378,24 @@ export class DestinationDetailModalComponent {
         { url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop', title: 'Cenários Inesquecíveis' }
       ]
     };
+  });
+
+  // Calendário Anual Interativo dos 12 Meses (Melhor Época para Visitar)
+  bestTimeCalendar = computed(() => {
+    const letters = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+    const names = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+    ];
+    const ratings = this.curated().bestTimeMonths || [
+      'NORMAL', 'NORMAL', 'GOOD', 'BEST', 'BEST', 'BEST', 'GOOD', 'GOOD', 'BEST', 'BEST', 'GOOD', 'NORMAL'
+    ];
+
+    return letters.map((letter, idx) => ({
+      letter,
+      fullName: names[idx],
+      rating: ratings[idx] || 'NORMAL'
+    }));
   });
 
   forecastPage = signal(0);
@@ -394,6 +451,37 @@ export class DestinationDetailModalComponent {
     });
   });
 
+  travelPlanningTip = computed(() => {
+    const base = this.destination?.basePrice || 900;
+    const country = (this.destination?.country || '').toLowerCase();
+    const isNational = country.includes('brasil') || country.includes('brazil');
+    const isPolar = this.isPolarDestination();
+    const isEco = this.isEcoDestination();
+
+    let daysLabel = '5 a 7 dias';
+    let multiplier = 2.6;
+
+    if (isPolar) {
+      daysLabel = '7 a 10 dias';
+      multiplier = 2.2;
+    } else if (isNational) {
+      daysLabel = isEco ? '4 a 6 dias' : '4 a 5 dias';
+      multiplier = 3.2;
+    } else {
+      daysLabel = '6 a 8 dias';
+      multiplier = 2.5;
+    }
+
+    const rawSuggested = Math.round((base * multiplier) / 100) * 100;
+    const suggestedBudget = Math.max(base + 800, rawSuggested);
+
+    return {
+      daysLabel,
+      suggestedBudget: this.formatPrice(suggestedBudget),
+      dailyEstimate: this.formatPrice(Math.round((suggestedBudget - base) / 5))
+    };
+  });
+
   nextForecastPage() {
     if (this.forecastPage() < 3) {
       this.forecastPage.update(p => p + 1);
@@ -410,7 +498,7 @@ export class DestinationDetailModalComponent {
     const name = (this.destination?.name || '').toLowerCase();
     const city = (this.destination?.city || '').toLowerCase();
     const country = (this.destination?.country || '').toLowerCase();
-    return name.includes('antártida') || name.includes('antarctica') || name.includes('reykjavik') || city.includes('antártida') || country.includes('antártida') || name.includes('banff');
+    return name.includes('antártida') || name.includes('antarctica') || name.includes('reykjavik') || city.includes('antártida') || country.includes('antártida');
   }
 
   isEcoDestination(): boolean {

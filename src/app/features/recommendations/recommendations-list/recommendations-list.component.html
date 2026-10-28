@@ -19,12 +19,14 @@
       <h1 class="h3 fw-bold text-dark mb-0">Recomendações</h1>
     </div>
 
-    <div class="d-flex gap-2 mt-3 mt-sm-0">
-      <a routerLink="/quiz" class="btn btn-outline-secondary btn-sm px-3 rounded-pill fw-semibold">
-        <i class="bi bi-patch-question me-1"></i> Refazer Quiz
+    <div class="d-flex align-items-center gap-2 mt-3 mt-sm-0">
+      <a routerLink="/quiz" class="btn-quiz-header text-decoration-none">
+        <i class="bi bi-patch-question-fill"></i>
+        <span>{{ quizButtonLabel() }}</span>
       </a>
-      <button (click)="loadRecommendations()" class="btn btn-primary btn-sm px-3 rounded-pill fw-semibold shadow-sm" [disabled]="isLoading()">
-        <i class="bi bi-arrow-clockwise me-1"></i> Atualizar
+      <button type="button" (click)="loadRecommendations()" class="btn-refresh-header" [disabled]="isLoading()" title="Atualizar recomendações">
+        <i class="bi bi-arrow-clockwise" [class.spin-active]="isLoading()"></i>
+        <span>Atualizar</span>
       </button>
     </div>
   </div>
@@ -41,7 +43,7 @@
     <div class="alert alert-danger d-flex flex-column align-items-center justify-content-center p-4 my-4 rounded-4 text-center" role="alert">
       <h5 class="fw-bold mb-2">Não foi possível carregar as recomendações.</h5>
       <p class="mb-3 small text-danger-emphasis">{{ errorMessage() }}</p>
-      <button class="btn btn-outline-danger btn-sm px-4 rounded-pill" (click)="loadRecommendations()">
+      <button class="btn btn-outline-danger btn-sm px-4 rounded-3" (click)="loadRecommendations()">
         Tentar novamente
       </button>
     </div>
@@ -56,10 +58,10 @@
         Responda ao nosso Quiz de Viagens para descobrirmos suas preferências de clima, aventura e orçamento!
       </p>
       <div class="d-flex justify-content-center gap-2">
-        <a routerLink="/quiz" class="btn btn-primary btn-sm px-4 rounded-pill fw-bold">
-          Responder Quiz Agora →
+        <a routerLink="/quiz" class="btn btn-primary btn-sm px-4 rounded-3 fw-bold">
+          Responder Quiz Agora
         </a>
-        <a routerLink="/destinations" class="btn btn-outline-secondary btn-sm px-4 rounded-pill">
+        <a routerLink="/destinations" class="btn btn-outline-secondary btn-sm px-4 rounded-3">
           Explorar Destinos
         </a>
       </div>
@@ -98,16 +100,14 @@
                       <div class="card-3d-overlay"></div>
                     </div>
 
-                    <!-- Camada Flutuante: Badges (translateZ: z-40) -->
-                    <div class="card-3d-badges card-3d-item z-40">
+                    <!-- Camada Flutuante: Header do Card (Horizon à esquerda, Rank badge à direita) -->
+                    <div class="card-3d-header card-3d-item z-40">
+                      <div class="card-3d-brand">
+                        <img src="assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
+                      </div>
                       <span class="rank-badge">
                         {{ i + 1 }}º {{ getRankLabel(i) }}
                       </span>
-                    </div>
-
-                    <!-- Camada Flutuante: Logo Horizon (translateZ: z-30) -->
-                    <div class="card-3d-brand card-3d-item z-30">
-                      <img src="assets/LogoH.png" alt="Horizon" class="brand-logo-tag">
                     </div>
 
                     <!-- Camada Flutuante: Conteúdo do Card (translateZ: z-60) -->
@@ -129,10 +129,6 @@
                         <div class="card-3d-item z-80">
                           <span class="btn-3d-action shadow">
                             Ver Voos
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                              <line x1="5" y1="12" x2="19" y2="12"></line>
-                              <polyline points="12 5 19 12 12 19"></polyline>
-                            </svg>
                           </span>
                         </div>
                       </div>
@@ -156,7 +152,7 @@
                     <div class="d-flex align-items-start justify-content-between mb-4 position-relative z-1">
                       <div>
                         @if (rec.tourismType) {
-                          <span class="tourism-type-badge px-3 py-1 fw-bold rounded-pill border text-uppercase d-inline-block mb-3">
+                          <span class="tourism-type-badge px-3 py-1 fw-bold rounded-3 border text-uppercase d-inline-block mb-3">
                             {{ formatTourismType(rec.tourismType) }}
                           </span>
                         }
@@ -198,7 +194,7 @@
                   </div>
 
                   <div class="pt-3 mt-auto d-flex justify-content-end position-relative" style="z-index: 2;">
-                    <a [routerLink]="['/flights']" [queryParams]="{ destinationId: rec.destinationId }" class="btn CartBtn btn-embarcar rounded-pill fw-bold text-white border-0 shadow-sm" style="width: 140px; text-decoration: none;">
+                    <a [routerLink]="['/flights']" [queryParams]="{ destinationId: rec.destinationId }" class="btn CartBtn btn-embarcar rounded-3 fw-bold text-white border-0 shadow-sm" style="width: 140px; text-decoration: none;">
                       <div class="btn-text-wrapper">
                         <span class="btn-text">Embarcar</span>
                       </div>
@@ -247,7 +243,7 @@
                   <!-- Score Pill (Top Right) -->
                   @if (rec.score !== undefined && rec.score !== null) {
                     <div class="position-absolute top-0 end-0 m-2">
-                      <span class="badge text-white rounded-pill px-3 py-2 fw-bold shadow-sm score-tag-small">
+                      <span class="badge text-white rounded-2 px-3 py-2 fw-bold shadow-sm score-tag-small">
                         ⭐ {{ formatScore(rec.score) }} compatível
                       </span>
                     </div>

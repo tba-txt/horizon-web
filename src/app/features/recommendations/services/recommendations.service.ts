@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, timeout } from 'rxjs';
 import { Recommendation } from '../models/recommendation.model';
 import { environment } from '../../../../environments/environment';
 
@@ -13,6 +13,8 @@ export class RecommendationsService {
 
   getRecommendations(limit = 10): Observable<Recommendation[]> {
     const params = new HttpParams().set('limit', limit.toString());
-    return this.http.get<Recommendation[]>(this.apiUrl, { params });
+    return this.http.get<Recommendation[]>(this.apiUrl, { params }).pipe(
+      timeout(15000)
+    );
   }
 }

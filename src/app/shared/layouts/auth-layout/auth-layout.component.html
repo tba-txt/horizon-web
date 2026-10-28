@@ -1,0 +1,38 @@
+<div class="container-fluid min-vh-100 p-0 overflow-hidden d-flex align-items-center justify-content-center auth-viewport-wrapper">
+      <div class="auth-card-container d-flex shadow-lg w-100">
+        
+        <!-- Coluna de Imagem / Branding (expandida para a esquerda) -->
+        <div 
+          class="d-none d-md-block position-relative auth-brand-side p-0 overflow-hidden h-100"
+          [ngClass]="{'order-1': imagePosition === 'left', 'order-2': imagePosition === 'right'}"
+        >
+          @if (imageSrc) {
+            <img 
+              [src]="imageSrc" 
+              alt="Horizon Auth" 
+              class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
+              style="object-position: left center;"
+            />
+          } @else {
+            <div class="auth-bg-overlay"></div>
+            <div class="position-relative z-2 text-center max-w-brand text-white p-5 h-100 d-flex flex-column align-items-center justify-content-center">
+              <h1 class="display-4 fw-bold mb-3 tracking-tight">Horizon</h1>
+              <p class="lead mb-0 text-white-50">
+                Sua agência de viagens com recomendações inteligentes e personalizadas.
+              </p>
+            </div>
+          }
+        </div>
+
+        <!-- Coluna de Formulário (Fundo cinza bem claro) -->
+        <div 
+          class="position-relative p-0 h-100 auth-form-side"
+          [ngClass]="{'order-2': imagePosition === 'left', 'order-1': imagePosition === 'right'}"
+        >
+          <div class="w-100 h-100 auth-form-container d-flex align-items-center justify-content-center">
+            <ng-content></ng-content>
+          </div>
+        </div>
+        
+      </div>
+    </div>

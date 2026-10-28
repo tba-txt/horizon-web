@@ -7,11 +7,12 @@ import { DestinationsService } from '../services/destinations.service';
 import { Destination } from '../models/destination.model';
 
 import { PlaneLoaderComponent } from '../../../shared/components/plane-loader/plane-loader.component';
+import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
 
 @Component({
   selector: 'app-common-destinations',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent, PlaneLoaderComponent],
+  imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent, PlaneLoaderComponent, BackToTopComponent],
   templateUrl: './common-destinations.component.html',
   styleUrls: ['./common-destinations.component.scss']
 })

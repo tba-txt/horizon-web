@@ -55,6 +55,17 @@ export class TokenStorageService {
     }
   }
 
+  public clearNewUserLocalCache(userId: string | number): void {
+    if (typeof localStorage === 'undefined' || !userId) return;
+    localStorage.removeItem(`userInteractions_${userId}`);
+    localStorage.removeItem(`interactedPosts_${userId}`);
+    localStorage.removeItem(`thisOrThatSelection_${userId}`);
+    localStorage.removeItem(`triviaSelection_${userId}`);
+    localStorage.removeItem(`articleRead_${userId}`);
+    localStorage.removeItem(`quizCompleted_${userId}`);
+    localStorage.removeItem(`horizonCoupon_${userId}`);
+  }
+
   public clearStorage(): void {
     // Obter o token bruto diretamente para não acionar getToken() e causar loop infinito
     const rawToken = sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
@@ -70,6 +81,10 @@ export class TokenStorageService {
       } catch {}
     }
     localStorage.removeItem('thisOrThatSelection');
+    localStorage.removeItem('thisOrThatSelection_guest');
+    localStorage.removeItem('userInteractions_guest');
+    localStorage.removeItem('interactedPosts_guest');
+    localStorage.removeItem('triviaSelection_guest');
     localStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(TOKEN_KEY);
   }

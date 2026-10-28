@@ -77,6 +77,20 @@ a, button, .btn, input, select {
   box-shadow: 0 12px 24px rgba(0,0,0,0.12) !important;
 }
 
+/* Disable card hover in traveler-identity and checkout */
+app-traveler-identity .card,
+app-traveler-identity .card:hover,
+.profile-main-card,
+.profile-main-card:hover,
+app-checkout .card,
+app-checkout .card:hover,
+app-checkout aside.card,
+app-checkout aside.card:hover {
+  transform: none !important;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  transition: none !important;
+}
+
 /* Smooth custom dropdowns */
 .dropdown-menu.show {
   animation: slideDownFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -197,6 +211,39 @@ img.w-100, .w-100 img {
 
 
 
+
+/* =========================================================
+   GLOBAL MODAL SCROLL LOCK & OVERSCROLL CONTAINMENT
+   Impede que o scroll de qualquer modal vaze para a página de fundo
+   ========================================================= */
+html:has(.modal-backdrop-glass),
+body:has(.modal-backdrop-glass),
+html:has(.modal.show),
+body:has(.modal.show),
+html:has(.modal-backdrop),
+body:has(.modal-backdrop),
+html:has(.feedback-modal-backdrop),
+body:has(.feedback-modal-backdrop),
+html:has(.deactivate-modal-backdrop),
+body:has(.deactivate-modal-backdrop),
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
+/* Garante contenção estrita de rolagem dentro do modal */
+.modal,
+.modal-dialog,
+.modal-content,
+.modal-body,
+.modal-backdrop-glass,
+.modal-card-glass,
+.modal-scroll-content,
+.feedback-modal-card,
+.deactivate-modal-card {
+  overscroll-behavior: contain !important;
+}
 
 /* Custom Modern Scrollbar */
 ::-webkit-scrollbar { width: 10px; height: 10px; }

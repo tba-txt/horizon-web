@@ -19,14 +19,27 @@
 
   </div>
 } @else if (identity(); as data) {
-  <section class="mb-5" id="traveler-identity-section" [class.theme-eco]="isEcoTheme()" [class.theme-comum]="!isEcoTheme()">
-    <div class="card bg-white profile-main-card shadow-sm">
+  <section class="mb-5 pt-3" id="traveler-identity-section" [class.theme-eco]="isEcoTheme()" [class.theme-comum]="!isEcoTheme()">
+    <div class="profile-card-container position-relative">
       
-      <!-- Orbs Animados ao Fundo -->
-      <div class="glow-orb"></div>
-      <div class="glow-orb-2"></div>
+      <!-- Botão Zerar Algoritmo no Topo Direito (Aba Figma) -->
+      <button
+        type="button"
+        class="btn-top-reset-algorithm"
+        (click)="openResetConfirm()"
+        [disabled]="isResetting()"
+        title="Zerar algoritmo e limpar curtidas e preferências"
+      >
+        <span>Zerar Algoritmo</span>
+      </button>
 
-      <div class="row g-5 position-relative z-1">
+      <div class="card bg-white profile-main-card shadow-sm">
+        
+        <!-- Orbs Animados ao Fundo -->
+        <div class="glow-orb"></div>
+        <div class="glow-orb-2"></div>
+
+        <div class="row g-5 position-relative z-1">
         
         <!-- COLUNA 1: PERFIL & IMAGEM HORIZON -->
         <div class="col-lg-3 pe-lg-4 d-flex flex-column">
@@ -79,9 +92,40 @@
               </div>
             }
             @if (data.topDimensions.length === 0) {
-              <div class="text-center text-muted py-4">
-                <i class="bi bi-bar-chart text-light fs-2 mb-2 d-block"></i>
-                Nenhuma afinidade registrada ainda.
+              <div class="affinities-empty-card p-4 rounded-4 shadow-sm">
+                <!-- Top Status & Actions (sem pontilhado, sem barrinhas de prévia) -->
+                <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3 mb-0">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="empty-state-icon-box flex-shrink-0 d-flex align-items-center justify-content-center">
+                      @if (resetSuccess()) {
+                        <i class="bi bi-check2-circle fs-4 theme-text"></i>
+                      } @else {
+                        <i class="bi bi-sliders2-vertical fs-4 theme-text"></i>
+                      }
+                    </div>
+                    <div>
+                      <h4 class="h6 fw-bold text-dark mb-1">
+                        @if (resetSuccess()) {
+                          Algoritmo zerado com sucesso!
+                        } @else {
+                          Algoritmo pronto para calibração
+                        }
+                      </h4>
+                      <p class="text-secondary small mb-0">
+                        Nenhuma preferência registrada. Responda ao quiz ou interaja com o feed para calcular suas métricas.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                    <a routerLink="/quiz" class="btn-empty-action primary-action">
+                      <i class="bi bi-patch-question-fill me-1"></i> Fazer Quiz
+                    </a>
+                    <a routerLink="/feed" class="btn-empty-action secondary-action">
+                      <i class="bi bi-compass me-1"></i> Explorar Feed
+                    </a>
+                  </div>
+                </div>
               </div>
             }
           </div>
@@ -89,21 +133,101 @@
           <div class="mt-5 pt-4">
             <span class="text-uppercase fw-bold theme-text horizon-see-label d-block mb-3">COMO O HORIZON TE VÊ</span>
             
-            <h2 class="horizon-see-title fw-bold text-dark mb-3 impact-text">
-              O seu coração pede por <span class="theme-text">{{ data.topDimensions[0]?.label || 'Novas Experiências' }}</span>
-            </h2>
-            
-            <p class="text-secondary reading-text fs-5" style="line-height: 1.7; max-width: 850px;">
-              @if (data.topDimensions.length >= 2) {
-                Você busca experiências marcadas por <strong class="text-dark">{{ data.topDimensions[0].label | lowercase }}</strong> e <strong class="text-dark">{{ data.topDimensions[1].label | lowercase }}</strong>. O algoritmo entende você como um viajante que procura destinos focados nestas características.
-              } @else {
-                O algoritmo está aprendendo seu estilo de viagem. Conforme você interage com o feed e responde ao quiz, construiremos seu perfil de forma totalmente personalizada.
-              }
-            </p>
+            @if (data.onboardingStatus === 'NO_QUIZ_NO_FEED') {
+              <h2 class="horizon-see-title fw-bold text-dark mb-3 impact-text">
+                Ei, seja bem-vindo à <span class="theme-text">Horizon</span>!
+              </h2>
+              <p class="text-secondary reading-text fs-5 mb-0" style="line-height: 1.7; max-width: 760px;">
+                Identificamos que você ainda não realizou o nosso quiz e nem possui interações registradas no feed. Para que o Horizon descubra seus destinos ideais, responda ao quiz de viagens ou curta e vote nos conteúdos do feed!
+              </p>
+            } @else if (data.onboardingStatus === 'QUIZ_ONLY') {
+              <h2 class="horizon-see-title fw-bold text-dark mb-3 impact-text">
+                O seu coração pede por <span class="theme-text">{{ data.topDimensions[0]?.label || 'Novas Experiências' }}</span>
+              </h2>
+              <p class="text-secondary reading-text fs-5 mb-0" style="line-height: 1.7; max-width: 760px;">
+                Seja bem-vindo à Horizon! Você já realizou o quiz de viagens, porém ainda não possui interações registradas no feed. Suas preferências do quiz já estão ativas e ficarão ainda mais refinadas conforme você interagir com publicações do feed.
+              </p>
+            } @else if (data.onboardingStatus === 'FEED_ONLY') {
+              <h2 class="horizon-see-title fw-bold text-dark mb-3 impact-text">
+                O seu coração pede por <span class="theme-text">{{ data.topDimensions[0]?.label || 'Novas Experiências' }}</span>
+              </h2>
+              <p class="text-secondary reading-text fs-5 mb-0" style="line-height: 1.7; max-width: 760px;">
+                Seja bem-vindo à Horizon! Suas interações no feed já começaram a mapear seus interesses, mas você ainda não realizou o seu quiz de viagens. Responda ao quiz para calibrar suas preferências fundamentais e deixar suas recomendações completas!
+              </p>
+            } @else {
+              <h2 class="horizon-see-title fw-bold text-dark mb-3 impact-text">
+                O seu coração pede por <span class="theme-text">{{ data.topDimensions[0]?.label || 'Novas Experiências' }}</span>
+              </h2>
+              <p class="text-secondary reading-text fs-5 mb-0" style="line-height: 1.7; max-width: 760px;">
+                @if (data.topDimensions.length >= 2) {
+                  Você busca experiências marcadas por <strong class="text-dark">{{ data.topDimensions[0].label | lowercase }}</strong> e <strong class="text-dark">{{ data.topDimensions[1].label | lowercase }}</strong>. Seu algoritmo está 100% calibrado integrando suas respostas do quiz e seu comportamento em tempo real no feed.
+                } @else {
+                  Suas interações e respostas do quiz apontam forte interesse por <strong class="text-dark">{{ data.topDimensions[0]?.label | lowercase }}</strong>. Continue explorando para calibrar ainda mais o seu DNA de viajante.
+                }
+              </p>
+            }
           </div>
 
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
+  <!-- Modal com Fundo de Vidro Embaçado (Glassmorphism) -->
+  @if (showResetConfirm()) {
+    <div 
+      class="glass-modal-backdrop" 
+      (click)="cancelReset()"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="reset-modal-title"
+    >
+      <div 
+        class="glass-modal-card" 
+        (click)="$event.stopPropagation()"
+      >
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h3 id="reset-modal-title" class="h5 fw-bold text-dark m-0">Zerar Algoritmo</h3>
+          <button 
+            type="button" 
+            class="btn-modal-close" 
+            (click)="cancelReset()" 
+            [disabled]="isResetting()"
+            aria-label="Fechar"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+
+        <p class="modal-message mb-4">
+          Tem certeza de que deseja zerar o algoritmo? Seu perfil comportamental e interações serão redefinidos para os valores iniciais.
+        </p>
+
+        <div class="d-flex align-items-center justify-content-end gap-2">
+          <button
+            type="button"
+            class="btn-modal-cancel"
+            (click)="cancelReset()"
+            [disabled]="isResetting()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="button"
+            class="btn-modal-confirm"
+            (click)="confirmResetAlgorithm()"
+            [disabled]="isResetting()"
+          >
+            @if (isResetting()) {
+              <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+              Zerando...
+            } @else {
+              Zerar Algoritmo
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  }
 }

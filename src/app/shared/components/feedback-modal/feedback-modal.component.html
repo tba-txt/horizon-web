@@ -1,0 +1,218 @@
+@if (isOpen()) {
+  <div class="modal-backdrop-glass" tabindex="-1" role="dialog" aria-modal="true" (click)="close()">
+    <div class="modal-dialog modal-dialog-centered w-100" style="max-width: 560px;" (click)="$event.stopPropagation()">
+      <div class="modal-content modal-card-glass border-0 shadow-lg overflow-hidden">
+            
+            <!-- Header Visual Horizon -->
+            <div class="modal-header border-0 p-0 position-relative overflow-hidden" style="height: 88px;">
+              <img 
+                src="assets/cima-usuario.png" 
+                alt="Horizon" 
+                class="w-100 h-100 object-fit-cover"
+              />
+              <div class="position-absolute inset-0 w-100 h-100 d-flex justify-content-between align-items-center px-4" style="background: linear-gradient(135deg, rgba(11, 37, 69, 0.88) 0%, rgba(91, 164, 216, 0.82) 100%); top: 0; left: 0;">
+                <div class="text-white">
+                  <h2 class="h5 fw-bold mb-0 text-white">
+                    @if (mode() === 'CSAT') {
+                      @if (taskContext() === 'QUIZ') {
+                        Como foi sua experiência no Quiz?
+                      } @else if (taskContext() === 'CHECKOUT') {
+                        Como foi sua experiência de compra?
+                      } @else if (targetType() === 'TRIP' && destinationName()) {
+                        Como foi sua viagem para {{ destinationName() }}?
+                      } @else {
+                        Como foi sua experiência na Horizon?
+                      }
+                    } @else {
+                      @if (targetType() === 'TRIP' && destinationName()) {
+                        Como foi sua viagem para {{ destinationName() }}?
+                      } @else {
+                        Sua opinião sobre a Horizon
+                      }
+                    }
+                  </h2>
+                </div>
+                <button type="button" class="btn-close btn-close-white" (click)="close()" aria-label="Fechar"></button>
+              </div>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body p-4">
+              
+              @if (isAlreadySubmitted()) {
+                <div class="text-center py-3">
+                  <div class="mb-2" style="color: #65A30D;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                    </svg>
+                  </div>
+                  <h3 class="h6 fw-bold text-dark mb-1">Avaliação já registrada</h3>
+                  <p class="text-secondary small mb-3">
+                    Você já registrou sua avaliação para esta etapa. Obrigado por compartilhar sua experiência!
+                  </p>
+                  <button type="button" class="btn btn-horizon-green px-4 py-2 rounded-2 fw-semibold" (click)="close()">
+                    Fechar
+                  </button>
+                </div>
+              } @else if (isSuccess()) {
+                <div class="text-center py-3">
+                  <div class="mb-2" style="color: #65A30D;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                    </svg>
+                  </div>
+                  <h3 class="h6 fw-bold text-dark mb-1">Agradecemos pela sua avaliação :)</h3>
+                  <p class="text-secondary small mb-3">
+                    Sua avaliação foi registrada com sucesso na Horizon.
+                  </p>
+                  <button type="button" class="btn btn-horizon-green px-4 py-2 rounded-2 fw-semibold" (click)="close()">
+                    Concluir
+                  </button>
+                </div>
+              } @else {
+                <form (ngSubmit)="submitFeedback()">
+                  
+                  <!-- CSAT: Satisfação (1 a 5 estrelas amarelas) - Apenas em CSAT ou ALL -->
+                  @if (mode() !== 'NPS') {
+                    <div class="mb-4">
+                      <label class="form-label fw-bold text-dark small mb-2 d-block">
+                        1. @if (taskContext() === 'QUIZ') {
+                          Como você avalia sua experiência ao responder ao Quiz de Perfil?
+                        } @else if (taskContext() === 'CHECKOUT') {
+                          Como você avalia o processo de reserva e compra da passagem?
+                        } @else if (targetType() === 'TRIP') {
+                          Como você avalia sua experiência geral nesta viagem?
+                        } @else {
+                          Como está sendo sua experiência geral na Horizon?
+                        }
+                      </label>
+
+                      <div class="d-flex gap-2">
+                        @for (step of csatSteps; track step.score) {
+                          <button
+                            type="button"
+                            class="csat-step-btn flex-fill py-2 px-1 rounded-2 d-flex flex-column align-items-center justify-content-center"
+                            [class.active]="csatScore() === step.score"
+                            (click)="csatScore.set(step.score)"
+                          >
+                            <div class="d-flex align-items-center justify-content-center gap-1 mb-1 star-row">
+                              @for (starIdx of step.stars; track starIdx) {
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                                  @if (csatScore() === step.score) {
+                                    <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                                  } @else {
+                                    <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+                                  }
+                                </svg>
+                              }
+                            </div>
+                            <span class="csat-step-label">{{ step.label }}</span>
+                          </button>
+                        }
+                      </div>
+                    </div>
+                  }
+
+                  <!-- NPS: Recomendação 0 a 10 (0 a 6 Vermelho/Detrator, 7 a 8 Amarelo/Neutro, 9 a 10 Verde/Promotor) - Apenas em NPS ou ALL -->
+                  @if (mode() !== 'CSAT') {
+                    <div class="mb-4">
+                      <label class="form-label fw-bold text-dark small mb-2 d-block">
+                        {{ mode() === 'ALL' ? '2. ' : '1. ' }}De 0 a 10, o quanto você recomendaria a Horizon para um amigo?
+                      </label>
+
+                      <div class="nps-grid">
+                        @for (num of npsScores; track num) {
+                          <button 
+                            type="button" 
+                            class="nps-box-btn rounded-2 fw-bold"
+                            [class.nps-zone-red]="num <= 6"
+                            [class.nps-zone-yellow]="num >= 7 && num <= 8"
+                            [class.nps-zone-green]="num >= 9"
+                            [class.active]="npsScore() === num"
+                            (click)="npsScore.set(num)"
+                          >
+                            {{ num }}
+                          </button>
+                        }
+                      </div>
+
+                      
+                    </div>
+                  }
+
+                  <!-- Destaques Rápidos (Grid Responsivo de 2 Colunas - Sem Pilha Vertical) -->
+                  <div class="mb-4">
+                    <label class="form-label fw-bold text-dark small mb-2 d-block">
+                      {{ getTagsQuestionNumber() }}. Quais pontos mais influenciaram sua {{ mode() === 'CSAT' ? 'avaliação' : 'nota' }}? <span class="text-secondary fw-normal">(opcional)</span>
+                    </label>
+                    <div class="highlight-tags-grid">
+                      @for (tag of currentHighlightTags(); track tag) {
+                        <button
+                          type="button"
+                          class="highlight-tag-btn rounded-2"
+                          [class.active]="isTagSelected(tag)"
+                          (click)="toggleTag(tag)"
+                        >
+                          @if (isTagSelected(tag)) {
+                            <svg class="tag-check-icon me-1" width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                              <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+                            </svg>
+                          }
+                          <span>{{ tag }}</span>
+                        </button>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Comentário Opcional -->
+                  <div class="mb-4">
+                    <label for="feedbackComment" class="form-label fw-bold text-dark small mb-1">
+                      {{ getCommentQuestionNumber() }}. Comentário adicional <span class="text-secondary fw-normal">(opcional)</span>
+                    </label>
+                    <textarea 
+                      id="feedbackComment" 
+                      class="form-control rounded-2 small" 
+                      rows="2" 
+                      [(ngModel)]="commentText" 
+                      name="comment"
+                      maxlength="500"
+                    ></textarea>
+                  </div>
+
+                  @if (errorMessage()) {
+                    <div class="alert alert-danger py-2 px-3 small rounded-2 mb-3">
+                      {{ errorMessage() }}
+                    </div>
+                  }
+
+                  <!-- Botões de Ação -->
+                  <div class="d-flex justify-content-end gap-2 mt-4 pt-1">
+                    <button 
+                      type="button" 
+                      class="btn btn-cancel-red px-3 px-sm-4 py-2 rounded-2 fw-bold shadow-sm small" 
+                      (click)="close()"
+                    >
+                      Cancelar
+                    </button>
+                    <button 
+                      type="submit" 
+                      class="btn btn-horizon-green px-3 px-sm-4 py-2 rounded-2 fw-bold shadow-sm small"
+                      [disabled]="isSubmitDisabled()"
+                    >
+                      @if (isSubmitting()) {
+                        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                        Enviando...
+                      } @else {
+                        Enviar Avaliação
+                      }
+                    </button>
+                  </div>
+                </form>
+              }
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    }

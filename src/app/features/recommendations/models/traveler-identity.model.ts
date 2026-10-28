@@ -53,8 +53,17 @@ export interface RadarPoint {
   labelY: number;
 }
 
+export type ProfileOnboardingStatus = 
+  | 'NO_QUIZ_NO_FEED'   // Situação 1: Sem Quiz e Sem Feed
+  | 'QUIZ_ONLY'         // Situação 2: Fez Quiz, Sem Feed
+  | 'FEED_ONLY'         // Situação 3: Sem Quiz, Com Feed
+  | 'COMPLETED';        // Situação 4: Quiz e Feed ativos
+
 export interface TravelerIdentityState {
   hasProfile: boolean;
+  hasExplicitProfile: boolean;
+  hasBehavioralProfile: boolean;
+  onboardingStatus: ProfileOnboardingStatus;
   userName: string;
   socialName?: string;
   profileImageUrl?: string | null;

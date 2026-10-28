@@ -1,0 +1,828 @@
+<app-navbar></app-navbar>
+
+    <!-- Hero Section -->
+    <header class="hero-container position-relative overflow-hidden">
+      <img 
+        src="assets/feed.webp" 
+        alt="Feed de Histórias e Crônicas de Viagem" 
+        class="w-100 hero-image"
+        fetchpriority="high"
+        (error)="handleImageError($event)"
+      />
+    </header>
+
+    <main class="container-fluid px-3 px-xl-5 py-4 py-lg-5" style="max-width: 1240px; margin-top: 0;">
+      
+      <!-- Layout Centralizado do Feed -->
+      <div class="row g-4 justify-content-center">
+
+        <div class="col-12 col-lg-8 col-xl-7">
+          
+          <section class="mb-4">
+            <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+              <div>
+                <h1 class="h2 fw-bold text-dark mb-0">Feed</h1>
+              </div>
+
+              <!-- Ordenação Recentes / Populares estilizada sem pill -->
+              <div class="sort-tabs-container p-1 rounded-2 bg-white border d-flex align-items-center gap-1 shadow-xs" role="group" aria-label="Ordenar artigos">
+                <button 
+                  type="button" 
+                  class="sort-tab-btn"
+                  [class.active]="sortBy() === 'recent'"
+                  [attr.aria-pressed]="sortBy() === 'recent'"
+                  (click)="sortBy.set('recent')"
+                >
+                  <i class="bi bi-clock me-1"></i> Recentes
+                </button>
+                <button 
+                  type="button" 
+                  class="sort-tab-btn"
+                  [class.active]="sortBy() === 'popular'"
+                  [attr.aria-pressed]="sortBy() === 'popular'"
+                  (click)="sortBy.set('popular')"
+                >
+                  <i class="bi bi-fire me-1"></i> Populares
+                </button>
+              </div>
+            </div>
+
+            <!-- Campo de Busca Aprimorado -->
+            <div class="search-box-wrapper mb-3">
+              <div class="input-group search-input-group shadow-xs">
+                <span class="input-group-text bg-white border-end-0 text-muted ps-3" aria-hidden="true">
+                  <i class="bi bi-search" style="color: #5BA4D8;"></i>
+                </span>
+                <input 
+                  type="text" 
+                  class="form-control border-start-0 ps-2 py-2 search-input" 
+                  placeholder="Buscar crônicas, cidades, dunas, patrimônios..."
+                  [ngModel]="searchQuery()" 
+                  (ngModelChange)="searchQuery.set($event)" 
+                  aria-label="Buscar crônicas, dicas e experiências"
+                />
+                @if (searchQuery()) {
+                  <button class="btn btn-clean-clear border-start-0 pe-3 text-muted" type="button" (click)="searchQuery.set('')" aria-label="Limpar campo de busca">
+                    <i class="bi bi-x-circle-fill"></i>
+                  </button>
+                }
+              </div>
+            </div>
+
+            <!-- Categorias / Trilhas Temáticas (Chips Retangulares - NO PILLS) -->
+            <div class="category-chips-strip d-flex align-items-center gap-2 overflow-x-auto pb-2">
+              @for (cat of categories; track cat.id) {
+                <button 
+                  type="button" 
+                  class="category-chip"
+                  [class.active]="selectedCategory() === cat.id"
+                  (click)="setCategory(cat.id)"
+                >
+                  <i class="bi me-1" [class]="cat.icon"></i>
+                  <span>{{ cat.label }}</span>
+                </button>
+              }
+            </div>
+          </section>
+
+          @if (isLoading()) {
+            <div class="d-flex align-items-center justify-content-center py-5" aria-live="polite">
+              <app-plane-loader></app-plane-loader>
+            </div>
+          } @else if (filteredPosts().length === 0) {
+            <div class="text-center py-5 bg-white rounded-4 border shadow-sm p-4" aria-live="polite">
+              <i class="bi bi-journal-x fs-1 text-secondary mb-2 d-block" aria-hidden="true"></i>
+              <h3 class="h5 fw-bold text-dark mb-1">Nenhum artigo encontrado</h3>
+              <p class="text-muted small mb-3">Tente mudar os termos de busca.</p>
+              <button class="btn btn-outline-primary btn-sm rounded-3 px-4 fw-semibold" (click)="clearFilters()">
+                Limpar Busca
+              </button>
+            </div>
+          } @else {
+            <div class="d-flex flex-column gap-5 feed-container">
+              @for (post of displayedPosts(); track post.id) {
+                <div class="post-item-wrapper mb-4" [id]="'post-' + post.id">
+                  @if (post.postType === 'THIS_OR_THAT') {
+                    <!-- Aba Superior Centralizada para Isso ou Aquilo (Azul Horizon Glassmorphism) -->
+                    <div class="post-glass-tabs-bar d-flex justify-content-center px-3">
+                      <div class="post-glass-folder-tab tab-center-blue">
+                        <i class="bi bi-arrows-collapse me-2"></i>
+                        <span>Isso ou Aquilo</span>
+                      </div>
+                    </div>
+                  } @else if (post.postType !== 'TRIVIA') {
+                    <!-- Abas Superiores em Vidro Escuro (Localização à esquerda e Leitura à direita) -->
+                    <div class="post-glass-tabs-bar d-flex align-items-center justify-content-between px-3">
+                      <div class="post-glass-folder-tab tab-left">
+                        <img 
+                          src="assets/aviao-icon.webp" 
+                          alt="Avião" 
+                          class="tab-airplane-icon me-2" 
+                          width="18" 
+                          height="18" 
+                          loading="lazy" 
+                          decoding="async" 
+                        />
+                        <span>{{ getPostLocation(post) }}</span>
+                      </div>
+
+                      <div class="post-glass-folder-tab tab-right">
+                        <i class="bi bi-clock me-2" style="color: #5BA4D8;"></i>
+                        <span>{{ getPostReadTime(post) }}</span>
+                      </div>
+                    </div>
+                  }
+
+                  <article class="card border-0 shadow-sm rounded-4 overflow-hidden post-card bg-white" [class.this-or-that-post-card]="post.postType === 'THIS_OR_THAT'">
+                    
+                    @if (post.postType === 'THIS_OR_THAT') {
+                      <div class="card-body p-4 p-md-5 bg-white text-center">
+                        <div class="mb-4">
+                          <h2 class="h4 fw-bold text-dark lh-sm mb-1" style="font-family: var(--font-heading); letter-spacing: -0.01em;">Selecione apenas uma opção</h2>
+                          <p class="text-muted small mb-0">Qual dessas opções combina mais com a sua viagem perfeita?</p>
+                        </div>
+                        
+                        <div class="this-or-that-container position-relative">
+                          <div class="row g-3 g-md-2 justify-content-center position-relative">
+                            <!-- Botão Central VS -->
+                            <div class="vs-badge position-absolute top-50 start-50 translate-middle bg-white text-dark fw-bold rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; font-size: 1.1rem; font-family: var(--font-heading); border: 4px solid #fff; z-index: 10; transition: opacity 0.5s ease; pointer-events: none;" [style.opacity]="thisOrThatSelection()[post.id] ? '0' : '1'">
+                              VS
+                            </div>
+                            
+                            @for (opt of post.thisOrThatOptions; track opt.id; let idx = $index) {
+                              <div class="col-12 col-md-6">
+                                <div 
+                                  class="this-or-that-card position-relative overflow-hidden"
+                                  [class.voted]="thisOrThatSelection()[post.id] === opt.id"
+                                  [class.dimmed]="thisOrThatSelection()[post.id] && thisOrThatSelection()[post.id] !== opt.id"
+                                  [class.rounded-start-4]="idx === 0"
+                                  [class.rounded-end-4]="idx === 1"
+                                  (click)="selectThisOrThat(post.id, opt.id)"
+                                  style="cursor: pointer; height: 320px; transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1); border: none !important;"
+                                >
+                                  @if (opt.image) {
+                                    <img [src]="opt.image" loading="lazy" decoding="async" class="w-100 h-100 object-fit-cover option-img" style="transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);" alt="Option" (error)="handleImageError($event)">
+                                  } @else {
+                                    <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                                      <i class="bi bi-image text-white-50" style="font-size: 2.5rem; opacity: 0.35;"></i>
+                                    </div>
+                                  }
+                                  
+                                  <!-- Gradiente Overlay -->
+                                  <div class="position-absolute inset-0 w-100 h-100" style="background: linear-gradient(to top, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.4) 50%, transparent 100%); transition: opacity 0.6s ease;"></div>
+                                  
+                                  <!-- Conteúdo (Texto e Votos) -->
+                                  <div class="position-absolute bottom-0 start-0 w-100 p-3 p-md-4 text-start z-2 d-flex flex-column justify-content-end">
+                                    <h3 class="h5 text-white fw-bold mb-2 option-label" style="text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 8px rgba(0,0,0,0.95), 0 4px 16px rgba(0,0,0,0.85); transition: transform 0.4s ease;">{{ opt.label }}</h3>
+                                    
+                                    <!-- Votação (Porcentagem + Quantidade de Votos com Sombra Preta) -->
+                                    @if (thisOrThatSelection()[post.id]) {
+                                      <div class="vote-stats-container mt-1 animate-fade-in">
+                                        <div class="d-flex align-items-baseline gap-2 text-white flex-wrap">
+                                          <span class="fw-black fs-3 lh-1 text-white" style="color: #ffffff; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 8px rgba(0, 0, 0, 0.95), 0 4px 14px rgba(0, 0, 0, 0.85);">{{ getVotePercentage(post, opt) }}%</span>
+                                          <span class="text-white fw-semibold" style="font-size: 0.85rem; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 2px 6px rgba(0, 0, 0, 0.95), 0 3px 10px rgba(0, 0, 0, 0.85);">
+                                            • {{ getVoteCount(post, opt) }} {{ getVoteCount(post, opt) === 1 ? 'voto' : 'votos' }}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    }
+                                  </div>
+                                </div>
+                              </div>
+                            }
+                          </div>
+                          
+                          <div class="d-flex justify-content-center" style="min-height: 40px; margin-top: 1rem; transition: opacity 0.6s ease;" [style.opacity]="thisOrThatSelection()[post.id] ? '1' : '0'">
+                            @if (thisOrThatSelection()[post.id]) {
+                              <button class="btn btn-sm text-white fw-semibold px-4 rounded-3 shadow-sm" style="background-color: #65A30D; border: none; font-size: 0.8rem;" (click)="resetThisOrThat(post.id)">
+                                <i class="bi bi-arrow-counterclockwise me-1"></i> Refazer Escolha
+                              </button>
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    } @else if (post.postType === 'TRIVIA') {
+                      <div class="card-body p-4 p-md-5 text-center text-white trivia-card-body" style="background: linear-gradient(rgba(11, 37, 69, 0.45), rgba(11, 37, 69, 0.55)), url('assets/trivia-bg.webp') center/cover no-repeat;">
+                        <div class="mb-4 text-center">
+                          <h2 class="h4 fw-bold lh-sm mb-0 text-white" style="text-shadow: 0 2px 8px rgba(0,0,0,0.6);">Parada Obrigatória Horizon</h2>
+                        </div>
+                        
+                        <div class="bg-white text-dark rounded-4 p-4 p-md-4 shadow-sm text-start">
+                          <h3 class="h5 fw-bold mb-4 text-dark lh-base" style="font-size: 1.12rem; color: #0f172a !important;">
+                            {{ post.triviaData?.question }}
+                          </h3>
+                          
+                          <div class="d-flex flex-column gap-3">
+                            @for (opt of post.triviaData?.options; track opt; let idx = $index) {
+                              <button 
+                                type="button"
+                                class="trivia-option-card d-flex align-items-center justify-content-between"
+                                [class.is-correct]="triviaSelection()[post.id] === idx && idx === post.triviaData!.correctIndex"
+                                [class.is-wrong]="triviaSelection()[post.id] === idx && idx !== post.triviaData!.correctIndex"
+                                [class.is-revealed-correct]="triviaSelection()[post.id] !== undefined && triviaSelection()[post.id] !== post.triviaData!.correctIndex && idx === post.triviaData!.correctIndex"
+                                [class.is-dimmed]="triviaSelection()[post.id] !== undefined && triviaSelection()[post.id] !== idx && idx !== post.triviaData!.correctIndex"
+                                [disabled]="triviaSelection()[post.id] !== undefined"
+                                (click)="selectTrivia(post.id, idx)"
+                              >
+                                <div class="d-flex align-items-center gap-3">
+                                  <span class="trivia-radio-dot">
+                                    @if (triviaSelection()[post.id] === idx && idx === post.triviaData!.correctIndex) {
+                                      <i class="bi bi-check-lg text-success fw-bold" style="font-size: 0.85rem;"></i>
+                                    } @else if (triviaSelection()[post.id] === idx && idx !== post.triviaData!.correctIndex) {
+                                      <i class="bi bi-x-lg text-danger fw-bold" style="font-size: 0.85rem;"></i>
+                                    } @else if (triviaSelection()[post.id] !== undefined && idx === post.triviaData!.correctIndex) {
+                                      <i class="bi bi-check-lg text-success fw-bold" style="font-size: 0.85rem;"></i>
+                                    }
+                                  </span>
+                                  <span>{{ opt }}</span>
+                                </div>
+                              </button>
+                            }
+                          </div>
+                          
+                          @if (triviaSelection()[post.id] !== undefined) {
+                            <div class="mt-4 trivia-feedback-card shadow-sm">
+                              @if (triviaSelection()[post.id] === post.triviaData!.correctIndex) {
+                                <div class="d-flex align-items-center gap-2 mb-2 text-white fw-bold" style="font-size: 0.95rem;">
+                                  <span>Você acertou! A resposta correta é: <u class="text-white fw-semibold">{{ post.triviaData?.options[post.triviaData!.correctIndex] }}</u></span>
+                                </div>
+                                <p class="mb-0 text-white small lh-base" style="font-size: 0.88rem; color: rgba(255, 255, 255, 0.92) !important;">
+                                  {{ post.triviaData?.explanation }}
+                                </p>
+                              } @else {
+                                <div class="d-flex align-items-center gap-2 mb-2 text-white fw-bold" style="font-size: 0.95rem;">
+                                  <span>Não foi dessa vez! A opção correta era: <u class="text-white fw-semibold">{{ post.triviaData?.options[post.triviaData!.correctIndex] }}</u></span>
+                                </div>
+                                <p class="mb-0 text-white small lh-base" style="font-size: 0.88rem; color: rgba(255, 255, 255, 0.92) !important;">
+                                  {{ post.triviaData?.explanation }}
+                                </p>
+                              }
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    } @else {
+                      <div class="position-relative post-image-wrapper">
+                        @if (getPostImages(post).length > 1) {
+                          <!-- Contador de Fotos no canto inferior direito da imagem -->
+                          <div class="post-photo-bottom-info position-absolute bottom-0 end-0 p-3 z-3 pointer-events-none">
+                            <span class="post-glass-badge photo-count-badge">
+                              <i class="bi bi-camera-fill me-1"></i>
+                              {{ (activeImageIndex()[post.id] ?? 0) + 1 }}/{{ getPostImages(post).length }}
+                            </span>
+                          </div>
+                        }
+
+                        <!-- Gradiente sutil inferior na imagem -->
+                        <div class="post-image-gradient-scrim position-absolute bottom-0 start-0 end-0 z-2 pointer-events-none"></div>
+
+                        <div 
+                          #trackRef
+                          class="carousel-track"
+                          [class.is-dragging]="isDragging[post.id]"
+                          (mousedown)="onMouseDown($event, post.id, trackRef)"
+                          (mousemove)="onMouseMove($event, post.id, trackRef)"
+                          (mouseup)="onMouseUp(post.id, trackRef)"
+                          (mouseleave)="onMouseUp(post.id, trackRef)"
+                          (scroll)="onCarouselScroll(post.id, trackRef)"
+                        >
+                          @for (img of getPostImages(post); track $index) {
+                            <div class="carousel-slide">
+                              <img 
+                                [src]="img" 
+                                [alt]="post.title" 
+                                class="w-100 h-100 object-fit-cover pointer-events-none"
+                                loading="lazy"
+                                decoding="async"
+                                width="800"
+                                height="450"
+                                draggable="false"
+                                (error)="handleImageError($event)"
+                              />
+                            </div>
+                          }
+                        </div>
+
+                        @if (getPostImages(post).length > 1) {
+                          <button 
+                            type="button" 
+                            class="btn carousel-control-btn carousel-prev" 
+                            (click)="scrollCarousel(post, -1, $event, trackRef)"
+                            aria-label="Imagem anterior"
+                            title="Imagem anterior"
+                          >
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+                          </button>
+                          
+                          <button 
+                            type="button" 
+                            class="btn carousel-control-btn carousel-next" 
+                            (click)="scrollCarousel(post, 1, $event, trackRef)"
+                            aria-label="Próxima imagem"
+                            title="Próxima imagem"
+                          >
+                            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+                          </button>
+
+                          <div class="carousel-indicators-custom" role="tablist" aria-label="Indicadores de fotos">
+                            @for (img of getPostImages(post); track $index) {
+                              <button 
+                                type="button"
+                                class="carousel-dot" 
+                                role="tab"
+                                [class.active]="(activeImageIndex()[post.id] ?? 0) === $index"
+                                [attr.aria-label]="'Ir para imagem ' + ($index + 1) + ' de ' + getPostImages(post).length"
+                                (click)="goToSlide(post, $index, $event, trackRef)"
+                              ></button>
+                            }
+                          </div>
+                        }
+                      </div>
+
+                      <div class="card-body p-4 p-md-5">
+                        <!-- Título com efeito hover que abre a matéria -->
+                        <h2 
+                          class="h4 fw-bold text-dark mb-3 lh-sm post-title-hover" 
+                          (click)="openArticleReader(post)"
+                          tabindex="0"
+                          role="button"
+                          (keydown.enter)="openArticleReader(post)"
+                        >
+                          {{ post.title }}
+                        </h2>
+
+                        @if (post.caption) {
+                          <p class="text-secondary mb-4 lh-base fs-6 post-preview-text">
+                            {{ getPostPreview(post.caption) }}
+                          </p>
+                        }
+
+                      <!-- Barra de Ações: Reações & Botões -->
+                      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 pt-1">
+                        <div class="d-flex align-items-center gap-2">
+                          <!-- Botão Like redesenhado -->
+                          <button 
+                            type="button" 
+                            class="feed-action-btn like-btn" 
+                            [class.is-liked]="post.userInteraction === 'LIKE'"
+                            (click)="toggleInteraction(post, 'LIKE', $event)" 
+                            aria-label="Curtir post"
+                            title="Curtir e ensinar o algoritmo"
+                          >
+                            <i class="bi fs-5" [class.bi-hand-thumbs-up-fill]="post.userInteraction === 'LIKE'" [class.bi-hand-thumbs-up]="post.userInteraction !== 'LIKE'"></i>
+                            <span class="btn-text">Curtir</span>
+                            <span class="action-count">{{ post.likesCount || 0 }}</span>
+                          </button>
+
+                          <!-- Botão Dislike redesenhado -->
+                          <button 
+                            type="button" 
+                            class="feed-action-btn dislike-btn" 
+                            [class.is-disliked]="post.userInteraction === 'DISLIKE'"
+                            (click)="toggleInteraction(post, 'DISLIKE', $event)" 
+                            aria-label="Dislike no post"
+                            title="Não curtir e refinar preferências"
+                          >
+                            <i class="bi fs-5" [class.bi-hand-thumbs-down-fill]="post.userInteraction === 'DISLIKE'" [class.bi-hand-thumbs-down]="post.userInteraction !== 'DISLIKE'"></i>
+                            <span class="btn-text">Dislike</span>
+                            <span class="action-count">{{ post.dislikesCount || 0 }}</span>
+                          </button>
+
+                          <!-- Botão Compartilhar -->
+                          <button
+                            type="button"
+                            class="feed-action-icon-btn"
+                            (click)="sharePost(post, $event)"
+                            title="Copiar link da crônica"
+                            aria-label="Compartilhar crônica"
+                          >
+                            <i class="bi bi-share"></i>
+                          </button>
+                        </div>
+
+                        <!-- Botão Ler Artigo -->
+                        <button 
+                          type="button" 
+                          class="btn-read-article d-flex align-items-center justify-content-center"
+                          (click)="openArticleReader(post)"
+                          [attr.aria-label]="'Ler matéria completa: ' + post.title"
+                        >
+                          <span>Ler Artigo</span>
+                        </button>
+                      </div>
+
+                    </div>
+                  }
+                  </article>
+                </div>
+              }
+            </div>
+          }
+
+        </div>
+
+      </div>
+    </main>
+
+    <!-- MODAL DE LEITURA COMPLETA DO ARTIGO -->
+    @if (selectedArticle(); as article) {
+      <div class="modal-backdrop fade show modal-article-backdrop" (click)="closeArticleReader()"></div>
+      <div class="modal fade show d-block modal-article-reader" tabindex="-1" role="dialog" aria-modal="true" (click)="closeArticleReader()">
+        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable modal-article-dialog" (click)="$event.stopPropagation()">
+          <div class="modal-content modal-article-shell border-0 overflow-hidden">
+            <div class="modal-header border-0 px-4 px-md-5 pt-4 pb-2">
+              <div>
+                <div class="article-reader-kicker">Matéria completa</div>
+                <h2 class="article-reader-title mb-0">{{ article.title }}</h2>
+              </div>
+              <button type="button" class="btn-close ms-3" (click)="closeArticleReader()" aria-label="Fechar matéria"></button>
+            </div>
+
+            <div class="modal-body px-4 px-md-5 pt-3 pb-4">
+              <div class="position-relative rounded-3 overflow-hidden mb-4 article-reader-media">
+                <img 
+                  [src]="getActiveImage(article)" 
+                  [alt]="article.title" 
+                  class="article-reader-image" 
+                />
+
+                @if (getPostImages(article).length > 1) {
+                  <button 
+                    type="button" 
+                    class="btn carousel-control-btn carousel-prev" 
+                    (click)="prevImage(article, $event)" 
+                    aria-label="Imagem anterior"
+                    title="Imagem anterior"
+                  >
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/></svg>
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn carousel-control-btn carousel-next" 
+                    (click)="nextImage(article, $event)" 
+                    aria-label="Próxima imagem"
+                    title="Próxima imagem"
+                  >
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/></svg>
+                  </button>
+                }
+              </div>
+
+              @if (article.caption) {
+                <div class="article-reader-copy px-0 py-2">
+                  <p class="article-text-body">{{ article.caption }}</p>
+                </div>
+              }
+            </div>
+
+            <footer class="article-reader-footer px-4 px-md-5 py-3">
+              <div class="article-reactions d-flex align-items-center gap-3" role="group" aria-label="Avaliar matéria">
+                <button 
+                  type="button" 
+                  class="clean-reaction-btn" 
+                  [class.is-liked]="article.userInteraction === 'LIKE'" 
+                  (click)="toggleInteraction(article, 'LIKE', $event)" 
+                  aria-label="Gostei da matéria"
+                >
+                  <i class="bi fs-5" [class.bi-hand-thumbs-up-fill]="article.userInteraction === 'LIKE'" [class.bi-hand-thumbs-up]="article.userInteraction !== 'LIKE'"></i>
+                  <span class="fw-semibold">Like</span>
+                  <span class="reaction-count">{{ article.likesCount || 0 }}</span>
+                </button>
+
+                <button 
+                  type="button" 
+                  class="clean-reaction-btn" 
+                  [class.is-disliked]="article.userInteraction === 'DISLIKE'" 
+                  (click)="toggleInteraction(article, 'DISLIKE', $event)" 
+                  aria-label="Não gostei da matéria"
+                >
+                  <i class="bi fs-5" [class.bi-hand-thumbs-down-fill]="article.userInteraction === 'DISLIKE'" [class.bi-hand-thumbs-down]="article.userInteraction !== 'DISLIKE'"></i>
+                  <span class="fw-semibold">Dislike</span>
+                  <span class="reaction-count">{{ article.dislikesCount || 0 }}</span>
+                </button>
+              </div>
+
+              <button type="button" class="article-return-button" (click)="closeArticleReader()">
+                Voltar ao feed
+              </button>
+            </footer>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- WIDGET FLUTUANTE DE MISSÕES & RECOMPENSAS (LATERAL ESQUERDA NO MEIO) -->
+    <div class="floating-missions-container" [class.is-wiggling]="isWiggling() && !allMissionsCompleted()">
+      
+      <!-- Botão Flutuante Tipo Aba Lateral com Bússola Horizon -->
+      <button 
+        type="button" 
+        class="btn-floating-missions shadow-lg"
+        [class.missions-unlocked]="allMissionsCompleted()"
+        (click)="isMissionsOpen.set(true)"
+        aria-label="Abrir Missões Horizon e Desconto"
+        title="Missões Horizon - 10% OFF"
+      >
+        <div class="missions-tab-inner">
+          <div class="missions-tab-icon">
+            @if (allMissionsCompleted()) {
+              <i class="bi bi-gift-fill text-warning fs-5"></i>
+            } @else {
+              <i class="bi bi-compass-fill fs-5" style="color: #ffffff;"></i>
+            }
+          </div>
+          <div class="missions-tab-info d-none d-sm-flex flex-column text-start">
+            <span class="missions-tab-title">Missões</span>
+            <span class="missions-tab-badge">10% OFF</span>
+          </div>
+          <span class="missions-tab-count">{{ missionsCompletedCount() }}/3</span>
+        </div>
+      </button>
+
+      <!-- Aviso Sutil em Balão (a cada 5 minutos, aparece à direita do botão) -->
+      @if (subtleNotice()) {
+        <div class="floating-missions-notice shadow-lg" (click)="isMissionsOpen.set(true); subtleNotice.set(null)" role="button" tabindex="0">
+          <div class="d-flex align-items-center gap-2">
+            <span class="notice-text">{{ subtleNotice() }}</span>
+          </div>
+          <button 
+            type="button" 
+            class="btn-close-notice" 
+            (click)="$event.stopPropagation(); subtleNotice.set(null)" 
+            aria-label="Fechar aviso"
+            title="Fechar aviso"
+          >
+            <i class="bi bi-x-lg"></i>
+          </button>
+        </div>
+      }
+    </div>
+
+    @if (isMissionsOpen()) {
+      <div 
+        class="missions-modal-backdrop" 
+        (click)="isMissionsOpen.set(false)"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="missions-modal-title"
+      >
+        <div class="missions-modal-dialog" (click)="$event.stopPropagation()">
+          <div class="missions-modal-shell text-white position-relative overflow-hidden">
+            
+            <!-- Orbs luminosos de fundo para profundidade premium -->
+            <div class="missions-glow-orb orb-1 pointer-events-none"></div>
+            <div class="missions-glow-orb orb-2 pointer-events-none"></div>
+
+            <div class="p-4 p-md-4 position-relative z-1">
+              
+              <!-- Header com Badge de Desconto & Botão Fechar Glass -->
+              <div class="d-flex align-items-center justify-content-between mb-3">
+                <span class="missions-discount-badge">
+                  <i class="bi bi-tag-fill me-1"></i> 10% OFF EXCLUSIVO
+                </span>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="missions-counter-label">
+                    {{ missionsCompletedCount() }}/3 Concluídas
+                  </span>
+                  <button 
+                    type="button" 
+                    class="btn-close-missions-glass" 
+                    (click)="isMissionsOpen.set(false)"
+                    aria-label="Fechar modal de missões"
+                  >
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Título & Subtítulo -->
+              <h2 id="missions-modal-title" class="h4 fw-bold mb-1 text-white d-flex align-items-center gap-2">
+                <span>Libere 10% de Desconto</span>
+                <i class="bi bi-stars text-warning fs-5"></i>
+              </h2>
+              <p class="missions-modal-desc mb-3">
+                Cumpra as 3 tarefas de viajante abaixo e receba um cupom pessoal exclusivo para aplicar na sua próxima reserva no checkout:
+              </p>
+
+              <!-- Barra de Progresso com Shimmer -->
+              <div class="missions-progress-track mb-3">
+                <div 
+                  class="missions-progress-fill" 
+                  role="progressbar" 
+                  [style.width.%]="(missionsCompletedCount() / 3) * 100"
+                  [attr.aria-valuenow]="missionsCompletedCount()" 
+                  aria-valuemin="0" 
+                  aria-valuemax="3"
+                ></div>
+              </div>
+
+              <!-- Lista de 3 Tarefas com Design Elevado -->
+              <div class="d-flex flex-column gap-2 mb-3">
+                
+                <!-- Tarefa 1: Quiz Horizon -->
+                <div class="mission-task-card d-flex align-items-center justify-content-between p-3"
+                     [class.is-completed]="quizMissionCompleted()">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="task-icon-box" [class.completed]="quizMissionCompleted()">
+                      @if (quizMissionCompleted()) {
+                        <i class="bi bi-check-lg"></i>
+                      } @else {
+                        <i class="bi bi-patch-question"></i>
+                      }
+                    </div>
+                    <div>
+                      <strong class="d-block task-title" [class.text-success]="quizMissionCompleted()">
+                        Faça o seu Quiz Horizon
+                      </strong>
+                      @if (!quizMissionCompleted()) {
+                        <a routerLink="/quiz" (click)="isMissionsOpen.set(false)" class="task-action-link">
+                          Iniciar Quiz agora ›
+                        </a>
+                      } @else {
+                        <span class="task-status-text">Perfil de viajante ativo</span>
+                      }
+                    </div>
+                  </div>
+                  <span class="task-badge" [class.completed]="quizMissionCompleted()">
+                    {{ quizMissionCompleted() ? '1/1' : '0/1' }}
+                  </span>
+                </div>
+
+                <!-- Tarefa 2: Interagir com 10 posts -->
+                <div class="mission-task-card d-flex align-items-center justify-content-between p-3"
+                     [class.is-completed]="interactionsCount() >= 10">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="task-icon-box" [class.completed]="interactionsCount() >= 10">
+                      @if (interactionsCount() >= 10) {
+                        <i class="bi bi-check-lg"></i>
+                      } @else {
+                        <i class="bi bi-hand-thumbs-up"></i>
+                      }
+                    </div>
+                    <div>
+                      <strong class="d-block task-title" [class.text-success]="interactionsCount() >= 10">
+                        Interaja com 10 conteúdos
+                      </strong>
+                      <span class="task-subtitle">Isso ou Aquilo, Trivias ou Curtidas</span>
+                    </div>
+                  </div>
+                  <span class="task-badge" [class.completed]="interactionsCount() >= 10">
+                    {{ interactionsCount() }}/10
+                  </span>
+                </div>
+
+                <!-- Tarefa 3: Ler 1 matéria completa -->
+                <div class="mission-task-card d-flex align-items-center justify-content-between p-3"
+                     [class.is-completed]="articleRead()">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="task-icon-box" [class.completed]="articleRead()">
+                      @if (articleRead()) {
+                        <i class="bi bi-check-lg"></i>
+                      } @else {
+                        <i class="bi bi-book"></i>
+                      }
+                    </div>
+                    <div>
+                      <strong class="d-block task-title" [class.text-success]="articleRead()">
+                        Leia 1 post completo
+                      </strong>
+                      <span class="task-subtitle">Abra a crônica em um dos posts</span>
+                    </div>
+                  </div>
+                  <span class="task-badge" [class.completed]="articleRead()">
+                    {{ articleRead() ? '1/1' : '0/1' }}
+                  </span>
+                </div>
+
+              </div>
+
+              <!-- ESTADO DE RECOMPENSA DESBLOQUEADA -->
+              @if (allMissionsCompleted()) {
+                @if (couponUsed()) {
+                  <div class="coupon-reward-box p-3 text-center animate-bounce-in">
+                    <div class="d-flex align-items-center justify-content-center gap-2 text-secondary fw-bold small text-uppercase mb-1">
+                      <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                      <span>Cupom Já Utilizado</span>
+                    </div>
+                    <div class="p-2 rounded-2 bg-light border my-2">
+                      <span class="font-monospace text-muted text-decoration-line-through small">{{ couponCode() }}</span>
+                    </div>
+                    <small class="text-muted d-block" style="font-size: 0.72rem;">
+                      Você já aproveitou este desconto de 10% OFF em uma de suas viagens. Benefício de uso único por viajante!
+                    </small>
+                  </div>
+                } @else {
+                  <div class="coupon-reward-box p-3 text-center animate-bounce-in">
+                    <div class="d-flex align-items-center justify-content-center gap-2 text-success fw-bold small text-uppercase mb-1">
+                      <i class="bi bi-gift-fill text-warning fs-5"></i>
+                      <span>Parabéns! Cupom Liberado!</span>
+                    </div>
+                    <div class="d-flex align-items-center justify-content-between p-2 rounded-2 bg-light border border-dashed my-2">
+                      <span class="font-monospace fw-bold fs-5 tracking-wider" style="color: #5BA4D8;">{{ couponCode() }}</span>
+                      <button 
+                        type="button" 
+                        class="btn-copy-coupon" 
+                        [class.copied]="couponCopied()"
+                        (click)="copyCoupon()"
+                      >
+                        <i class="bi" [class.bi-check-lg]="couponCopied()" [class.bi-clipboard]="!couponCopied()"></i>
+                        {{ couponCopied() ? 'Copiado!' : 'Copiar' }}
+                      </button>
+                    </div>
+                    <small class="text-muted d-block" style="font-size: 0.73rem;">
+                      Insira este cupom no checkout para abater 10% do total da sua viagem! (Uso único)
+                    </small>
+                  </div>
+                }
+              } @else {
+                <div class="missions-footer-hint text-center pt-2">
+                  <i class="bi bi-lightning-charge-fill text-warning me-1"></i>
+                  <span>Falta pouco para liberar seu desconto exclusivo!</span>
+                </div>
+              }
+
+            </div>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- MODAL DE CADASTRO / LOGIN PARA CONVIDADOS DO FEED -->
+    @if (showGuestAuthModal()) {
+      <div 
+        class="guest-auth-backdrop" 
+        (click)="showGuestAuthModal.set(false)"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="guest-auth-title"
+      >
+        <div class="guest-auth-dialog" (click)="$event.stopPropagation()">
+          <div class="guest-auth-card text-center position-relative p-4 p-md-5">
+            
+            <!-- Botão Fechar -->
+            <button 
+              type="button" 
+              class="btn-guest-close" 
+              (click)="showGuestAuthModal.set(false)"
+              aria-label="Fechar aviso"
+              title="Fechar"
+            >
+              <i class="bi bi-x-lg"></i>
+            </button>
+
+            <!-- Ícone Central com Cor Padrão Horizon -->
+            <div class="d-flex justify-content-center mb-3">
+              <div class="guest-auth-icon-box">
+                <i class="bi bi-heart-fill"></i>
+              </div>
+            </div>
+
+            <!-- Header Editorial -->
+            <div class="mb-4">
+              <h3 id="guest-auth-title" class="guest-auth-title mb-2">Gostou deste conteúdo?</h3>
+              <p class="guest-auth-desc mb-0">
+                Ao curtir posts ou participar das votações, nosso algoritmo aprende sobre seus gostos para recomendar os melhores destinos do mundo. Crie uma conta ou faça login para interagir!
+              </p>
+            </div>
+
+            <!-- Ações Principais -->
+            <div class="d-flex flex-column gap-2 w-100">
+              <a 
+                routerLink="/register"
+                [queryParams]="{ returnUrl: '/feed' }"
+                class="btn-guest-register"
+              >
+                Criar Conta Gratuita
+              </a>
+
+              <a 
+                routerLink="/login"
+                [queryParams]="{ returnUrl: '/feed' }"
+                class="btn-guest-login"
+              >
+                Já tenho conta (Entrar)
+              </a>
+
+              <button 
+                type="button" 
+                class="btn-guest-explore mt-1"
+                (click)="showGuestAuthModal.set(false)"
+              >
+                Continuar apenas explorando
+              </button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    }
+
+    @if (shareNotice()) {
+      <div class="share-toast shadow-lg animate-pop">
+        <i class="bi bi-check2-circle text-success me-2 fs-5"></i>
+        <span>{{ shareNotice() }}</span>
+      </div>
+    }
+
+    <app-back-to-top></app-back-to-top>
+    <app-footer></app-footer>

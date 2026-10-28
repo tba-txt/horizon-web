@@ -12,21 +12,28 @@
   padding: 3rem !important;
   position: relative;
   overflow: hidden; /* To contain background animations */
+  transform: none !important;
+  transition: none !important;
+
+  &:hover {
+    transform: none !important;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+  }
 }
 
 /* Dynamic Themes */
 .theme-eco {
-  --theme-color: #198754; /* Green Ecoturismo */
-  --theme-color-rgb: 25, 135, 84;
+  --theme-color: #65A30D; /* Green Ecoturismo Horizon */
+  --theme-color-rgb: 101, 163, 13;
 }
 .theme-comum {
-  --theme-color: #4895CC; /* Official Horizon Blue */
-  --theme-color-rgb: 72, 149, 204;
+  --theme-color: #5BA4D8; /* Official Horizon Blue */
+  --theme-color-rgb: 91, 164, 216;
 }
 
 :host-context(:not(.theme-eco):not(.theme-comum)) {
-  --theme-color: #4895CC; /* Fallback Default */
-  --theme-color-rgb: 72, 149, 204;
+  --theme-color: #5BA4D8; /* Fallback Default */
+  --theme-color-rgb: 91, 164, 216;
 }
 
 .theme-text {
@@ -124,13 +131,8 @@
 }
 
 /* BAR ANIMATIONS */
-.affinity-row:hover .progress-bar {
-  filter: brightness(1.1);
-  box-shadow: 0 0 10px rgba(var(--theme-color-rgb), 0.4);
-}
-
 .affinity-bar-animated {
-  transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease;
+  transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
   animation: loadBar 1.5s ease-out forwards;
 }
 
@@ -188,20 +190,16 @@
 }
 
 .archetype-image-card {
-  min-height: 280px;
-  max-height: 380px;
+  width: 100%;
+  aspect-ratio: 949 / 1658;
   border-radius: 1.25rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   z-index: 1;
 
   img {
+    width: 100%;
+    height: 100%;
     border-radius: 1.25rem;
     object-fit: cover;
-  }
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 28px -6px rgba(var(--theme-color-rgb), 0.35);
   }
 }
 
@@ -264,3 +262,317 @@
   0% { transform: scale(0.95); }
   100% { transform: scale(1.05); }
 }
+
+/* RESPONSIVIDADE MEDIA QUERIES */
+@media (max-width: 991.98px) {
+  .profile-main-card {
+    padding: 2rem !important;
+    border-radius: 28px !important;
+  }
+
+  .horizon-see-title {
+    font-size: 1.85rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .profile-card-container {
+    padding-top: 28px !important;
+  }
+
+  .btn-top-reset-algorithm {
+    height: 30px !important;
+    right: 36px !important;
+    border-radius: 12px 12px 0 0 !important;
+    font-size: 0.8rem !important;
+    padding: 0 1.2rem !important;
+  }
+
+  .profile-main-card {
+    padding: 1.5rem !important;
+    border-radius: 24px !important;
+    border-width: 3px !important;
+  }
+
+  .horizon-see-title {
+    font-size: 1.5rem;
+  }
+
+  .reading-text {
+    font-size: 1.05rem !important;
+  }
+
+  .archetype-image-card {
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto 1.5rem auto;
+    aspect-ratio: 949 / 1658;
+    height: auto;
+    min-height: auto;
+    max-height: none;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .profile-card-container {
+    padding-top: 24px !important;
+  }
+
+  .btn-top-reset-algorithm {
+    height: 25.5px !important;
+    right: 20px !important;
+    border-radius: 10px 10px 0 0 !important;
+    font-size: 0.74rem !important;
+    padding: 0 0.9rem !important;
+  }
+
+  .profile-main-card {
+    padding: 1.25rem !important;
+    border-radius: 18px !important;
+    border-width: 2px !important;
+  }
+
+  .horizon-see-title {
+    font-size: 1.25rem;
+  }
+
+  .reading-text {
+    font-size: 0.95rem !important;
+  }
+
+  .user-avatar-circle {
+    width: 52px;
+    height: 52px;
+  }
+
+  .archetype-image-card {
+    max-width: 320px;
+    margin-bottom: 1.25rem;
+  }
+}
+
+/* =========================================================
+   BOTÃO SUPERIOR DIREITO: ZERAR ALGORITMO (ABA / TAB FIGMA)
+   ========================================================= */
+.profile-card-container {
+  position: relative;
+  width: 100%;
+  padding-top: 32px; /* Dá espaço vertical exato para a aba no topo */
+}
+
+.btn-top-reset-algorithm {
+  position: absolute;
+  top: 0;
+  right: 64px;
+  height: 35px; /* 32px acima + 3px sobrepondo a borda de 4px, sem vazar no branco */
+  z-index: 5;
+  background-color: var(--theme-color);
+  color: #ffffff;
+  border: none;
+  padding: 0 1.6rem;
+  border-radius: 14px 14px 0 0; /* Cantos superiores arredondados, base perfeitamente plana */
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  box-shadow: 0 -2px 8px rgba(var(--theme-color-rgb), 0.22);
+  transition: filter 0.2s ease, opacity 0.2s ease;
+
+  span {
+    color: #ffffff;
+    letter-spacing: -0.01em;
+  }
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+
+  &:active:not(:disabled) {
+    filter: brightness(0.96);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+/* =========================================================
+   MODAL DE CONFIRMAÇÃO COM DESIGN PREMIUM HORIZON
+   ========================================================= */
+.glass-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1060;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  animation: glassFadeIn 0.2s ease-out forwards;
+}
+
+.glass-modal-card {
+  width: 100%;
+  max-width: 420px;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.2);
+  animation: glassScaleUp 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+}
+
+.btn-modal-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    color: #0f172a;
+    background-color: #f1f5f9;
+  }
+}
+
+.modal-message {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: #64748b;
+  margin: 0;
+}
+
+.btn-modal-cancel {
+  padding: 0.55rem 1.15rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #64748b;
+  background-color: transparent;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background-color: #f8fafc;
+    color: #1e293b;
+    border-color: #cbd5e1;
+  }
+}
+
+.btn-modal-confirm {
+  padding: 0.55rem 1.25rem;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #ffffff;
+  background-color: var(--theme-color);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(0.92);
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+}
+
+@keyframes glassFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes glassScaleUp {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* =========================================================
+   AFFINITIES EMPTY STATE (ESTADO INICIAL SEM PONTILHADO)
+   ========================================================= */
+.affinities-empty-card {
+  background: linear-gradient(135deg, rgba(var(--theme-color-rgb), 0.04) 0%, rgba(255, 255, 255, 0.98) 100%);
+  border: 1.5px solid rgba(var(--theme-color-rgb), 0.22);
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(11, 37, 69, 0.04);
+}
+
+.empty-state-icon-box {
+  width: 44px;
+  height: 44px;
+  background: rgba(var(--theme-color-rgb), 0.12);
+  border-radius: 12px;
+}
+
+.btn-empty-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.15rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+
+  &.primary-action {
+    background-color: var(--theme-color);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 8px rgba(var(--theme-color-rgb), 0.28);
+
+    &:hover {
+      filter: brightness(0.92);
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 12px rgba(var(--theme-color-rgb), 0.38);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &.secondary-action {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
+
+    &:hover {
+      background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      color: #ffffff !important;
+      transform: translateY(-1.5px);
+      box-shadow: 0 4px 16px rgba(245, 158, 11, 0.48);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+}
+

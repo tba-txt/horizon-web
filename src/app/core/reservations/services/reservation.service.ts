@@ -27,8 +27,14 @@ export class ReservationService {
     this.checkoutDraftSignal.set(draft);
     if (draft) {
       sessionStorage.setItem('horizon_checkout_draft', JSON.stringify(draft));
+      try {
+        localStorage.setItem('horizon_checkout_draft', JSON.stringify(draft));
+      } catch {}
     } else {
       sessionStorage.removeItem('horizon_checkout_draft');
+      try {
+        localStorage.removeItem('horizon_checkout_draft');
+      } catch {}
     }
   }
 
@@ -38,7 +44,7 @@ export class ReservationService {
 
   private loadDraftFromSession(): CheckoutDraft | null {
     try {
-      const saved = sessionStorage.getItem('horizon_checkout_draft');
+      const saved = sessionStorage.getItem('horizon_checkout_draft') || localStorage.getItem('horizon_checkout_draft');
       return saved ? JSON.parse(saved) : null;
     } catch {
       return null;
@@ -65,8 +71,13 @@ export class ReservationService {
     return this.http.get<TicketResponse[]>(`${this.ticketsUrl}/reservation/${reservationId}`);
   }
 
-  downloadTicketPdf(ticketNumber: string): Observable<Blob> {
+  downloadTicketPdf(ticketNumber: string, seatClass?: string): Observable<Blob> {
+    const params: Record<string, string> = {};
+    if (seatClass) {
+      params['seatClass'] = seatClass;
+    }
     return this.http.get(`${this.ticketsUrl}/${ticketNumber}/download`, {
+      params,
       responseType: 'blob'
     });
   }

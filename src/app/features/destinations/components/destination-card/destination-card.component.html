@@ -20,7 +20,7 @@
         </div>
         <div class="dest-info" [class.text-end]="isWide">
           <span class="dest-price small fw-medium opacity-100">
-            Econômica a partir de <span class="fw-bold fs-6">BRL {{ destination.basePrice || 0 }}</span>
+            Básico a partir de <span class="fw-bold fs-6">BRL {{ destination.basePrice || 0 }}</span>
           </span>
         </div>
       </div>
@@ -51,15 +51,12 @@
                 Embarcar
               }
             </span>
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" class="btn-chevron ms-1">
-              <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-            </svg>
           </span>
 
           <!-- Rastro de fumaça sutil quando decola -->
           <span class="jet-stream" aria-hidden="true"></span>
         </button>
-        <button class="btn btn-discover w-100 fw-semibold rounded-pill text-white text-decoration-underline" (click)="onDiscover($event)">
+        <button class="btn btn-discover w-100 fw-semibold rounded-2 text-white text-decoration-underline" (click)="onDiscover($event)">
           Descubra
         </button>
       </div>

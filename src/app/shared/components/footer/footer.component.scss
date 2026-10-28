@@ -1,0 +1,204 @@
+.footer-horizon {
+      background-color: #5BA4D8; /* Azul padrão Horizon estrito */
+      color: #ffffff;
+      width: 100%;
+      position: relative;
+    }
+
+    /* Watermark náutica / bússola sutil de fundo */
+    .footer-watermark {
+      position: absolute;
+      right: -60px;
+      bottom: -60px;
+      font-size: 24rem;
+      color: rgba(255, 255, 255, 0.05);
+      line-height: 1;
+      user-select: none;
+      z-index: 0;
+    }
+
+    .footer-brand-logo {
+      height: 38px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+    }
+
+    .footer-manifesto {
+      font-size: 0.88rem;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 320px;
+    }
+
+    .social-icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px; /* Strict: NO rounded-pill */
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .social-icon-btn:hover {
+      background: #ffffff;
+      border-color: #ffffff;
+      color: #5BA4D8;
+      transform: translateY(-2px);
+    }
+
+    .footer-col-title {
+      font-size: 1.05rem;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .footer-nav-list li {
+      margin-bottom: 0.65rem;
+    }
+
+    .footer-nav-link {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.875rem;
+      text-decoration: none;
+      transition: color 0.18s ease, transform 0.18s ease;
+      display: inline-block;
+    }
+    .footer-nav-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
+      transform: translateX(2px);
+    }
+
+    .footer-email-link {
+      color: #ffffff;
+      font-size: 0.84rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.18s ease;
+      display: inline-block;
+      word-break: break-all;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px; /* Strict: NO rounded-pill */
+    }
+    .footer-email-link:hover {
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
+
+    .footer-cta-box {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+    }
+
+    .cta-box-title {
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .cta-box-desc {
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.82rem;
+      line-height: 1.4;
+    }
+
+    /* Botão CTA Verde Padrão Horizon #65A30D */
+    .btn-footer-cta {
+      background: #65A30D; /* Verde padrão Horizon */
+      color: #ffffff;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 0.68rem 1.2rem;
+      border-radius: 8px; /* Strict: NO rounded-pill */
+      transition: all 0.22s ease;
+      box-shadow: 0 4px 14px rgba(101, 163, 13, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .btn-footer-cta:hover {
+      background: #558b0a;
+      color: #ffffff;
+      box-shadow: 0 6px 18px rgba(101, 163, 13, 0.5);
+      transform: translateY(-2px);
+    }
+
+    /* Container de Idiomas - Sem divider lines, fundo sutil integrado */
+    .footer-languages-container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px; /* Strict: NO rounded-pill */
+    }
+
+    .footer-lang-label {
+      font-size: 0.95rem;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .lang-selector-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px; /* Strict: NO rounded-pill */
+      color: rgba(255, 255, 255, 0.85);
+      font-size: 0.82rem;
+      padding: 0.22rem 0.6rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .lang-selector-btn:hover:not(.active) {
+      color: #ffffff;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .lang-selector-btn.active {
+      color: #5BA4D8;
+      background: #ffffff;
+      border-color: #ffffff;
+      font-weight: 700;
+    }
+
+    .lang-notice-toast {
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      line-height: 1.4;
+    }
+
+    .footer-copyright-text {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.84rem;
+    }
+
+    .pointer-events-none {
+      pointer-events: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+      .footer-manifesto {
+        max-width: 100%;
+      }
+      .footer-cta-box {
+        margin-top: 1rem;
+      }
+    }

@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -6,6 +6,7 @@ import { environment } from '../../../../environments/environment';
 import { 
   ProfileResponse, 
   TravelerIdentityState, 
+  ProfileOnboardingStatus,
   AttributeDimension, 
   TravelerArchetype, 
   RadarPoint 
@@ -61,6 +62,8 @@ export class TravelerIdentityService {
   private http = inject(HttpClient);
   private readonly baseUrl = environment.apiUrl;
 
+  readonly identityState = signal<TravelerIdentityState | null>(null);
+
   getTravelerIdentity(): Observable<TravelerIdentityState> {
     return forkJoin({
       explicit: this.http.get<ProfileResponse>(`${this.baseUrl}/profiles/explicit`).pipe(
@@ -73,7 +76,19 @@ export class TravelerIdentityService {
         catchError(() => of({ name: 'Viajante', budgetPerPerson: null } as UserProfile))
       )
     }).pipe(
-      map(data => this.processIdentity(data.explicit, data.behavioral, data.user))
+      map(data => {
+        const state = this.processIdentity(data.explicit, data.behavioral, data.user);
+        this.identityState.set(state);
+        return state;
+      })
+    );
+  }
+
+  resetAlgorithm(): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/profiles/reset`).pipe(
+      map(() => {
+        this.identityState.set(null);
+      })
     );
   }
 
@@ -85,8 +100,21 @@ export class TravelerIdentityService {
     const explicitAttrs = explicitRes?.attributes || [];
     const behavioralAttrs = behavioralRes?.attributes || [];
 
-    const hasProfile = (explicitRes?.hasProfile && explicitAttrs.length > 0) || 
-                       (behavioralRes?.hasProfile && behavioralAttrs.length > 0);
+    const hasExplicitProfile = !!(explicitRes?.hasProfile && explicitAttrs.length > 0);
+    const hasBehavioralProfile = !!(behavioralRes?.hasProfile && behavioralAttrs.length > 0);
+
+    let onboardingStatus: ProfileOnboardingStatus = 'NO_QUIZ_NO_FEED';
+    if (hasExplicitProfile && hasBehavioralProfile) {
+      onboardingStatus = 'COMPLETED';
+    } else if (hasExplicitProfile && !hasBehavioralProfile) {
+      onboardingStatus = 'QUIZ_ONLY';
+    } else if (!hasExplicitProfile && hasBehavioralProfile) {
+      onboardingStatus = 'FEED_ONLY';
+    } else {
+      onboardingStatus = 'NO_QUIZ_NO_FEED';
+    }
+
+    const hasProfile = hasExplicitProfile || hasBehavioralProfile;
 
     const explicitMap = new Map<string, number>();
     for (const a of explicitAttrs) {
@@ -128,9 +156,9 @@ export class TravelerIdentityService {
       .filter(d => d.explicitScore > 0 || d.behavioralScore > 0)
       .sort((a, b) => b.combinedScore - a.combinedScore);
 
-    const topDimensions = (sortedActiveDimensions.length >= 4 
-      ? sortedActiveDimensions.slice(0, 5) 
-      : dimensions.slice(0, 5));
+    const topDimensions = sortedActiveDimensions.length > 0
+      ? sortedActiveDimensions.slice(0, 5)
+      : [];
 
     // Determina o Estilo
     const archetype = this.determineArchetype(dimensions);
@@ -142,6 +170,9 @@ export class TravelerIdentityService {
 
     return {
       hasProfile,
+      hasExplicitProfile,
+      hasBehavioralProfile,
+      onboardingStatus,
       userName: user?.name || 'Viajante',
       socialName: user?.socialName || undefined,
       profileImageUrl: user?.profileImageUrl || null,

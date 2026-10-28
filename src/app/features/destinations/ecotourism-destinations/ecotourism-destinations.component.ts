@@ -9,11 +9,12 @@ import { Destination } from '../models/destination.model';
 import { DestinationWeather } from '../models/weather.model';
 
 import { PlaneLoaderComponent } from '../../../shared/components/plane-loader/plane-loader.component';
+import { BackToTopComponent } from '../../../shared/components/back-to-top/back-to-top.component';
 
 @Component({
   selector: 'app-ecotourism-destinations',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent, DestinationDetailModalComponent, PlaneLoaderComponent],
+  imports: [CommonModule, RouterLink, NavbarComponent, FooterComponent, DestinationDetailModalComponent, PlaneLoaderComponent, BackToTopComponent],
   templateUrl: './ecotourism-destinations.component.html',
   styleUrls: ['./ecotourism-destinations.component.scss']
 })

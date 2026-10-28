@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -6,34 +6,42 @@ import { RouterLink } from '@angular/router';
   selector: 'app-footer',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  template: `
-    <footer class="footer-horizon py-4 mt-auto">
-      <div class="container">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
-          <a routerLink="/destinations" class="d-flex align-items-center text-decoration-none" aria-label="Horizon Travel">
-            <img src="assets/LogoH.png" alt="Horizon Travel" class="footer-logo" width="120" height="38" loading="lazy" decoding="async" />
-          </a>
-
-          <div class="text-white text-opacity-90 small fw-medium">
-            © 2026 Horizon Travel. Todos os direitos reservados.
-          </div>
-        </div>
-      </div>
-    </footer>
-  `,
-  styles: [`
-    .footer-horizon {
-      background-color: #4895CC;
-      width: 100%;
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
-    }
-
-    .footer-logo {
-      height: 38px;
-      width: auto;
-      object-fit: contain;
-      display: block;
-    }
-  `]
+  templateUrl: './footer.component.html',
+  styleUrls: ['./footer.component.scss']
 })
-export class FooterComponent {}
+export class FooterComponent {
+  currentLang = signal<string>('pt');
+  langNotice = signal<string | null>(null);
+  private noticeTimer?: any;
+
+  languages = [
+    { code: 'pt', label: 'Português' },
+    { code: 'en', label: 'English' },
+    { code: 'fr', label: 'Français' },
+    { code: 'es', label: 'Español' },
+    { code: 'zh', label: '中文' },
+    { code: 'nl', label: 'Nederlands' },
+    { code: 'ar', label: 'العربية' },
+    { code: 'ru', label: 'Русский' },
+    { code: 'de', label: 'Deutsch' },
+    { code: 'ja', label: '日本語' },
+    { code: 'it', label: 'Italiano' }
+  ];
+
+  selectLanguage(lang: { code: string; label: string }): void {
+    if (this.noticeTimer) clearTimeout(this.noticeTimer);
+
+    if (lang.code === 'pt') {
+      this.currentLang.set('pt');
+      this.langNotice.set(null);
+      return;
+    }
+
+    this.currentLang.set(lang.code);
+    this.langNotice.set(`Idioma ${lang.label} selecionado. Os outros idiomas ainda serão implementados. O conteúdo principal segue em Português.`);
+
+    this.noticeTimer = setTimeout(() => {
+      this.langNotice.set(null);
+    }, 5000);
+  }
+}

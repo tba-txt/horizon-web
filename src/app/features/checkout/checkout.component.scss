@@ -1,0 +1,624 @@
+.hero-container {
+      width: 100%;
+      background: #0b2545;
+      height: 320px;
+      max-height: 320px;
+      overflow: hidden;
+    }
+
+    .hero-image {
+      width: 100%;
+      height: 320px;
+      max-height: 320px;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .hero-container {
+        max-height: 240px;
+      }
+      .hero-image {
+        height: 240px;
+      }
+    }
+
+    .checkout-page-bg {
+      background-color: #eaf2f8;
+      min-height: calc(100vh - 320px);
+    }
+
+    .btn-checkout-primary {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      font-weight: 700;
+      padding: 12px 28px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 4px 14px rgba(91, 164, 216, 0.35);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .btn-checkout-primary:hover:not(:disabled) {
+      background-color: #4895CC;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgba(91, 164, 216, 0.45);
+      color: #ffffff;
+    }
+
+    .btn-checkout-primary:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn-checkout-primary:disabled {
+      background-color: #cbd5e1;
+      box-shadow: none;
+      cursor: not-allowed;
+      opacity: 0.75;
+      color: #ffffff;
+    }
+
+    .btn-checkout-back {
+      background-color: #ffffff;
+      color: #475569;
+      font-weight: 600;
+      padding: 11px 22px;
+      border-radius: 12px;
+      border: 1.5px solid #cbd5e1;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.92rem;
+    }
+
+    .btn-checkout-back:hover {
+      background-color: #f8fafc;
+      border-color: #94a3b8;
+      color: #1e293b;
+      transform: translateY(-1px);
+    }
+
+    .btn-checkout-secondary {
+      background-color: #ffffff;
+      color: #5BA4D8;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 1.5px solid #5BA4D8;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+    }
+
+    .btn-checkout-secondary:hover:not(:disabled) {
+      background-color: rgba(91, 164, 216, 0.08);
+      color: #4895CC;
+      border-color: #4895CC;
+      transform: translateY(-1px);
+    }
+
+    .modal-backdrop.show {
+      background-color: rgba(11, 37, 69, 0.55);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .btn-checkout-cancel,
+    .btn-checkout-danger-link {
+      background-color: #ffffff;
+      color: #dc2626;
+      font-weight: 600;
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 1.5px solid rgba(220, 38, 38, 0.45);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(220, 38, 38, 0.04);
+    }
+
+    .btn-checkout-cancel:hover:not(:disabled),
+    .btn-checkout-danger-link:hover:not(:disabled) {
+      background-color: rgba(220, 38, 38, 0.08);
+      border-color: #dc2626;
+      color: #b91c1c;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+    }
+
+    .btn-checkout-cancel:active:not(:disabled),
+    .btn-checkout-danger-link:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(220, 38, 38, 0.1);
+    }
+
+    .btn-checkout-cancel:disabled,
+    .btn-checkout-danger-link:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .btn-horizon-blue {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      border: 1px solid #5BA4D8;
+      transition: all 0.2s ease;
+    }
+
+    .btn-horizon-blue:hover:not(:disabled) {
+      background-color: #4895CC;
+      border-color: #4895CC;
+      color: #ffffff;
+    }
+
+    .btn-horizon-blue:disabled {
+      background-color: #93c5fd;
+      border-color: #93c5fd;
+      color: #ffffff;
+      opacity: 0.7;
+    }
+
+    .btn-horizon-green {
+      background-color: #65A30D;
+      color: #ffffff;
+      border: 1px solid #65A30D;
+      transition: all 0.2s ease;
+    }
+
+    .btn-horizon-green:hover:not(:disabled) {
+      background-color: #558b0a;
+      border-color: #558b0a;
+      color: #ffffff;
+    }
+
+    .btn-horizon-outline {
+      background-color: transparent;
+      color: #5BA4D8;
+      border: 1px solid #5BA4D8;
+      transition: all 0.2s ease;
+    }
+
+    .btn-horizon-outline:hover:not(:disabled) {
+      background-color: #5BA4D8;
+      color: #ffffff;
+      border-color: #5BA4D8;
+    }
+
+    .horizon-input:focus {
+      border-color: #5BA4D8;
+      box-shadow: 0 0 0 0.2rem rgba(91, 164, 216, 0.2);
+    }
+
+    .passenger-accordion-item {
+      border-color: #dbeafe !important;
+      transition: border-color 0.2s ease;
+    }
+
+    .passenger-accordion-header {
+      background: #f8fafc;
+      cursor: pointer;
+      transition: background-color 0.15s ease;
+    }
+
+    .passenger-accordion-header:hover {
+      background: #f0f7fd;
+    }
+
+    .passenger-accordion-header.active-header {
+      background: #f0f7fd;
+    }
+
+    .summary-dest-banner {
+      height: 170px;
+      width: 100%;
+      overflow: hidden;
+      background: #0b2545;
+    }
+
+    .summary-dest-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(11, 37, 69, 0.75) 0%, rgba(11, 37, 69, 0.15) 60%, transparent 100%);
+    }
+
+    .summary-dest-title {
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+      letter-spacing: -0.2px;
+    }
+
+    .checkout-stepper {
+      background: #ffffff;
+      border: 1px solid #dbeafe;
+      border-radius: 12px;
+      padding: 12px 24px;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
+    }
+
+    .stepper-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .stepper-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      color: #64748b;
+    }
+
+    .stepper-step.active {
+      color: #5BA4D8;
+      font-weight: 700;
+    }
+
+    .stepper-step.completed {
+      color: #65A30D;
+      font-weight: 600;
+    }
+
+    .step-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .stepper-step.active .step-badge {
+      background: #5BA4D8;
+      color: #ffffff;
+    }
+
+    .stepper-step.completed .step-badge {
+      background: #65A30D;
+      color: #ffffff;
+    }
+
+    .step-title {
+      font-weight: 600;
+      font-size: 0.92rem;
+      line-height: 1.2;
+    }
+
+    @media (max-width: 768px) {
+      .checkout-stepper {
+        padding: 8px 12px;
+      }
+      .stepper-step {
+        padding: 6px 8px;
+      }
+    }
+
+    .policy-notice {
+      border-left: 3px solid #5BA4D8 !important;
+    }
+
+    .passenger-index {
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      background: #5BA4D8;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .passenger-card {
+      transition: all 0.2s ease;
+    }
+
+    .passenger-card:hover {
+      border-color: #cbd5e1 !important;
+    }
+
+    :host .card,
+    :host .card:hover,
+    .card,
+    .card:hover {
+      transform: none !important;
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+      transition: none !important;
+    }
+
+    .payment-option-card {
+      background: #ffffff;
+      transition: none !important;
+    }
+
+    .payment-option-card:hover {
+      background: #ffffff !important;
+      border-color: #dee2e6 !important;
+    }
+
+    .payment-option-card.selected,
+    .payment-option-card.selected:hover {
+      border-color: #5BA4D8 !important;
+      background: #f0f7ff !important;
+    }
+
+    .payment-radio {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .payment-radio.checked {
+      border-color: #5BA4D8;
+    }
+
+    .radio-inner {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .payment-radio.checked .radio-inner {
+      background: #5BA4D8;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    .virtual-card {
+      width: 100%;
+      max-width: 360px;
+      min-height: 190px;
+      background: linear-gradient(135deg, #0b2545 0%, #1e3a5f 50%, #5BA4D8 100%);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .font-size-10 {
+      font-size: 10px;
+    }
+
+    .tracking-widest {
+      letter-spacing: 3px;
+    }
+
+    .tracking-wider {
+      letter-spacing: 1.5px;
+    }
+
+    .max-w-500 {
+      max-width: 500px;
+    }
+
+    .flight-itinerary-card {
+      transition: all 0.2s ease;
+    }
+
+    .flight-route-line {
+      min-width: 70px;
+    }
+
+    .route-line {
+      height: 1.5px;
+      background: #cbd5e1;
+      width: 100%;
+      margin: 4px 0;
+    }
+
+    .route-plane {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #64748b;
+      font-size: 0.7rem;
+      background: #f8f9fa;
+      padding: 0 4px;
+    }
+
+    .boarding-pass-card {
+      border-left: 4px solid #5BA4D8 !important;
+    }
+
+    .ticket-3d-wrapper {
+      perspective: 1000px;
+      display: flex;
+      justify-content: center;
+      padding: 0.25rem 0;
+    }
+
+    @media (max-width: 575.98px) {
+      .hero-container, .hero-image {
+        height: 180px;
+        max-height: 180px;
+      }
+      .checkout-stepper {
+        padding: 6px 8px;
+      }
+      .step-badge {
+        width: 22px;
+        height: 22px;
+        font-size: 0.72rem;
+      }
+      .step-title {
+        font-size: 0.78rem;
+      }
+      .ticket-3d-wrapper {
+        transform: scale(0.9);
+      }
+
+      .checkout-actions-row {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+        width: 100% !important;
+
+        .btn-checkout-back {
+          flex: 0 0 auto !important;
+          min-width: 88px !important;
+          padding: 12px 16px !important;
+          font-size: 0.88rem !important;
+          justify-content: center !important;
+          text-align: center !important;
+        }
+
+        .btn-checkout-primary {
+          flex: 1 1 auto !important;
+          padding: 12px 14px !important;
+          font-size: 0.88rem !important;
+          justify-content: center !important;
+          text-align: center !important;
+          white-space: nowrap !important;
+        }
+      }
+
+      .checkout-secondary-actions {
+        display: flex !important;
+        flex-direction: row !important;
+        gap: 10px !important;
+        width: 100% !important;
+
+        .btn-checkout-secondary,
+        .btn-checkout-cancel {
+          flex: 1 1 50% !important;
+          padding: 10px 12px !important;
+          font-size: 0.84rem !important;
+          justify-content: center !important;
+          text-align: center !important;
+          white-space: nowrap !important;
+        }
+      }
+    }
+
+    @media (max-width: 370px) {
+      .checkout-actions-row {
+        flex-direction: column-reverse !important;
+        gap: 8px !important;
+
+        .btn-checkout-back,
+        .btn-checkout-primary {
+          width: 100% !important;
+          flex: none !important;
+        }
+      }
+
+      .checkout-secondary-actions {
+        flex-direction: column !important;
+        gap: 8px !important;
+
+        .btn-checkout-secondary,
+        .btn-checkout-cancel {
+          width: 100% !important;
+          flex: none !important;
+        }
+      }
+    }
+
+    @media (max-width: 400px) {
+      .ticket-3d-wrapper {
+        transform: scale(0.8);
+      }
+    }
+
+    /* Alerta Contextual de Documentação de Viagem (Mercosul / Internacional) */
+    .travel-doc-alert {
+      background: #f8fbfe;
+      border: 1px solid rgba(91, 164, 216, 0.35);
+      border-radius: 12px;
+      transition: all 0.2s ease;
+
+      &.alert-mercosul {
+        background: rgba(91, 164, 216, 0.08);
+        border-color: rgba(91, 164, 216, 0.35);
+
+        .doc-icon-badge {
+          background: rgba(91, 164, 216, 0.18);
+          color: #5BA4D8;
+        }
+
+        .doc-status-badge {
+          background: rgba(91, 164, 216, 0.15);
+          color: #2671a5;
+        }
+      }
+
+      &.alert-international {
+        background: #f0f7fd;
+        border-color: rgba(91, 164, 216, 0.5);
+
+        .doc-icon-badge {
+          background: #5BA4D8;
+          color: #ffffff;
+        }
+
+        .doc-status-badge {
+          background: rgba(91, 164, 216, 0.2);
+          color: #1e6498;
+        }
+      }
+
+      .doc-icon-badge {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+      }
+
+      .doc-alert-title {
+        color: #0f172a;
+        font-size: 0.88rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+      }
+
+      .doc-status-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 6px;
+        letter-spacing: 0.02em;
+      }
+
+      .doc-alert-desc {
+        color: #475569;
+        font-size: 0.81rem;
+        line-height: 1.45;
+      }
+    }
