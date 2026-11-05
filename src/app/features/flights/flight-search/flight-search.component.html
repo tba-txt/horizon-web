@@ -26,7 +26,7 @@
             <label class="form-label small fw-semibold text-secondary">
               Origem
             </label>
-            <input 
+            <input aria-label="Origem" 
               type="text" 
               class="form-control bg-light"
               value="São Paulo (SAO)"
@@ -78,7 +78,7 @@
               [class.bg-light]="!selectedDestinationId() || isLoadingFlightDates()"
               [disabled]="!selectedDestinationId() || isLoadingFlightDates()"
               (click)="toggleOutboundCalendar($event)"
-              style="height: 38px;"
+              style="min-height: 44px;"
             >
               <span class="small text-truncate" [class.text-dark]="startDate()" [class.text-muted]="!startDate()">
                 @if (!selectedDestinationId()) {
@@ -112,7 +112,7 @@
                     (click)="prevMonth('outbound', $event)"
                     title="Mês anterior"
                   >
-                    ‹
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
                   </button>
                   <span class="calendar-title text-capitalize">
                     {{ getMonthYearLabel(calendarMonth()) }}
@@ -123,7 +123,7 @@
                     (click)="nextMonth('outbound', $event)"
                     title="Próximo mês"
                   >
-                    ›
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
 
@@ -208,7 +208,7 @@
               [class.bg-light]="!startDate()"
               [disabled]="!startDate()"
               (click)="toggleReturnCalendar($event)"
-              style="height: 38px;"
+              style="min-height: 44px;"
             >
               <span class="small text-truncate" [class.text-dark]="endDate()" [class.text-muted]="!endDate()">
                 @if (!startDate()) {
@@ -240,7 +240,7 @@
                     (click)="prevMonth('return', $event)"
                     title="Mês anterior"
                   >
-                    ‹
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
                   </button>
                   <span class="calendar-title text-capitalize">
                     {{ getMonthYearLabel(returnCalendarMonth()) }}
@@ -251,7 +251,7 @@
                     (click)="nextMonth('return', $event)"
                     title="Próximo mês"
                   >
-                    ›
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
                   </button>
                 </div>
 
@@ -326,19 +326,45 @@
             <label for="passengers" class="form-label small fw-semibold text-secondary">
               Passageiros
             </label>
-            <select 
-              id="passengers" 
-              class="form-select"
-              [ngModel]="passengers()" 
-              (ngModelChange)="passengers.set($event)"
-              name="passengers"
-            >
-              <option [ngValue]="1">1 adulto</option>
-              <option [ngValue]="2">2 adultos</option>
-              <option [ngValue]="3">3 adultos</option>
-              <option [ngValue]="4">4 adultos</option>
-              <option [ngValue]="5">5 adultos</option>
-            </select>
+            <div class="passenger-picker">
+              <button 
+                id="passengers" 
+                type="button" 
+                class="passenger-picker-trigger" 
+                [class.passenger-picker-open]="isPassengerDropdownOpen()" 
+                (click)="togglePassengerDropdown($event)" 
+                [attr.aria-expanded]="isPassengerDropdownOpen()" 
+                aria-haspopup="listbox"
+              >
+                <span>{{ passengerLabel() }}</span>
+                <span class="passenger-picker-caret" aria-hidden="true"></span>
+              </button>
+              @if (isPassengerDropdownOpen()) {
+                <div class="passenger-picker-menu" role="listbox" aria-label="Selecione o número de passageiros" (click)="$event.stopPropagation()">
+                  <div class="passenger-group-label">Adultos (+12 anos)</div>
+                  <div class="passenger-group-options">
+                    @for (num of passengerOptions; track num) {
+                      <button 
+                        type="button" 
+                        role="option" 
+                        class="passenger-option" 
+                        [attr.aria-selected]="passengers() === num" 
+                        [class.passenger-option-selected]="passengers() === num" 
+                        (click)="selectPassengers(num, $event)"
+                      >
+                        <span class="d-flex align-items-center gap-2">
+                          <i class="bi" [class.bi-person]="num === 1" [class.bi-people-fill]="num > 1" aria-hidden="true"></i>
+                          <span>{{ num === 1 ? '1 adulto' : num + ' adultos' }}</span>
+                        </span>
+                        @if (passengers() === num) {
+                          <i class="bi bi-check2 fw-bold" aria-hidden="true"></i>
+                        }
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
           </div>
 
           <!-- Botão de Busca -->
@@ -393,7 +419,7 @@
                   <div class="summary-dest-bottom position-relative z-1">
                     @if (selectedDestination()?.country) {
                       <span class="summary-country-label d-inline-flex align-items-center gap-1 mb-1">
-                        <i class="bi bi-geo-alt-fill"></i>
+                        <i class="bi bi-geo-alt-fill" aria-hidden="true"></i>
                         {{ selectedDestination()!.country }}
                       </span>
                     }
@@ -429,14 +455,14 @@
                       <div class="summary-leg-card h-100">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                           <div class="d-flex align-items-center gap-2">
-                            <span class="leg-direction-tag"><i class="bi bi-airplane"></i> Voo de Ida</span>
+                            <span class="leg-direction-tag"><i class="bi bi-airplane" aria-hidden="true"></i> Voo de Ida</span>
                           </div>
                           <span class="leg-class-tag" [ngClass]="'tag-' + outbound.seatClass.toLowerCase()">
                             Classe {{ getClassName(outbound.seatClass) }}
                           </span>
                         </div>
 
-                        <!-- Rota Ilustrada com Fotos (São Paulo ➔ Destino) -->
+                        <!-- Rota Ilustrada com Fotos (São Paulo → Destino) -->
                         <div class="leg-route-visual d-flex align-items-center justify-content-between gap-2 mb-3">
                           <!-- Origem: São Paulo -->
                           <div class="d-flex align-items-center gap-2 min-w-0">
@@ -457,7 +483,7 @@
                           <div class="leg-connector flex-grow-1 px-2 text-center">
                             <span class="leg-duration">{{ getFlightDuration(outbound.flight.departureTime, outbound.flight.arrivalTime, outbound.flight.durationMinutes) }}</span>
                             <div class="leg-line">
-                              <i class="bi bi-airplane-fill leg-plane"></i>
+                              <i class="bi bi-airplane-fill leg-plane" aria-hidden="true"></i>
                             </div>
                             <span class="leg-date">{{ outbound.flight.flightDate | date:'dd/MM/yyyy' }}</span>
                           </div>
@@ -491,14 +517,14 @@
                       <div class="summary-leg-card h-100">
                         <div class="d-flex justify-content-between align-items-center mb-3">
                           <div class="d-flex align-items-center gap-2">
-                            <span class="leg-direction-tag"><i class="bi bi-arrow-repeat"></i> Voo de Volta</span>
+                            <span class="leg-direction-tag"><i class="bi bi-arrow-repeat" aria-hidden="true"></i> Voo de Volta</span>
                           </div>
                           <span class="leg-class-tag" [ngClass]="'tag-' + ret.seatClass.toLowerCase()">
                             Classe {{ getClassName(ret.seatClass) }}
                           </span>
                         </div>
 
-                        <!-- Rota Ilustrada com Fotos (Destino ➔ São Paulo) -->
+                        <!-- Rota Ilustrada com Fotos (Destino → São Paulo) -->
                         <div class="leg-route-visual d-flex align-items-center justify-content-between gap-2 mb-3">
                           <!-- Origem da Volta: Destino -->
                           <div class="d-flex align-items-center gap-2 min-w-0">
@@ -519,7 +545,7 @@
                           <div class="leg-connector flex-grow-1 px-2 text-center">
                             <span class="leg-duration">{{ getFlightDuration(ret.flight.departureTime, ret.flight.arrivalTime, ret.flight.durationMinutes) }}</span>
                             <div class="leg-line">
-                              <i class="bi bi-airplane-fill leg-plane"></i>
+                              <i class="bi bi-airplane-fill leg-plane" aria-hidden="true"></i>
                             </div>
                             <span class="leg-date">{{ ret.flight.flightDate | date:'dd/MM/yyyy' }}</span>
                           </div>
@@ -621,7 +647,7 @@
               (click)="openClassInfoModal()"
               title="Conheça o que cada classe oferece"
             >
-              <i class="bi bi-info-circle text-primary-custom"></i>
+              <i class="bi bi-info-circle text-primary-custom" aria-hidden="true"></i>
               <span>O que cada classe oferece?</span>
             </button>
           </div>
@@ -644,7 +670,7 @@
                       <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                         <span class="flight-badge-code">{{ flight.flightNumber }}</span>
                         <span class="flight-date-badge">
-                          <i class="bi bi-calendar3 me-1 text-secondary"></i>
+                          <i class="bi bi-calendar3 me-1 text-secondary" aria-hidden="true"></i>
                           {{ flight.flightDate | date:'dd/MM/yyyy' }}
                         </span>
                         @if (flight.availableSeats > 0) {
@@ -688,7 +714,7 @@
                           (click)="openClassInfoModal()"
                           title="Comparar benefícios das classes"
                         >
-                          <i class="bi bi-info-circle"></i>
+                          <i class="bi bi-info-circle" aria-hidden="true"></i>
                           <span>O que inclui?</span>
                         </button>
                       </div>
@@ -758,7 +784,7 @@
                 (click)="openClassInfoModal()"
                 title="Conheça o que cada classe oferece"
               >
-                <i class="bi bi-info-circle text-primary-custom"></i>
+                <i class="bi bi-info-circle text-primary-custom" aria-hidden="true"></i>
                 <span>O que cada classe oferece?</span>
               </button>
             </div>
@@ -781,7 +807,7 @@
                       <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
                         <span class="flight-badge-code">{{ flight.flightNumber }}</span>
                         <span class="flight-date-badge">
-                          <i class="bi bi-calendar3 me-1 text-secondary"></i>
+                          <i class="bi bi-calendar3 me-1 text-secondary" aria-hidden="true"></i>
                           {{ flight.flightDate | date:'dd/MM/yyyy' }}
                         </span>
                         @if (flight.availableSeats > 0) {
@@ -825,7 +851,7 @@
                           (click)="openClassInfoModal()"
                           title="Comparar benefícios das classes"
                         >
-                          <i class="bi bi-info-circle"></i>
+                          <i class="bi bi-info-circle" aria-hidden="true"></i>
                           <span>O que inclui?</span>
                         </button>
                       </div>
@@ -891,7 +917,7 @@
           
           <!-- Botão de Fechar Circular em Vidro Fosco -->
           <button type="button" class="glass-close-btn" (click)="closeClassInfoModal()" aria-label="Fechar Modal">
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
           </button>
 
           <!-- Hero Header com a Imagem WebP do Avião Horizon -->
@@ -964,7 +990,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-briefcase"></i></div>
+                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-briefcase" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Bagagem de Mão</h4>
                       </div>
                       <p class="benefit-desc mb-0">1 item pessoal (mochila ou bolsa) + 1 mala de mão de até 10 kg na cabine.</p>
@@ -974,7 +1000,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-luggage"></i></div>
+                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-luggage" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Bagagem Despachada</h4>
                       </div>
                       <p class="benefit-desc mb-0">Não inclusa na tarifa básica. Pode ser adquirida à parte a qualquer momento.</p>
@@ -984,7 +1010,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-person"></i></div>
+                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-person" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Assento</h4>
                       </div>
                       <p class="benefit-desc mb-0">Poltrona ergonômica com apoio regulável e reclinação padrão confortável.</p>
@@ -994,7 +1020,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-cup-hot"></i></div>
+                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-cup-hot" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Serviço de Bordo</h4>
                       </div>
                       <p class="benefit-desc mb-0">Snacks selecionados e bebidas não alcoólicas (café, sucos, água e refrigerantes).</p>
@@ -1004,7 +1030,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-phone"></i></div>
+                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-phone" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Entretenimento a Bordo</h4>
                       </div>
                       <p class="benefit-desc mb-0">Filmes, séries e podcasts acessíveis diretamente pelo seu celular ou tablet.</p>
@@ -1014,7 +1040,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-check2-circle"></i></div>
+                        <div class="benefit-icon-box basic-icon-box"><i class="bi bi-check2-circle" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Check-in e Assento</h4>
                       </div>
                       <p class="benefit-desc mb-0">Check-in online liberado 48h antes e escolha de assento gratuita no check-in.</p>
@@ -1036,7 +1062,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-luggage-fill"></i></div>
+                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-luggage-fill" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Bagagem Despachada Inclusa</h4>
                       </div>
                       <p class="benefit-desc mb-0">Item pessoal + mala de mão (10 kg) <strong>+ 1 mala despachada de até 23 kg</strong> inclusa.</p>
@@ -1046,7 +1072,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-arrows-angle-expand"></i></div>
+                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-arrows-angle-expand" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Espaço Extra (+10 cm)</h4>
                       </div>
                       <p class="benefit-desc mb-0">Poltrona com maior distância para as pernas e ângulo de reclinação ampliado.</p>
@@ -1056,7 +1082,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-egg-fried"></i></div>
+                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-egg-fried" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Refeição Quente Completa</h4>
                       </div>
                       <p class="benefit-desc mb-0">Prato quente à la carte, sobremesa e seleção de bebidas com cerveja e vinho.</p>
@@ -1066,7 +1092,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-wifi"></i></div>
+                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-wifi" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Wi-Fi Incluso</h4>
                       </div>
                       <p class="benefit-desc mb-0">Conexão cortesia para mensagens e navegação durante o voo, com tomada USB.</p>
@@ -1076,7 +1102,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-clock-history"></i></div>
+                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-clock-history" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Embarque Prioritário</h4>
                       </div>
                       <p class="benefit-desc mb-0">Fila preferencial no check-in do aeroporto e embarque no Grupo 2.</p>
@@ -1086,7 +1112,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-geo-alt"></i></div>
+                        <div class="benefit-icon-box executive-icon-box"><i class="bi bi-geo-alt" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Marcação Antecipada</h4>
                       </div>
                       <p class="benefit-desc mb-0">Escolha do assento sem custo adicional no momento da reserva.</p>
@@ -1108,7 +1134,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-moon-stars"></i></div>
+                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-moon-stars" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Poltrona Leito (180°)</h4>
                       </div>
                       <p class="benefit-desc mb-0">Reclina totalmente e vira cama plana, com travesseiro macio e manta térmica.</p>
@@ -1118,7 +1144,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-shield-check"></i></div>
+                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-shield-check" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Salas VIP Horizon</h4>
                       </div>
                       <p class="benefit-desc mb-0">Acesso gratuito aos lounges parceiros com buffet completo e área de descanso.</p>
@@ -1128,7 +1154,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-luggage-fill"></i></div>
+                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-luggage-fill" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">2 Malas Despachadas</h4>
                       </div>
                       <p class="benefit-desc mb-0">Duas malas de até 23 kg com etiqueta de bagagem prioritária na esteira.</p>
@@ -1138,7 +1164,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-stars"></i></div>
+                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-stars" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Menu Gourmet e Espumante</h4>
                       </div>
                       <p class="benefit-desc mb-0">Refeições completas preparadas por chefs, com carta de vinhos finos e espumante.</p>
@@ -1148,7 +1174,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-lightning-charge"></i></div>
+                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-lightning-charge" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Prioridade Total</h4>
                       </div>
                       <p class="benefit-desc mb-0">Balcão VIP dedicado no check-in, embarque no Grupo 1 e desembarque ágil.</p>
@@ -1158,7 +1184,7 @@
                   <div class="col-12 col-md-6">
                     <div class="benefit-item p-2 p-sm-3 rounded-3 bg-white h-100">
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-gift"></i></div>
+                        <div class="benefit-icon-box premium-icon-box"><i class="bi bi-gift" aria-hidden="true"></i></div>
                         <h4 class="benefit-title mb-0">Kit Conforto e Wi-Fi Rápido</h4>
                       </div>
                       <p class="benefit-desc mb-0">Nécessaire com itens de higiene, fone anti-ruído e Wi-Fi ilimitado de alta velocidade.</p>
@@ -1172,7 +1198,7 @@
             <div class="comparison-matrix-card p-2 p-sm-3 rounded-3 bg-white">
               <div class="d-flex align-items-center justify-content-between mb-2">
                 <h4 class="h6 fw-bold text-dark mb-0">Comparativo lado a lado</h4>
-                <span class="small text-muted d-block d-md-none" style="font-size: 0.72rem;">Arraste para o lado ›</span>
+                <span class="small text-muted d-block d-md-none" style="font-size: 0.72rem;">Arraste para o lado <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
               </div>
               
               <div class="comparison-scroll-wrapper">

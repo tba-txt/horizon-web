@@ -16,7 +16,7 @@
 
       <!-- Barra de Pesquisa Principal -->
       <div class="hero-search-wrapper mx-auto">
-        <input
+        <input aria-label="Pesquise por palavras-chave (ex: passaporte, bagagem, pix, desconto...)"
           type="text"
           class="hero-search-input"
           placeholder="Pesquise por palavras-chave (ex: passaporte, bagagem, pix, desconto...)"
@@ -25,11 +25,11 @@
         />
         @if (searchQuery()) {
           <button type="button" class="hero-search-clear" (click)="clearSearch()" title="Limpar busca">
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
           </button>
         }
         <span class="hero-search-icon">
-          <i class="bi bi-search"></i>
+          <i class="bi bi-search" aria-hidden="true"></i>
         </span>
       </div>
     </div>
@@ -48,7 +48,7 @@
               <div class="popular-item" [class.expanded]="isFaqExpanded(item.id)">
                 <button type="button" class="popular-question-btn" (click)="toggleFaq(item.id)">
                   <span class="popular-question-text">{{ item.question }}</span>
-                  <i class="bi" [ngClass]="isFaqExpanded(item.id) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                  <i class="bi" [ngClass]="isFaqExpanded(item.id) ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
                 </button>
                 @if (isFaqExpanded(item.id)) {
                   <div class="popular-answer-box">
@@ -77,7 +77,7 @@
                       <span class="search-cat-tag">{{ item.category }}</span>
                       <span class="popular-question-text">{{ item.question }}</span>
                     </div>
-                    <i class="bi" [ngClass]="isFaqExpanded(item.id) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                    <i class="bi" [ngClass]="isFaqExpanded(item.id) ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
                   </button>
                   @if (isFaqExpanded(item.id)) {
                     <div class="popular-answer-box">
@@ -89,7 +89,7 @@
             </div>
           } @else {
             <div class="empty-search-card text-center">
-              <i class="bi bi-search empty-search-icon"></i>
+              <i class="bi bi-search empty-search-icon" aria-hidden="true"></i>
               <h4>Nenhum resultado encontrado para "{{ searchQuery() }}"</h4>
               <p>Tente pesquisar com outros termos ou envie uma mensagem no canal de atendimento abaixo.</p>
               <button type="button" class="btn-green-action" (click)="scrollToSection('canal-atendimento')">
@@ -124,14 +124,14 @@
               <!-- Cabeçalho do Card (Ícone + Título/Descrição + Chevron) -->
               <div class="subject-card-main">
                 <div class="subject-card-icon">
-                  <i class="bi" [ngClass]="card.icon"></i>
+                  <i class="bi" [ngClass]="card.icon" aria-hidden="true"></i>
                 </div>
                 <div class="subject-card-info">
                   <h3 class="subject-card-title">{{ card.title }}</h3>
                   <p class="subject-card-desc">{{ card.description }}</p>
                 </div>
                 <div class="subject-card-chevron">
-                  <i class="bi" [ngClass]="isCategoryExpanded(card.id) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                  <i class="bi" [ngClass]="isCategoryExpanded(card.id) ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
                 </div>
               </div>
 
@@ -146,7 +146,7 @@
                         (click)="toggleFaq(q.id, $event)"
                       >
                         <span>{{ q.question }}</span>
-                        <i class="bi" [ngClass]="isFaqExpanded(q.id) ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                        <i class="bi" [ngClass]="isFaqExpanded(q.id) ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
                       </button>
                       @if (isFaqExpanded(q.id)) {
                         <div class="inner-faq-answer">
@@ -187,7 +187,7 @@
             <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-1">
               <h3 class="form-card-title mb-0">Como podemos ajudar?</h3>
               <span class="protocol-preview-badge">
-                <i class="bi bi-patch-check-fill me-1"></i> Protocolo Digital
+                <i class="bi bi-patch-check-fill me-1" aria-hidden="true"></i> Protocolo Digital
               </span>
             </div>
             <p class="form-card-subtitle mb-0">
@@ -198,7 +198,7 @@
           <div class="support-form-scrollable">
             @if (errorMessage()) {
               <div class="alert-error-box mb-3">
-                <i class="bi bi-exclamation-triangle-fill"></i>
+                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
                 <span>{{ errorMessage() }}</span>
               </div>
             }
@@ -209,8 +209,8 @@
               <div class="col-12 col-md-6">
                 <label class="form-label-hz">Nome cadastrado *</label>
                 <div class="input-icon-group">
-                  <i class="bi bi-person input-left-icon"></i>
-                  <input
+                  <i class="bi bi-person input-left-icon" aria-hidden="true"></i>
+                  <input aria-label="Nome cadastrado"
                     type="text"
                     class="form-control-hz with-icon"
                     [class.readonly-field]="isLoggedIn()"
@@ -228,8 +228,8 @@
               <div class="col-12 col-md-6">
                 <label class="form-label-hz">E-mail de contato *</label>
                 <div class="input-icon-group">
-                  <i class="bi bi-envelope input-left-icon"></i>
-                  <input
+                  <i class="bi bi-envelope input-left-icon" aria-hidden="true"></i>
+                  <input aria-label="E-mail de contato"
                     type="email"
                     class="form-control-hz with-icon"
                     name="userEmail"
@@ -254,22 +254,22 @@
                     @if (currentSubjectSla(); as selectedOpt) {
                       <div class="trigger-selected-content">
                         <span class="subject-icon-box" [ngClass]="getSlaColorClass(selectedOpt.slaHours)">
-                          <i class="bi" [ngClass]="selectedOpt.icon"></i>
+                          <i class="bi" [ngClass]="selectedOpt.icon" aria-hidden="true"></i>
                         </span>
                         <span class="trigger-selected-label">{{ selectedOpt.label }}</span>
                         <span class="sla-pill-badge" [ngClass]="getSlaColorClass(selectedOpt.slaHours)">
-                          <i class="bi bi-clock-fill"></i> {{ selectedOpt.slaDescription }}
+                          <i class="bi bi-clock-fill" aria-hidden="true"></i> {{ selectedOpt.slaDescription }}
                         </span>
                       </div>
                     } @else {
                       <div class="trigger-placeholder-content">
                         <span class="subject-icon-box default">
-                          <i class="bi bi-grid-fill"></i>
+                          <i class="bi bi-grid-fill" aria-hidden="true"></i>
                         </span>
                         <span class="placeholder-text">Selecione o assunto da sua mensagem...</span>
                       </div>
                     }
-                    <i class="bi chevron-indicator" [ngClass]="isSubjectDropdownOpen() ? 'bi-chevron-up' : 'bi-chevron-down'"></i>
+                    <i class="bi chevron-indicator" [ngClass]="isSubjectDropdownOpen() ? 'bi-chevron-up' : 'bi-chevron-down'" aria-hidden="true"></i>
                   </button>
 
                   @if (isSubjectDropdownOpen()) {
@@ -282,7 +282,7 @@
                         >
                           <div class="dropdown-item-left">
                             <span class="subject-icon-box" [ngClass]="getSlaColorClass(opt.slaHours)">
-                              <i class="bi" [ngClass]="opt.icon"></i>
+                              <i class="bi" [ngClass]="opt.icon" aria-hidden="true"></i>
                             </span>
                             <div class="dropdown-item-texts">
                               <span class="dropdown-item-label">{{ opt.label }}</span>
@@ -290,7 +290,7 @@
                             </div>
                           </div>
                           <span class="sla-pill-badge" [ngClass]="getSlaColorClass(opt.slaHours)">
-                            <i class="bi bi-clock-fill"></i> {{ opt.slaDescription }}
+                            <i class="bi bi-clock-fill" aria-hidden="true"></i> {{ opt.slaDescription }}
                           </span>
                         </div>
                       }
@@ -305,7 +305,7 @@
                   <div class="sla-dynamic-banner" [ngClass]="getSlaColorClass(sla.slaHours)">
                     <div class="sla-banner-left">
                       <span class="sla-banner-icon">
-                        <i class="bi" [ngClass]="sla.icon"></i>
+                        <i class="bi" [ngClass]="sla.icon" aria-hidden="true"></i>
                       </span>
                       <div>
                         <span class="sla-banner-label">Prazo máximo de resposta humana (SLA):</span>
@@ -322,7 +322,7 @@
               <!-- Descrição / Mensagem -->
               <div class="col-12">
                 <label class="form-label-hz">Mensagem *</label>
-                <textarea
+                <textarea aria-label="Mensagem"
                   class="form-control-hz"
                   rows="4"
                   name="description"
@@ -348,7 +348,7 @@
 
                 @if (attachments().length === 0) {
                   <label class="upload-dropzone">
-                    <input
+                    <input aria-label="Anexar arquivos"
                       type="file"
                       class="d-none"
                       multiple
@@ -356,7 +356,7 @@
                       (change)="onFilesSelected($event)"
                     />
                     <div class="upload-icon-circle">
-                      <i class="bi bi-cloud-arrow-up-fill"></i>
+                      <i class="bi bi-cloud-arrow-up-fill" aria-hidden="true"></i>
                     </div>
                     <div class="upload-texts">
                       <strong>Anexar comprovantes ou documentos</strong>
@@ -369,7 +369,7 @@
                       @for (file of attachments(); track file.id) {
                         <div class="attached-file-chip">
                           <div class="attached-chip-left">
-                            <i class="bi" [ngClass]="getFileIcon(file.name)"></i>
+                            <i class="bi" [ngClass]="getFileIcon(file.name)" aria-hidden="true"></i>
                             <div class="attached-chip-text">
                               <span class="file-name" [title]="file.name">{{ file.name }}</span>
                               <span class="file-size">{{ formatFileSize(file.size) }}</span>
@@ -381,7 +381,7 @@
                             (click)="removeAttachment(file.id)"
                             title="Remover anexo"
                           >
-                            <i class="bi bi-x-lg"></i>
+                            <i class="bi bi-x-lg" aria-hidden="true"></i>
                           </button>
                         </div>
                       }
@@ -389,14 +389,14 @@
 
                     @if (totalAttachmentSize() < maxTotalSizeBytes) {
                       <label class="btn-add-more-files mt-2">
-                        <input
+                        <input aria-label="Anexar arquivos"
                           type="file"
                           class="d-none"
                           multiple
                           accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
                           (change)="onFilesSelected($event)"
                         />
-                        <i class="bi bi-plus-circle me-1"></i> Adicionar mais arquivos
+                        <i class="bi bi-plus-circle me-1" aria-hidden="true"></i> Adicionar mais arquivos
                       </label>
                     }
                   </div>
@@ -404,7 +404,7 @@
 
                 @if (attachmentError()) {
                   <div class="attachment-error-msg mt-2">
-                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i>
                     <span>{{ attachmentError() }}</span>
                   </div>
                 }
@@ -421,7 +421,7 @@
                     <span class="spinner-border spinner-border-sm me-2" role="status"></span>
                     Enviando mensagem...
                   } @else {
-                    <i class="bi bi-send-check-fill me-2"></i>
+                    <i class="bi bi-send-check-fill me-2" aria-hidden="true"></i>
                     Enviar mensagem
                   }
                 </button>
@@ -440,7 +440,7 @@
   <div class="ticket-modal-backdrop" (click)="closeSuccessModal()">
     <div class="ticket-modal-card" (click)="$event.stopPropagation()">
       <div class="ticket-modal-icon">
-        <i class="bi bi-check2-circle"></i>
+        <i class="bi bi-check2-circle" aria-hidden="true"></i>
       </div>
 
       <span class="ticket-modal-tag">SOLICITAÇÃO RECEBIDA</span>

@@ -257,6 +257,35 @@
   }
 }
 
+/* Alto contraste no card de destino: textos sobre a foto SEMPRE brancos e nítidos */
+:host-context(html.a11y-high-contrast) {
+  .dest-card {
+    border: 2px solid #ffffff !important;
+  }
+
+  .dest-overlay {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 50%, rgba(0, 0, 0, 0.25) 100%) !important;
+  }
+
+  .dest-content,
+  .dest-title,
+  .dest-title *,
+  h3,
+  .dest-price,
+  .dest-price *,
+  span,
+  p {
+    color: #ffffff !important;
+    text-shadow: 0 2px 8px #000000, 0 0 12px #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .CartBtn {
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+  }
+}
+
 .btn-discover {
   background: transparent;
   border: none;

@@ -123,6 +123,8 @@
       position: relative;
       display: flex;
       flex-direction: column;
+      content-visibility: auto;
+      contain-intrinsic-size: 1px 700px;
     }
 
     .post-glass-tabs-bar {
@@ -456,6 +458,26 @@
       opacity: 1;
       transform: translateY(0);
     }
+    .btn-reset-this-or-that {
+      background-color: #65A30D;
+      color: #ffffff;
+      border: none;
+      font-size: 0.8rem;
+      transition: all 0.2s ease;
+
+      i {
+        color: #ffffff;
+      }
+
+      &:hover {
+        background-color: #558b0b;
+        color: #ffffff;
+        i {
+          color: #ffffff;
+        }
+      }
+    }
+
     .selection-check.show {
       opacity: 1 !important;
       transform: scale(1) !important;
@@ -1453,3 +1475,681 @@
       .carousel-prev { left: 8px; }
       .carousel-next { right: 8px; }
     }
+
+
+/* Modo Escuro em Feed */
+:host-context([data-theme='dark']) {
+  background-color: #0f172a !important;
+  color: #e5e7eb !important;
+
+  .feed-main-page,
+  .feed-container,
+  .feed-wrapper {
+    background-color: #0f172a !important;
+  }
+
+  .sort-tabs-container {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+  }
+
+  .sort-tab-btn {
+    color: #94a3b8 !important;
+
+    &:hover:not(.active) {
+      color: #ffffff !important;
+      background: #334155 !important;
+    }
+
+    &.active {
+      background: #5BA4D8 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .search-input-group {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+  }
+
+  .search-input {
+    background: transparent !important;
+    color: #f1f5f9 !important;
+
+    &::placeholder {
+      color: #64748b !important;
+    }
+  }
+
+  .category-chip {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+
+    &:hover:not(.active) {
+      background: #334155 !important;
+      color: #ffffff !important;
+    }
+
+    &.active {
+      background: #5BA4D8 !important;
+      color: #ffffff !important;
+      border-color: #5BA4D8 !important;
+    }
+  }
+
+  .card,
+  .feed-card,
+  .article-card,
+  .trivia-card,
+  .duel-card,
+  .bg-white {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+  }
+
+  .text-dark {
+    color: #f1f5f9 !important;
+  }
+
+  .text-secondary,
+  .text-muted {
+    color: #94a3b8 !important;
+  }
+
+  .modal-content,
+  .article-reader-modal,
+  .modal-article-shell,
+  .reader-card {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+  }
+
+  .article-reader-title {
+    color: #ffffff !important;
+  }
+
+  .article-reader-kicker {
+    color: #5BA4D8 !important;
+  }
+
+  .article-text-body {
+    color: #e2e8f0 !important;
+  }
+
+  .article-reader-footer {
+    background-color: #162032 !important;
+    border-top: 1px solid #334155 !important;
+  }
+
+  .clean-reaction-btn {
+    color: #cbd5e1 !important;
+
+    &:hover {
+      color: #ffffff !important;
+    }
+  }
+
+  .article-return-button {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f1f5f9 !important;
+
+    &:hover {
+      background: #334155 !important;
+      border-color: #5BA4D8 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .btn-reset-this-or-that {
+    background-color: #65A30D !important;
+    border: none !important;
+    color: #ffffff !important;
+
+    i, * {
+      color: #ffffff !important;
+    }
+
+    &:hover {
+      background-color: #558b0b !important;
+    }
+  }
+
+  .modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+  }
+
+  .trivia-option-btn,
+  .duel-option-btn {
+    background-color: #273449 !important;
+    border-color: #475569 !important;
+    color: #e2e8f0 !important;
+
+    &:hover {
+      background-color: #334155 !important;
+    }
+  }
+}
+
+/* Modo escuro + Alto contraste no Feed */
+:host-context(html.a11y-high-contrast[data-theme='dark']),
+:host-context(.a11y-high-contrast[data-theme='dark']) {
+  .modal-article-shell {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+  }
+
+  .article-reader-title {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .article-reader-kicker {
+    color: #8cc4ec !important;
+    font-weight: 800 !important;
+  }
+
+  .article-text-body {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+  }
+
+  .article-reader-footer {
+    background-color: #000000 !important;
+    border-top: 2px solid #ffffff !important;
+  }
+
+  .clean-reaction-btn {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+
+    &:hover {
+      color: #ffd400 !important;
+    }
+  }
+
+  .article-return-button {
+    background: #000000 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+
+    &:hover {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+  }
+
+  .btn-reset-this-or-that {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+
+    i, * {
+      color: #ffffff !important;
+    }
+
+    &:hover {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+
+      i, * {
+        color: #000000 !important;
+      }
+    }
+  }
+
+  .modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+  }
+
+  /* Barra de busca completa em alto contraste escuro */
+  .search-input-group {
+    border: 2px solid #ffffff !important;
+    border-radius: 12px !important;
+    background-color: #000000 !important;
+    overflow: hidden !important;
+
+    .input-group-text,
+    .search-input,
+    .form-control,
+    .btn-clean-clear {
+      border: none !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+      outline: none !important;
+      color: #ffffff !important;
+    }
+
+    .input-group-text i {
+      color: #ffffff !important;
+    }
+
+    .search-input::placeholder {
+      color: #94a3b8 !important;
+    }
+
+    &:focus-within {
+      outline: 3px solid #ffd400 !important;
+      outline-offset: 2px !important;
+    }
+  }
+
+  .sort-tabs-container {
+    border: 2px solid #ffffff !important;
+  }
+
+  .category-chip {
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+
+    &.active {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+  }
+
+  /* Modal de Missões & Cupom no Feed (Alto Contraste Escuro) */
+  .missions-modal-shell {
+    background: #000000 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+
+    #missions-modal-title,
+    #missions-modal-title * {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+
+    .missions-modal-desc {
+      color: #ffffff !important;
+      font-weight: 600 !important;
+    }
+
+    .missions-discount-badge {
+      background-color: #000000 !important;
+      color: #ffe600 !important;
+      border: 1.5px solid #ffffff !important;
+      font-weight: 800 !important;
+    }
+
+    .missions-counter-label {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      text-shadow: none !important;
+    }
+
+    .btn-close-missions-glass {
+      background: #000000 !important;
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+
+      i {
+        color: #ffffff !important;
+      }
+    }
+
+    .missions-progress-track {
+      background-color: #1e293b !important;
+      border: 1.5px solid #ffffff !important;
+    }
+
+    .missions-progress-fill {
+      background-color: #ffe600 !important;
+      box-shadow: none !important;
+    }
+
+    .mission-task-card {
+      background-color: #000000 !important;
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+
+      .task-title,
+      .task-title * {
+        color: #ffffff !important;
+        font-weight: 800 !important;
+      }
+
+      .task-subtitle,
+      .task-status-text {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+      }
+
+      .task-action-link {
+        color: #ffe600 !important;
+        font-weight: 800 !important;
+        text-decoration: underline !important;
+      }
+
+      .task-icon-box {
+        border: 1.5px solid #ffffff !important;
+
+        &.completed {
+          background-color: #ffffff !important;
+          color: #000000 !important;
+
+          i {
+            color: #000000 !important;
+          }
+        }
+
+        &:not(.completed) {
+          background-color: #000000 !important;
+          color: #ffffff !important;
+
+          i {
+            color: #ffffff !important;
+          }
+        }
+      }
+
+      .task-badge {
+        background-color: #000000 !important;
+        color: #ffe600 !important;
+        border: 1.5px solid #ffffff !important;
+        font-weight: 800 !important;
+      }
+    }
+
+    .coupon-reward-box {
+      background-color: #000000 !important;
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+
+      span,
+      small,
+      div {
+        color: #ffffff !important;
+      }
+
+      .border-dashed {
+        background-color: #0f172a !important;
+        border: 2px dashed #ffffff !important;
+      }
+
+      .font-monospace {
+        color: #ffe600 !important;
+        font-weight: 800 !important;
+        font-size: 1.15rem !important;
+      }
+
+      .btn-copy-coupon {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 2px solid #ffffff !important;
+        font-weight: 800 !important;
+
+        * {
+          color: #000000 !important;
+        }
+      }
+    }
+
+    .missions-footer-hint {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      text-shadow: none !important;
+
+      span, i {
+        color: #ffffff !important;
+      }
+    }
+  }
+}
+
+/* Alto contraste claro no Feed */
+:host-context(html.a11y-high-contrast:not([data-theme='dark'])),
+:host-context(.a11y-high-contrast:not([data-theme='dark'])) {
+  /* Barra de busca completa em alto contraste claro */
+  .search-input-group {
+    border: 2px solid #000000 !important;
+    border-radius: 12px !important;
+    background-color: #ffffff !important;
+    overflow: hidden !important;
+
+    .input-group-text,
+    .search-input,
+    .form-control,
+    .btn-clean-clear {
+      border: none !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+      outline: none !important;
+      color: #000000 !important;
+    }
+
+    .input-group-text i {
+      color: #000000 !important;
+    }
+
+    .search-input::placeholder {
+      color: #475569 !important;
+    }
+
+    &:focus-within {
+      outline: 3px solid #000000 !important;
+      outline-offset: 2px !important;
+    }
+  }
+
+  .sort-tabs-container {
+    border: 2px solid #000000 !important;
+  }
+
+  .category-chip {
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+
+    &.active {
+      background: #000000 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .modal-article-shell {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+  }
+
+  .article-reader-title {
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .article-text-body {
+    color: #000000 !important;
+    font-weight: 600 !important;
+  }
+
+  .article-reader-footer {
+    background-color: #ffffff !important;
+    border-top: 2px solid #000000 !important;
+  }
+
+  .article-return-button {
+    background: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  .btn-reset-this-or-that {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+
+    i, * {
+      color: #000000 !important;
+    }
+
+    &:hover {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+
+      i, * {
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  /* Modal de Missões & Cupom no Feed (Alto Contraste Claro) */
+  .missions-modal-shell {
+    background: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+
+    #missions-modal-title,
+    #missions-modal-title * {
+      color: #000000 !important;
+      font-weight: 800 !important;
+    }
+
+    .missions-modal-desc {
+      color: #000000 !important;
+      font-weight: 600 !important;
+    }
+
+    .missions-discount-badge {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 1.5px solid #000000 !important;
+      font-weight: 800 !important;
+    }
+
+    .missions-counter-label {
+      color: #000000 !important;
+      font-weight: 800 !important;
+      text-shadow: none !important;
+    }
+
+    .btn-close-missions-glass {
+      background: #ffffff !important;
+      border: 2px solid #000000 !important;
+      color: #000000 !important;
+
+      i {
+        color: #000000 !important;
+      }
+    }
+
+    .missions-progress-track {
+      background-color: #e2e8f0 !important;
+      border: 1.5px solid #000000 !important;
+    }
+
+    .missions-progress-fill {
+      background-color: #000000 !important;
+      box-shadow: none !important;
+    }
+
+    .mission-task-card {
+      background-color: #ffffff !important;
+      border: 2px solid #000000 !important;
+      color: #000000 !important;
+
+      .task-title,
+      .task-title * {
+        color: #000000 !important;
+        font-weight: 800 !important;
+      }
+
+      .task-subtitle,
+      .task-status-text {
+        color: #000000 !important;
+        font-weight: 600 !important;
+      }
+
+      .task-action-link {
+        color: #0028a8 !important;
+        font-weight: 800 !important;
+        text-decoration: underline !important;
+      }
+
+      .task-icon-box {
+        border: 1.5px solid #000000 !important;
+
+        &.completed {
+          background-color: #000000 !important;
+          color: #ffffff !important;
+
+          i {
+            color: #ffffff !important;
+          }
+        }
+
+        &:not(.completed) {
+          background-color: #ffffff !important;
+          color: #000000 !important;
+
+          i {
+            color: #000000 !important;
+          }
+        }
+      }
+
+      .task-badge {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 1.5px solid #000000 !important;
+        font-weight: 800 !important;
+      }
+    }
+
+    .coupon-reward-box {
+      background-color: #ffffff !important;
+      border: 2px solid #000000 !important;
+      color: #000000 !important;
+
+      span,
+      small,
+      div {
+        color: #000000 !important;
+      }
+
+      .border-dashed {
+        background-color: #f8fafc !important;
+        border: 2px dashed #000000 !important;
+      }
+
+      .font-monospace {
+        color: #000000 !important;
+        font-weight: 800 !important;
+        font-size: 1.15rem !important;
+      }
+
+      .btn-copy-coupon {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 2px solid #000000 !important;
+        font-weight: 800 !important;
+
+        * {
+          color: #ffffff !important;
+        }
+      }
+    }
+
+    .missions-footer-hint {
+      color: #000000 !important;
+      font-weight: 700 !important;
+      text-shadow: none !important;
+
+      span, i {
+        color: #000000 !important;
+      }
+    }
+  }
+
+}

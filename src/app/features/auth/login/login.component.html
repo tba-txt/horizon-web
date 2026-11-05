@@ -28,10 +28,10 @@
           </div>
           
           <!-- Badge do Globo com Avião em Órbita no ápice da curvatura -->
-          <a routerLink="/destinations" class="mobile-hero-floating-badge shadow text-decoration-none" title="Explorar Destinos">
+          <a routerLink="/destinations" class="mobile-hero-floating-badge shadow text-decoration-none" title="Explorar Destinos" aria-label="Explorar destinos">
             <div class="mobile-globe-scene position-relative d-flex align-items-center justify-content-center">
               <!-- Globo Imagem -->
-              <img src="/assets/globo.webp" alt="Globo" class="mobile-globe-svg" style="object-fit: contain;" />
+              <img src="/assets/globo.webp" alt="" class="mobile-globe-svg" style="object-fit: contain;" />
               <!-- Container da Órbita e Avião -->
               <div class="mobile-globe-plane-container">
                 <svg class="mobile-globe-plane" viewBox="0 0 24 24" fill="currentColor">
@@ -53,9 +53,9 @@
 
           <!-- Header / Branding Desktop (d-none d-md-block) -->
           <div class="text-center mb-3 login-anim-item pt-2 d-none d-md-block">
-            <a routerLink="/destinations" class="globe-scene mb-3 mx-auto text-decoration-none d-flex cursor-pointer" title="Explorar Destinos">
+            <a routerLink="/destinations" class="globe-scene mb-3 mx-auto text-decoration-none d-flex cursor-pointer" title="Explorar Destinos" aria-label="Explorar destinos">
               <!-- Globo Imagem -->
-              <img src="/assets/globo.webp" alt="Globo" class="globe-svg" style="object-fit: contain;" />
+              <img src="/assets/globo.webp" alt="" class="globe-svg" style="object-fit: contain;" />
               <!-- Container da Órbita e Avião -->
               <div class="globe-plane-container">
                 <svg class="globe-plane" viewBox="0 0 24 24" fill="currentColor">
@@ -194,6 +194,11 @@
                 <!-- Rastro de fumaça sutil quando decola -->
                 <span class="jet-stream" aria-hidden="true"></span>
               </button>
+            </div>
+
+            <!-- Botão Continuar com o Google -->
+            <div class="login-anim-item my-2">
+              <app-google-sign-in mode="login"></app-google-sign-in>
             </div>
 
             <!-- Espaçamento sem linha divisória (conforme regra estrita) -->

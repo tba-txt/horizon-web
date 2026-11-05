@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark" 
+<nav class="navbar navbar-expand-lg navbar-dark" aria-label="Navegação principal" 
          [ngClass]="isTransparent ? 'position-absolute top-0 mt-4 pt-1 start-0 w-100 shadow-none navbar-glass-home' : 'sticky-top shadow-sm navbar-glass-other'"
          [style.transition]="'background-color 0.3s ease'"
          [style.z-index]="1050">
@@ -52,13 +52,24 @@
             </li>
           </ul>
 
+          <button
+            type="button"
+            class="btn-theme-toggle"
+            (click)="themeService.toggle()"
+            [attr.aria-pressed]="themeService.theme() === 'dark'"
+            [attr.aria-label]="themeService.theme() === 'dark' ? 'Desativar modo escuro' : 'Ativar modo escuro'"
+          >
+            <i class="bi" [class.bi-moon-stars-fill]="themeService.theme() !== 'dark'" [class.bi-sun-fill]="themeService.theme() === 'dark'" aria-hidden="true"></i>
+            <span class="theme-toggle-label d-lg-none">{{ themeService.theme() === 'dark' ? 'Modo claro' : 'Modo escuro' }}</span>
+          </button>
+
           <div class="nav-auth-container">
             @if (isLoggedIn()) {
               <!-- Mobile Profile Card (visual elegante de card + texto suave de logout) -->
               <div class="nav-mobile-profile d-lg-none">
                 <a routerLink="/profile" (click)="closeMenu()" class="nav-user-mobile-card">
                   <div class="nav-user-avatar">
-                    <i class="bi bi-person-fill"></i>
+                    <i class="bi bi-person-fill" aria-hidden="true"></i>
                   </div>
                   <div class="nav-user-details">
                     <span class="nav-user-name">Minha Conta</span>
@@ -67,7 +78,7 @@
                   
                 </a>
                 <button type="button" class="btn-nav-logout-text" (click)="logout(); closeMenu()">
-                  <i class="bi bi-box-arrow-right"></i>
+                  <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
                   <span>Sair da conta</span>
                 </button>
               </div>
@@ -75,11 +86,11 @@
               <!-- Desktop Profile Buttons (botões elegantes em telas grandes) -->
               <div class="d-none d-lg-flex align-items-center gap-2">
                 <a routerLink="/profile" class="btn-nav-desktop-account">
-                  <i class="bi bi-person-circle"></i>
+                  <i class="bi bi-person-circle" aria-hidden="true"></i>
                   <span>Minha Conta</span>
                 </a>
                 <button type="button" class="btn-nav-desktop-logout" (click)="logout()">
-                  <i class="bi bi-box-arrow-right"></i>
+                  <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
                   <span>Sair</span>
                 </button>
               </div>

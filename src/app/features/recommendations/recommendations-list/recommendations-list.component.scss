@@ -417,6 +417,7 @@
     font-weight: 800;
     letter-spacing: -0.5px;
     text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
     margin-bottom: 2px;
   }
 
@@ -822,5 +823,279 @@
   .btn-3d-action {
     padding: 6px 12px;
     font-size: 0.8rem;
+  }
+}
+
+
+/* Modo Escuro em Recomendações */
+:host-context([data-theme='dark']) {
+  .editorial-card {
+    background: #1e293b !important;
+    border-color: #4895CC !important;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45) !important;
+    color: #f1f5f9 !important;
+
+    &.is-ecotourism {
+      border-color: #65A30D !important;
+    }
+
+    .location-text {
+      color: #94a3b8 !important;
+    }
+
+    .editorial-quote {
+      color: #e2e8f0 !important;
+    }
+
+    .tourism-type-badge {
+      background: rgba(91, 164, 216, 0.16) !important;
+      color: #8cc4ec !important;
+      border-color: rgba(91, 164, 216, 0.35) !important;
+    }
+
+    &.is-ecotourism .tourism-type-badge {
+      background: rgba(101, 163, 13, 0.16) !important;
+      color: #a3e635 !important;
+      border-color: rgba(101, 163, 13, 0.35) !important;
+    }
+
+    .circle-bg {
+      stroke: rgba(255, 255, 255, 0.12) !important;
+    }
+
+    .match-text .percentage {
+      color: #f1f5f9 !important;
+    }
+  }
+
+  .card-3d-wrapper .front {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+  }
+}
+
+/* Alto contraste (preservação de títulos e legibilidade sobre fotos dos Cards 3D) */
+:host-context(html.a11y-high-contrast),
+:host-context(.a11y-high-contrast) {
+  .card-3d-title {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    -webkit-text-stroke: 1px #000000;
+    paint-order: stroke fill;
+    text-shadow: 
+      -1.5px -1.5px 0 #000000,
+       1.5px -1.5px 0 #000000,
+      -1.5px  1.5px 0 #000000,
+       1.5px  1.5px 0 #000000,
+       0 2px 8px #000000,
+       0 0 12px #000000 !important;
+  }
+
+  .card-3d-content {
+    color: #ffffff !important;
+
+    .destination-country-tag,
+    span,
+    strong {
+      color: #ffffff !important;
+      text-shadow: 
+        -1px -1px 0 #000000,
+         1px -1px 0 #000000,
+        -1px  1px 0 #000000,
+         1px  1px 0 #000000,
+         0 2px 6px #000000 !important;
+    }
+  }
+
+  .rank-badge {
+    background: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+  }
+
+  .btn-3d-action {
+    background: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+
+    &:hover {
+      background: #ffffff !important;
+      color: #000000 !important;
+    }
+  }
+}
+
+
+/* Alto contraste claro para Recomendações */
+:host-context(html.a11y-high-contrast:not([data-theme='dark'])),
+:host-context(.a11y-high-contrast:not([data-theme='dark'])) {
+  .destination-card {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+
+    .card-body {
+      background-color: #ffffff !important;
+
+      .dest-card-title,
+      .dest-card-title *,
+      h3,
+      h3 * {
+        color: #000000 !important;
+        font-weight: 800 !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+      }
+
+      .dest-price-tag,
+      .dest-price-tag *,
+      p,
+      p * {
+        color: #000000 !important;
+        font-weight: 700 !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+      }
+    }
+
+    .btn-info-badge {
+      background-color: #000000 !important;
+      border: 2px solid #000000 !important;
+
+      img {
+        filter: none !important;
+      }
+    }
+
+    .score-tag-small {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 1.5px solid #ffffff !important;
+      text-shadow: none !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .editorial-card {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+
+    .editorial-title,
+    .editorial-title *,
+    .editorial-body,
+    .editorial-body *,
+    .editorial-stat,
+    .editorial-stat *,
+    h1, h2, h3, h4, h5, h6,
+    p, span {
+      color: #000000 !important;
+      text-shadow: none !important;
+      -webkit-text-stroke: 0 !important;
+    }
+
+    .editorial-badge {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 1px solid #000000 !important;
+      text-shadow: none !important;
+    }
+
+    .rank-triangle {
+      border-bottom-color: #000000 !important;
+    }
+
+    .rank-number {
+      color: #ffffff !important;
+      text-shadow: none !important;
+    }
+  }
+}
+
+/* Alto contraste escuro para Recomendações */
+:host-context(html.a11y-high-contrast[data-theme='dark']) {
+  .destination-card {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+
+    .card-body {
+      background-color: #000000 !important;
+
+      .dest-card-title,
+      .dest-card-title *,
+      h3,
+      h3 * {
+        color: #ffffff !important;
+        font-weight: 800 !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+      }
+
+      .dest-price-tag,
+      .dest-price-tag *,
+      p,
+      p * {
+        color: #ffe600 !important;
+        font-weight: 800 !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+      }
+    }
+
+    .btn-info-badge {
+      background-color: #ffffff !important;
+      border: 2px solid #ffffff !important;
+
+      img {
+        filter: invert(1) !important;
+      }
+    }
+
+    .score-tag-small {
+      background-color: #000000 !important;
+      color: #ffe600 !important;
+      border: 1.5px solid #ffffff !important;
+      text-shadow: none !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .editorial-card {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+
+    .editorial-title,
+    .editorial-title *,
+    .editorial-body,
+    .editorial-body *,
+    .editorial-stat,
+    .editorial-stat *,
+    h1, h2, h3, h4, h5, h6,
+    p, span {
+      color: #ffffff !important;
+      text-shadow: none !important;
+      -webkit-text-stroke: 0 !important;
+    }
+
+    .editorial-badge {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      border: 1px solid #ffffff !important;
+      text-shadow: none !important;
+    }
+
+    .rank-triangle {
+      border-bottom-color: #ffffff !important;
+    }
+
+    .rank-number {
+      color: #000000 !important;
+      text-shadow: none !important;
+    }
   }
 }

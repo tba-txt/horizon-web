@@ -4,13 +4,14 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { animate, stagger } from 'motion';
 import { AuthLayoutComponent } from '../../../shared/layouts/auth-layout/auth-layout.component';
+import { GoogleSignInComponent } from '../../../shared/components/google-sign-in/google-sign-in.component';
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { strictEmailValidator } from '../../../shared/validators/custom-validators';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AuthLayoutComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AuthLayoutComponent, GoogleSignInComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })

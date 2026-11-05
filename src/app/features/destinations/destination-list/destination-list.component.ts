@@ -357,13 +357,13 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
     if (this.isCardAnimatingOut()) return;
 
     this.isCardAnimatingOut.set(direction);
-    this.cardDragOffset.set(direction === 'right' ? 340 : -340);
+    this.cardDragOffset.set(direction === 'right' ? 380 : -380);
 
     setTimeout(() => {
       this.quizPreviewIndex.update(idx => (idx + 1) % this.quizPreviewCards.length);
       this.cardDragOffset.set(0);
       this.isCardAnimatingOut.set(null);
-    }, 280);
+    }, 450);
   }
 
   /**
@@ -1634,7 +1634,11 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
     this.isLoadingFeed.set(true);
     this.feedService.getPosts(true).subscribe({
       next: (data) => {
-        const list = (data || []).filter(p => p.published !== false && p.postType !== 'TRIVIA' && p.postType !== 'THIS_OR_THAT');
+        const allArticles = (data || []).filter(p => p.published !== false && p.postType !== 'TRIVIA' && p.postType !== 'THIS_OR_THAT');
+        // Prioriza estritamente os 25 artigos editoriais ricos (IDs 101..125 com textos longos e fotos exclusivas)
+        const curated = allArticles.filter(p => p.id >= 101 && p.id <= 125);
+        const fallback = allArticles.filter(p => !(p.id >= 101 && p.id <= 125));
+        const list = curated.length >= 6 ? curated : [...curated, ...fallback];
         this.feedPosts.set(this.prepareSixPosts(list));
         this.isLoadingFeed.set(false);
       },
@@ -1648,12 +1652,21 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
   private prepareSixPosts(backendList: Post[]): Post[] {
     const defaultArticles: Post[] = [
       {
+        id: 101,
+        title: 'Pequenos gigantes do gelo',
+        caption: 'Desembarcar na Península Antártica desafia qualquer escala humana de proporção sob o vento gelado e o mar de glaciares.',
+        imageUrl: '/assets/feed/id101-1.webp',
+        likesCount: 3,
+        dislikesCount: 1,
+        postType: 'ARTICLE'
+      },
+      {
         id: 102,
         title: 'O encanto das águas cristalinas de Noronha',
         caption: 'Mergulho na Baía dos Porcos e no Sancho com tartarugas marinhas e raias em um dos cenários mais preservados do planeta.',
         imageUrl: '/assets/feed/id102-1.webp',
-        likesCount: 2418,
-        dislikesCount: 24,
+        likesCount: 1,
+        dislikesCount: 3,
         postType: 'ARTICLE'
       },
       {
@@ -1661,8 +1674,8 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         title: 'Segredos da Chapada: O lendário Vale do Pati',
         caption: 'Serras tabulares, quedas d\'água misteriosas e a hospitalidade inesquecível dos nativos sob um céu apinhado de estrelas.',
         imageUrl: '/assets/feed/id103-1.webp',
-        likesCount: 1842,
-        dislikesCount: 15,
+        likesCount: 3,
+        dislikesCount: 2,
         postType: 'ARTICLE'
       },
       {
@@ -1670,8 +1683,8 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         title: 'Cores, aromas e histórias nos labirintos de Marrakech',
         caption: 'Mosaicos geométricos zellij, aromas adocicados de especiarias e a atmosfera fascinante da lendária praça Jemaa el-Fna.',
         imageUrl: '/assets/feed/id105-1.webp',
-        likesCount: 3150,
-        dislikesCount: 36,
+        likesCount: 6,
+        dislikesCount: 2,
         postType: 'ARTICLE'
       },
       {
@@ -1679,8 +1692,8 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         title: 'Lagoas de água doce entre o mar de dunas dos Lençóis',
         caption: 'Um deserto imenso de areia alvíssima pontilhado por lagoas cristalinas de água doce sob o sol do Maranhão.',
         imageUrl: '/assets/feed/id107-1.webp',
-        likesCount: 1980,
-        dislikesCount: 18,
+        likesCount: 4,
+        dislikesCount: 1,
         postType: 'ARTICLE'
       },
       {
@@ -1688,41 +1701,45 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
         title: 'Glaciares milenares e ventos bravos da Patagônia',
         caption: 'Diante do colossal Perito Moreno, o estrondo do gelo caindo nas águas do Lago Argentino é pura poesia selvagem.',
         imageUrl: '/assets/feed/id110-1.webp',
-        likesCount: 2740,
-        dislikesCount: 29,
-        postType: 'ARTICLE'
-      },
-      {
-        id: 116,
-        title: 'Colinas douradas e vinhedos seculares na Toscana',
-        caption: 'Vilarejos medievais de pedra, estradinhas cercadas de ciprestes e pores do sol inesquecíveis que tingem os campos de terracota.',
-        imageUrl: '/assets/feed/id116-1.webp',
-        likesCount: 2210,
-        dislikesCount: 12,
+        likesCount: 7,
+        dislikesCount: 0,
         postType: 'ARTICLE'
       }
     ];
 
     const result: Post[] = [];
     const usedIds = new Set<number>();
+    const usedTitles = new Set<string>();
 
-    for (const post of backendList) {
+    // Aceita apenas os artigos editoriais ricos (IDs 101 a 125)
+    const validBackendArticles = (backendList || []).filter(p => p.id >= 101 && p.id <= 125);
+
+    for (const post of validBackendArticles) {
       if (result.length >= 6) break;
+      const titleKey = (post.title || '').trim().toLowerCase();
+      if (usedIds.has(post.id) || usedTitles.has(titleKey)) continue;
+
+      const gallery = this.getPostImages(post);
+
       result.push({
         ...post,
         likesCount: post.likesCount ?? 0,
         dislikesCount: post.dislikesCount ?? 0,
-        imageUrl: post.imageUrl || `/assets/feed/id${post.id}-1.webp`
+        imageUrl: gallery[0],
+        galleryImages: gallery
       });
       usedIds.add(post.id);
+      usedTitles.add(titleKey);
     }
 
     if (result.length < 6) {
       for (const fallback of defaultArticles) {
         if (result.length >= 6) break;
-        if (!usedIds.has(fallback.id)) {
+        const titleKey = (fallback.title || '').trim().toLowerCase();
+        if (!usedIds.has(fallback.id) && !usedTitles.has(titleKey)) {
           result.push(fallback);
           usedIds.add(fallback.id);
+          usedTitles.add(titleKey);
         }
       }
     }
@@ -1773,19 +1790,20 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getPostImages(post: Post): string[] {
-    if (post.galleryImages && post.galleryImages.length > 0) {
-      return post.galleryImages;
-    }
-    const hasLocalArticleGallery =
-      post.id === 8 ||
-      (post.id >= 17 && post.id <= 20) ||
-      (post.id >= 101 && post.id <= 125);
-
-    if (hasLocalArticleGallery) {
+    // 1. Artigos editoriais ricos (101..125): usa sempre a galeria própria baseada no ID do artigo
+    if (post.id >= 101 && post.id <= 125) {
       return [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`);
     }
 
-    return post.imageUrl ? [post.imageUrl] : ['/assets/Horizon 1.webp'];
+    if (post.galleryImages && post.galleryImages.length >= 3 && !post.galleryImages[0].includes('photo-1469854523086')) {
+      return post.galleryImages;
+    }
+
+    if (post.id === 8 || (post.id >= 17 && post.id <= 20)) {
+      return [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`);
+    }
+
+    return [1, 2, 3].map(index => `/assets/feed/id101-${index}.webp`);
   }
 
   onFeedMouseDown(event: MouseEvent, postId: number, trackEl: HTMLElement): void {
@@ -1852,19 +1870,15 @@ export class DestinationListComponent implements OnInit, AfterViewInit, OnDestro
   }
 
   getPostImage(post: Post): string {
-    if (post.imageUrl && !post.imageUrl.includes('placeholder')) {
-      return post.imageUrl;
-    }
-    if (post.id) {
-      return `/assets/feed/id${post.id}-1.webp`;
-    }
-    return '/assets/Horizon 1.webp';
+    const images = this.getPostImages(post);
+    return images[0] || '/assets/Horizon 1.webp';
   }
 
   handleFeedImageError(event: any, post: Post): void {
     if (event?.target) {
-      if (post.id && !event.target.src.includes(`id${post.id}-1.webp`)) {
-        event.target.src = `/assets/feed/id${post.id}-1.webp`;
+      const images = this.getPostImages(post);
+      if (images && images.length > 0 && event.target.src !== images[0]) {
+        event.target.src = images[0];
       } else {
         event.target.src = '/assets/Horizon 1.webp';
       }

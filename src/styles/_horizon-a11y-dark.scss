@@ -1,0 +1,1224 @@
+/* =========================================================
+   MODO ESCURO HORIZON
+   Ativado por [data-theme='dark'] no <html> (ThemeService).
+   Bootstrap 5.3 já adapta seus componentes via data-bs-theme;
+   aqui ficam os ajustes das classes e componentes próprios.
+   Todas as combinações abaixo mantêm contraste mínimo WCAG AA.
+   ========================================================= */
+
+/* Utilitários de acessibilidade (valem para os dois temas) */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 3000;
+  padding: 12px 20px;
+  background: #0b2545;
+  color: #ffffff;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 8px;
+  border: 2px solid #ffffff;
+  transform: translateY(-200%);
+  transition: transform 0.15s ease-out;
+
+  &:focus,
+  &:focus-visible {
+    transform: translateY(0);
+    color: #ffffff;
+  }
+}
+
+/* O foco programático no <main> não precisa de contorno visível */
+main:focus,
+main:focus-visible {
+  outline: none !important;
+}
+
+/* Texto exclusivo para leitores de tela (reforço do Bootstrap) */
+.sr-only-horizon {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Alvos de toque mínimos (WCAG 2.5.8) em controles de formulário e botões */
+.btn,
+.form-control,
+.form-select,
+.destination-picker-trigger,
+.passenger-picker-trigger {
+  min-height: 44px;
+}
+.btn-sm {
+  min-height: 36px;
+}
+
+/* ---------------------------------------------------------
+   Tema escuro
+   --------------------------------------------------------- */
+[data-theme='dark'] {
+  color-scheme: dark;
+  --horizon-bg: #0f172a;
+  --horizon-surface: #1e293b;
+  --horizon-surface-2: #273449;
+  --horizon-border: #334155;
+  --horizon-text: #e5e7eb;
+  --horizon-text-muted: #cbd5e1;
+  --horizon-blue: #8cc4ec; /* variação clara do azul Horizon para texto sobre fundo escuro */
+  --horizon-green: #84cc16; /* variação clara do verde Horizon para texto sobre fundo escuro */
+
+  body {
+    background-color: var(--horizon-bg) !important;
+    color: var(--horizon-text);
+  }
+
+  /* Foco visível com contraste sobre fundo escuro */
+  :focus-visible {
+    outline: 2px solid #8cc4ec !important;
+  }
+
+  /* Dropdown "Para" de Destinos em Modo Escuro */
+  .custom-dest-dropdown {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+
+    .header-mode-title {
+      color: #f1f5f9 !important;
+    }
+
+    .header-mode-subtitle {
+      color: #94a3b8 !important;
+    }
+
+    .dest-item .dest-name {
+      color: #f1f5f9 !important;
+    }
+
+    .dest-item .dest-location {
+      color: #94a3b8 !important;
+    }
+
+    .dest-item.selected .dest-name {
+      color: #ffffff !important;
+    }
+  }
+
+  /* Quiz: Atalhos de orçamento e card de passaporte em Modo Escuro */
+  .quiz-budget-preset-btn {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #cbd5e1 !important;
+
+    &:hover {
+      background-color: #273449 !important;
+    }
+
+    &.is-active {
+      background-color: rgba(91, 164, 216, 0.2) !important;
+      border: 1.5px solid #5BA4D8 !important;
+      color: #5BA4D8 !important;
+    }
+  }
+
+  .quiz-passport-card {
+    background-color: #1e293b !important;
+    border: 1.5px solid #334155 !important;
+
+    &.is-active {
+      background-color: rgba(91, 164, 216, 0.12) !important;
+      border: 1.5px solid #5BA4D8 !important;
+    }
+  }
+
+  .quiz-passport-icon {
+    background-color: #273449 !important;
+    color: #94a3b8 !important;
+
+    &.is-active {
+      background-color: #5BA4D8 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .quiz-passport-title {
+    color: #f1f5f9 !important;
+  }
+
+  .quiz-passport-desc {
+    color: #94a3b8 !important;
+  }
+
+  .quiz-passport-badge-active {
+    background-color: #65A30D !important;
+    color: #ffffff !important;
+  }
+  .skip-link {
+    background: #8cc4ec;
+    color: #0b2545;
+    border-color: #0b2545;
+  }
+
+  .text-muted,
+  .text-secondary,
+  .text-body-secondary,
+  .info-item-label {
+    color: var(--horizon-text-muted) !important;
+  }
+  .text-dark,
+  .text-black,
+  .article-text-body,
+  .info-item-value,
+  .privacy-lead-text,
+  .privacy-section-text,
+  .privacy-list li {
+    color: var(--horizon-text) !important;
+  }
+  .privacy-list li strong {
+    color: #ffffff !important;
+  }
+  .text-primary,
+  .privacy-section-title {
+    color: var(--horizon-blue) !important;
+  }
+
+  /* Superfícies */
+  .bg-white,
+  .bg-light,
+  .card,
+  .sidebar-card,
+  .figma-white-card,
+  .privacy-principle-card,
+  .privacy-contact-card,
+  .a11y-block,
+  .list-group-item,
+  .accordion-item,
+  .modal-content,
+  .dropdown-menu {
+    background-color: var(--horizon-surface) !important;
+    color: var(--horizon-text);
+    border-color: var(--horizon-border) !important;
+  }
+  .card:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .glass-card,
+  .modal-card-glass,
+  .feedback-modal-card,
+  .deactivate-modal-card {
+    background: rgba(30, 41, 59, 0.88) !important;
+    border-color: rgba(148, 163, 184, 0.25) !important;
+    color: var(--horizon-text);
+  }
+
+  .modal-scroll-content {
+    background-color: #0b1329 !important;
+    color: var(--horizon-text) !important;
+  }
+
+  .modal-glass-footer {
+    background-color: #0f172a !important;
+    border-top: 1px solid #334155 !important;
+  }
+
+  .border,
+  .border-light,
+  .border-secondary {
+    border-color: var(--horizon-border) !important;
+  }
+
+  /* Formulários */
+  .form-control,
+  .form-select,
+  .destination-picker-trigger,
+  .passenger-picker-trigger,
+  .input-group-text {
+    background-color: #111c30 !important;
+    color: var(--horizon-text) !important;
+    border-color: #475569 !important;
+  }
+  .form-control::placeholder {
+    color: #94a3b8 !important;
+    opacity: 1;
+  }
+  .form-control:focus,
+  .form-select:focus,
+  .destination-picker-trigger:focus,
+  .passenger-picker-trigger:focus {
+    border-color: #8cc4ec;
+    box-shadow: 0 0 0 0.25rem rgba(140, 196, 236, 0.3) !important;
+  }
+  label,
+  .form-label {
+    color: var(--horizon-text);
+  }
+
+  /* Botões claros viram superfícies escuras */
+  .btn-light,
+  .btn-outline-dark,
+  .btn-outline-secondary {
+    background-color: var(--horizon-surface-2) !important;
+    color: var(--horizon-text) !important;
+    border-color: #475569 !important;
+  }
+
+  /* Tabelas e conteúdos auxiliares */
+  .table {
+    --bs-table-color: var(--horizon-text);
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--horizon-border);
+  }
+  hr {
+    border-color: var(--horizon-border);
+  }
+
+  .skeleton-box {
+    background: linear-gradient(90deg, #1e293b 25%, #2b3a52 50%, #1e293b 75%);
+    background-size: 200% 100%;
+  }
+  .wireframe-box {
+    background-color: #1e293b;
+    border-color: #475569;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+    border-left-color: #1e293b;
+  }
+  ::-webkit-scrollbar-thumb {
+    border-color: #0f172a;
+  }
+
+  .like-unlike-radio {
+    --inactive-color: #cbd5e1;
+    --hover: #e5e7eb;
+    --active-color: #8cc4ec;
+  }
+
+  /* Fotos levemente atenuadas para reduzir ofuscamento */
+  img:not([src$='.svg']) {
+    filter: brightness(0.92);
+  }
+
+  /* Títulos de Seção de Destinos ("Destinos" e "Eco" em branco puro com glow) */
+  .dest-title-animated {
+    .dest-word-main {
+      color: #ffffff !important;
+      text-shadow: 0 0 14px rgba(255, 255, 255, 0.28);
+    }
+    &.dest-title-common .dest-word-accent {
+      color: #8cc4ec !important;
+      text-shadow: 0 0 14px rgba(140, 196, 236, 0.38);
+    }
+    &.dest-title-eco .dest-word-accent {
+      color: #84cc16 !important;
+      text-shadow: 0 0 14px rgba(132, 204, 22, 0.38);
+    }
+    &:hover {
+      .dest-word-main {
+        color: #ffffff !important;
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.95), 0 0 32px rgba(255, 255, 255, 0.45);
+      }
+      &.dest-title-common .dest-word-accent {
+        color: #a8dcf8 !important;
+        text-shadow: 0 0 22px rgba(91, 164, 216, 0.9), 0 0 38px rgba(91, 164, 216, 0.65);
+      }
+      &.dest-title-eco .dest-word-accent {
+        color: #a3e635 !important;
+        text-shadow: 0 0 22px rgba(101, 163, 13, 0.9), 0 0 38px rgba(101, 163, 13, 0.65);
+      }
+    }
+  }
+}
+
+/* =========================================================
+   PREFERÊNCIAS DE ACESSIBILIDADE DO USUÁRIO
+   Classes aplicadas no <html> pelo AccessibilityService.
+   ========================================================= */
+
+/* Alto contraste (claro) */
+html.a11y-high-contrast:not([data-theme='dark']) {
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .user-layout-bg {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .text-muted,
+  .text-secondary,
+  .text-body-secondary,
+  .text-dark,
+  .article-text-body,
+  .info-item-label,
+  .info-item-value,
+  .privacy-lead-text,
+  .privacy-section-text,
+  .privacy-list li,
+  .privacy-list li strong {
+    color: #000000 !important;
+    font-weight: 600 !important;
+  }
+  main a:not(.btn),
+  footer a {
+    color: #0028a8 !important;
+    text-decoration: underline !important;
+  }
+  .card,
+  .sidebar-card,
+  .figma-white-card,
+  .privacy-principle-card,
+  .privacy-contact-card,
+  .a11y-block,
+  .glass-card,
+  .btn,
+  .form-control,
+  .form-select,
+  .destination-picker-trigger,
+  .passenger-picker-trigger,
+  .destination-picker-menu,
+  .passenger-picker-menu,
+  .modal-card-glass,
+  .modal-glass-footer,
+  .modal-content {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+  }
+  .search-input-group,
+  .input-group.search-input-group {
+    border: 2px solid #000000 !important;
+    border-radius: 12px !important;
+    background-color: #ffffff !important;
+    overflow: hidden !important;
+
+    .form-control,
+    .search-input,
+    .input-group-text,
+    .btn {
+      border: none !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+      outline: none !important;
+      color: #000000 !important;
+    }
+
+    .input-group-text i {
+      color: #000000 !important;
+    }
+  }
+  .sidebar-user-name,
+  .view-header-title,
+  .a11y-block-title,
+  h1:not(.text-white):not([class*='text-white']),
+  h2:not(.text-white):not([class*='text-white']),
+  h3:not(.text-white):not([class*='text-white']):not(.dest-title),
+  h4:not(.text-white):not([class*='text-white']),
+  h5:not(.text-white):not([class*='text-white']),
+  h6:not(.text-white):not([class*='text-white']) {
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  /* Preservação de contraste em cards de destinos com fotos/imagens (apenas textos sobrepostos em fotos) */
+  .dest-card-wrapper,
+  .dest-card,
+  .dest-content,
+  .card-3d-container,
+  .card-3d-body,
+  .card-3d-content {
+    .dest-title,
+    .dest-title *,
+    .card-3d-title,
+    .card-3d-title *,
+    h1, h2, h3, h4, h5, h6,
+    .dest-price,
+    .dest-price *,
+    span, p {
+      color: #ffffff !important;
+      text-shadow: 0 2px 8px #000000, 0 0 12px #000000 !important;
+    }
+    .dest-title,
+    .card-3d-title {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      -webkit-text-stroke: 1px #000000;
+      paint-order: stroke fill;
+      text-shadow: 
+        -1.5px -1.5px 0 #000000,
+         1.5px -1.5px 0 #000000,
+        -1.5px  1.5px 0 #000000,
+         1.5px  1.5px 0 #000000,
+         0 2px 8px #000000,
+         0 0 12px #000000 !important;
+    }
+  }
+
+  /* Garantir que cards com corpo separado (como em recomendações) tenham texto preto no corpo branco */
+  .destination-card {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+
+    .card-body {
+      background-color: #ffffff !important;
+
+      h1, h2, h3, h4, h5, h6,
+      .dest-card-title,
+      .dest-card-title *,
+      .dest-price-tag,
+      .dest-price-tag *,
+      span, p {
+        color: #000000 !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+      }
+
+      .dest-card-title,
+      .dest-card-title * {
+        font-weight: 800 !important;
+      }
+
+      .dest-price-tag,
+      .dest-price-tag * {
+        font-weight: 700 !important;
+      }
+    }
+
+    .btn-info-badge {
+      background-color: #000000 !important;
+      border: 2px solid #000000 !important;
+
+      img {
+        filter: none !important;
+      }
+    }
+
+    .score-tag-small {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 1.5px solid #ffffff !important;
+      text-shadow: none !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .editorial-card {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+
+    .editorial-title,
+    .editorial-title *,
+    .editorial-body,
+    .editorial-body *,
+    .editorial-stat,
+    .editorial-stat *,
+    h1, h2, h3, h4, h5, h6,
+    p, span {
+      color: #000000 !important;
+      text-shadow: none !important;
+      -webkit-text-stroke: 0 !important;
+    }
+  }
+
+  /* Modal de Avaliação / Feedback (CSAT e NPS) com topo azul/escuro */
+  .feedback-modal-card {
+    .text-white,
+    .text-white *,
+    h2.text-white,
+    [style*='background'] h2,
+    [style*='background'] * {
+      color: #ffffff !important;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9) !important;
+    }
+  }
+
+  /* Hero containers e banners escuros */
+  .hero-container,
+  .a11y-hero {
+    h1, h2, h3, p, span, .hero-title {
+      color: #ffffff !important;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+    }
+  }
+
+  /* Botões seletores de tipo de voo e classe em destinos */
+  .filter-dropdown-btn {
+    color: #ffffff !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.9) !important;
+
+    * {
+      color: #ffffff !important;
+    }
+
+    svg {
+      stroke: #ffffff !important;
+    }
+  }
+
+  /* Elementos com classe text-white */
+  .text-white {
+    color: #ffffff !important;
+  }
+
+  .btn-theme-toggle {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+
+    i {
+      color: #000000 !important;
+    }
+  }
+
+  .btn-reset-this-or-that {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+
+    i, * {
+      color: #000000 !important;
+    }
+  }
+
+  /* Modal de Missões & Cupom no Feed (Alto Contraste Claro) */
+  .missions-modal-shell {
+    background: #ffffff !important;
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+
+    #missions-modal-title,
+    #missions-modal-title * {
+      color: #000000 !important;
+      font-weight: 800 !important;
+    }
+
+    .missions-modal-desc {
+      color: #000000 !important;
+      font-weight: 600 !important;
+    }
+
+    .missions-discount-badge {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 1.5px solid #000000 !important;
+      font-weight: 800 !important;
+    }
+
+    .missions-counter-label {
+      color: #000000 !important;
+      font-weight: 800 !important;
+      text-shadow: none !important;
+    }
+
+    .btn-close-missions-glass {
+      background: #ffffff !important;
+      border: 2px solid #000000 !important;
+      color: #000000 !important;
+
+      i {
+        color: #000000 !important;
+      }
+    }
+
+    .missions-progress-track {
+      background-color: #e2e8f0 !important;
+      border: 1.5px solid #000000 !important;
+    }
+
+    .missions-progress-fill {
+      background-color: #000000 !important;
+      box-shadow: none !important;
+    }
+
+    .mission-task-card {
+      background-color: #ffffff !important;
+      border: 2px solid #000000 !important;
+      color: #000000 !important;
+
+      .task-title,
+      .task-title * {
+        color: #000000 !important;
+        font-weight: 800 !important;
+      }
+
+      .task-subtitle,
+      .task-status-text {
+        color: #000000 !important;
+        font-weight: 600 !important;
+      }
+
+      .task-action-link {
+        color: #0028a8 !important;
+        font-weight: 800 !important;
+        text-decoration: underline !important;
+      }
+
+      .task-icon-box {
+        border: 1.5px solid #000000 !important;
+
+        &.completed {
+          background-color: #000000 !important;
+          color: #ffffff !important;
+
+          i {
+            color: #ffffff !important;
+          }
+        }
+
+        &:not(.completed) {
+          background-color: #ffffff !important;
+          color: #000000 !important;
+
+          i {
+            color: #000000 !important;
+          }
+        }
+      }
+
+      .task-badge {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 1.5px solid #000000 !important;
+        font-weight: 800 !important;
+      }
+    }
+
+    .coupon-reward-box {
+      background-color: #ffffff !important;
+      border: 2px solid #000000 !important;
+      color: #000000 !important;
+
+      span,
+      small,
+      div {
+        color: #000000 !important;
+      }
+
+      .border-dashed {
+        background-color: #f8fafc !important;
+        border: 2px dashed #000000 !important;
+      }
+
+      .font-monospace {
+        color: #000000 !important;
+        font-weight: 800 !important;
+        font-size: 1.15rem !important;
+      }
+
+      .btn-copy-coupon {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 2px solid #000000 !important;
+        font-weight: 800 !important;
+
+        * {
+          color: #ffffff !important;
+        }
+      }
+    }
+
+    .missions-footer-hint {
+      color: #000000 !important;
+      font-weight: 700 !important;
+      text-shadow: none !important;
+
+      span, i {
+        color: #000000 !important;
+      }
+    }
+  }
+  .form-switch .form-check-input {
+    border: 2px solid #000000 !important;
+    background-color: #ffffff !important;
+    &:checked {
+      background-color: #000000 !important;
+      border-color: #000000 !important;
+    }
+  }
+  /* Quiz: Atalhos de orçamento e card de passaporte em Alto Contraste Claro */
+  .quiz-budget-preset-btn {
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  .quiz-passport-card {
+    border: 2px solid #000000 !important;
+
+    &.is-active {
+      border: 2px solid #000000 !important;
+    }
+  }
+
+  .quiz-passport-icon {
+    border: 2px solid #000000 !important;
+  }
+
+  .quiz-passport-title {
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .quiz-passport-desc {
+    color: #000000 !important;
+  }
+
+  :focus-visible {
+    outline: 3px solid #000000 !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 0 6px #ffd400 !important;
+  }
+}
+
+/* Alto contraste combinado com modo escuro */
+html.a11y-high-contrast[data-theme='dark'] {
+  body {
+    background: #000000 !important;
+    color: #ffffff !important;
+  }
+  .user-layout-bg {
+    background: #000000 !important;
+    color: #ffffff !important;
+  }
+  .text-muted,
+  .text-secondary,
+  .text-body-secondary,
+  .text-dark,
+  .article-text-body,
+  .info-item-label,
+  .info-item-value,
+  .privacy-lead-text,
+  .privacy-section-text,
+  .privacy-list li,
+  .privacy-list li strong {
+    color: #ffffff !important;
+    font-weight: 600 !important;
+  }
+  .dest-title-animated .dest-word-main {
+    color: #ffffff !important;
+  }
+  main a:not(.btn),
+  footer a {
+    color: #ffe600 !important;
+  }
+  .card,
+  .sidebar-card,
+  .figma-white-card,
+  .privacy-principle-card,
+  .privacy-contact-card,
+  .a11y-block,
+  .glass-card,
+  .btn,
+  .form-control,
+  .form-select,
+  .destination-picker-trigger,
+  .passenger-picker-trigger,
+  .destination-picker-menu,
+  .passenger-picker-menu,
+  .modal-card-glass,
+  .modal-glass-footer,
+  .modal-content {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+  }
+  .search-input-group,
+  .input-group.search-input-group {
+    border: 2px solid #ffffff !important;
+    border-radius: 12px !important;
+    background-color: #000000 !important;
+    overflow: hidden !important;
+
+    .form-control,
+    .search-input,
+    .input-group-text,
+    .btn {
+      border: none !important;
+      background-color: transparent !important;
+      box-shadow: none !important;
+      outline: none !important;
+      color: #ffffff !important;
+    }
+
+    .input-group-text i {
+      color: #ffffff !important;
+    }
+  }
+  .sidebar-user-name,
+  .view-header-title,
+  .a11y-block-title,
+  .radar-header-title,
+  .passport-title,
+  .quiz-passport-title,
+  .card-3d-title,
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+  .radar-axis-label,
+  text.radar-axis-label {
+    fill: #ffffff !important;
+    font-weight: 800 !important;
+  }
+  .form-switch .form-check-input {
+    border: 2px solid #ffffff !important;
+    background-color: #000000 !important;
+    &:checked {
+      background-color: #ffffff !important;
+      border-color: #ffffff !important;
+    }
+  }
+
+  /* Botões seletores de tipo de voo e classe em destinos */
+  .filter-dropdown-btn {
+    color: #ffffff !important;
+    border: 1.5px solid #ffffff !important;
+
+    * {
+      color: #ffffff !important;
+    }
+
+    svg {
+      stroke: #ffffff !important;
+    }
+  }
+
+  /* Cards de destinos e recomendações em alto contraste escuro */
+  .dest-card-wrapper,
+  .dest-card,
+  .dest-content,
+  .card-3d-container,
+  .card-3d-body,
+  .card-3d-content {
+    .dest-title,
+    .dest-title *,
+    .card-3d-title,
+    .card-3d-title *,
+    h1, h2, h3, h4, h5, h6,
+    .dest-price,
+    .dest-price *,
+    span, p {
+      color: #ffffff !important;
+      text-shadow: 0 2px 8px #000000, 0 0 12px #000000 !important;
+    }
+  }
+
+  .destination-card {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+
+    .card-body {
+      background-color: #000000 !important;
+
+      h1, h2, h3, h4, h5, h6,
+      .dest-card-title,
+      .dest-card-title *,
+      span {
+        color: #ffffff !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+      }
+
+      .dest-price-tag,
+      .dest-price-tag * {
+        color: #ffe600 !important;
+        font-weight: 800 !important;
+        text-shadow: none !important;
+        -webkit-text-stroke: 0 !important;
+      }
+    }
+
+    .btn-info-badge {
+      background-color: #ffffff !important;
+      border: 2px solid #ffffff !important;
+
+      img {
+        filter: invert(1) !important;
+      }
+    }
+
+    .score-tag-small {
+      background-color: #000000 !important;
+      color: #ffe600 !important;
+      border: 1.5px solid #ffffff !important;
+      text-shadow: none !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .editorial-card {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+
+    .editorial-title,
+    .editorial-title *,
+    .editorial-body,
+    .editorial-body *,
+    .editorial-stat,
+    .editorial-stat *,
+    h1, h2, h3, h4, h5, h6,
+    p, span {
+      color: #ffffff !important;
+      text-shadow: none !important;
+      -webkit-text-stroke: 0 !important;
+    }
+  }
+
+  .btn-theme-toggle {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+
+    i {
+      color: #ffffff !important;
+    }
+  }
+
+  .btn-reset-this-or-that {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+
+    i, * {
+      color: #ffffff !important;
+    }
+  }
+
+  /* Modal de Missões & Cupom no Feed (Alto Contraste Escuro) */
+  .missions-modal-shell {
+    background: #000000 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+
+    #missions-modal-title,
+    #missions-modal-title * {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+
+    .missions-modal-desc {
+      color: #ffffff !important;
+      font-weight: 600 !important;
+    }
+
+    .missions-discount-badge {
+      background-color: #000000 !important;
+      color: #ffe600 !important;
+      border: 1.5px solid #ffffff !important;
+      font-weight: 800 !important;
+    }
+
+    .missions-counter-label {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+      text-shadow: none !important;
+    }
+
+    .btn-close-missions-glass {
+      background: #000000 !important;
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+
+      i {
+        color: #ffffff !important;
+      }
+    }
+
+    .missions-progress-track {
+      background-color: #1e293b !important;
+      border: 1.5px solid #ffffff !important;
+    }
+
+    .missions-progress-fill {
+      background-color: #ffe600 !important;
+      box-shadow: none !important;
+    }
+
+    .mission-task-card {
+      background-color: #000000 !important;
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+
+      .task-title,
+      .task-title * {
+        color: #ffffff !important;
+        font-weight: 800 !important;
+      }
+
+      .task-subtitle,
+      .task-status-text {
+        color: #ffffff !important;
+        font-weight: 600 !important;
+      }
+
+      .task-action-link {
+        color: #ffe600 !important;
+        font-weight: 800 !important;
+        text-decoration: underline !important;
+      }
+
+      .task-icon-box {
+        border: 1.5px solid #ffffff !important;
+
+        &.completed {
+          background-color: #ffffff !important;
+          color: #000000 !important;
+
+          i {
+            color: #000000 !important;
+          }
+        }
+
+        &:not(.completed) {
+          background-color: #000000 !important;
+          color: #ffffff !important;
+
+          i {
+            color: #ffffff !important;
+          }
+        }
+      }
+
+      .task-badge {
+        background-color: #000000 !important;
+        color: #ffe600 !important;
+        border: 1.5px solid #ffffff !important;
+        font-weight: 800 !important;
+      }
+    }
+
+    .coupon-reward-box {
+      background-color: #000000 !important;
+      border: 2px solid #ffffff !important;
+      color: #ffffff !important;
+
+      span,
+      small,
+      div {
+        color: #ffffff !important;
+      }
+
+      .border-dashed {
+        background-color: #0f172a !important;
+        border: 2px dashed #ffffff !important;
+      }
+
+      .font-monospace {
+        color: #ffe600 !important;
+        font-weight: 800 !important;
+        font-size: 1.15rem !important;
+      }
+
+      .btn-copy-coupon {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 2px solid #ffffff !important;
+        font-weight: 800 !important;
+
+        * {
+          color: #000000 !important;
+        }
+      }
+    }
+
+    .missions-footer-hint {
+      color: #ffffff !important;
+      font-weight: 700 !important;
+      text-shadow: none !important;
+
+      span, i {
+        color: #ffffff !important;
+      }
+    }
+  }
+  /* Dropdown "Para" de Destinos em Alto Contraste Escuro */
+  .custom-dest-dropdown {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+
+    .header-mode-title,
+    .header-mode-subtitle,
+    .dest-item .dest-name,
+    .dest-item .dest-location {
+      color: #ffffff !important;
+    }
+
+    .dest-count-tag {
+      background-color: #000000 !important;
+      border: 1.5px solid #ffffff !important;
+      color: #ffe600 !important;
+    }
+  }
+
+  /* Quiz: Atalhos de orçamento e card de passaporte */
+  .quiz-budget-preset-btn {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+
+    &.is-active {
+      background-color: #5BA4D8 !important;
+      border: 2px solid #ffffff !important;
+      color: #000000 !important;
+    }
+  }
+
+  .quiz-passport-card {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+
+    &.is-active {
+      background-color: #000000 !important;
+      border: 2.5px solid #5BA4D8 !important;
+    }
+  }
+
+  .quiz-passport-icon {
+    background-color: #000000 !important;
+    border: 1.5px solid #ffffff !important;
+    color: #ffffff !important;
+
+    &.is-active {
+      background-color: #5BA4D8 !important;
+      border: 1.5px solid #ffffff !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .quiz-passport-title {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .quiz-passport-desc {
+    color: #ffffff !important;
+  }
+
+  .quiz-passport-badge-active {
+    background-color: #65A30D !important;
+    color: #ffffff !important;
+    border: 1.5px solid #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  :focus-visible {
+    outline: 3px solid #ffe600 !important;
+    box-shadow: 0 0 0 6px #000000 !important;
+  }
+}

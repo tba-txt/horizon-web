@@ -67,7 +67,7 @@
                   >
                     <img src="/assets/avatar-badge.webp?v=2" alt="Alterar foto" class="avatar-badge-icon" />
                   </button>
-                  <input #heroFileInput type="file" class="d-none" accept="image/*" (change)="onFileSelected($event)" />
+                  <input aria-label="Selecionar imagem" #heroFileInput type="file" class="d-none" accept="image/*" (change)="onFileSelected($event)" />
                 </div>
 
                 <h2 class="sidebar-user-name mb-1">
@@ -88,7 +88,7 @@
                   (click)="toggleHorizonMenu()"
                 >
                   <span class="fw-bold">Horizon</span>
-                  <i class="bi" [class.bi-chevron-down]="!isHorizonMenuOpen()" [class.bi-chevron-up]="isHorizonMenuOpen()"></i>
+                  <i class="bi" [class.bi-chevron-down]="!isHorizonMenuOpen()" [class.bi-chevron-up]="isHorizonMenuOpen()" aria-hidden="true"></i>
                 </button>
 
                 @if (isHorizonMenuOpen()) {
@@ -149,7 +149,7 @@
                   (click)="toggleDadosMenu()"
                 >
                   <span class="fw-bold">Dados e preferências</span>
-                  <i class="bi" [class.bi-chevron-down]="!isDadosMenuOpen()" [class.bi-chevron-up]="isDadosMenuOpen()"></i>
+                  <i class="bi" [class.bi-chevron-down]="!isDadosMenuOpen()" [class.bi-chevron-up]="isDadosMenuOpen()" aria-hidden="true"></i>
                 </button>
 
                 @if (isDadosMenuOpen()) {
@@ -175,10 +175,27 @@
                     <button 
                       type="button" 
                       class="menu-item-link text-start" 
+                      (click)="openChangePasswordModal()"
+                    >
+                      Segurança e Senha
+                    </button>
+
+                    <button 
+                      type="button" 
+                      class="menu-item-link text-start" 
                       [class.active]="activeView() === 'privacy'"
                       (click)="setActiveView('privacy')"
                     >
                       Política de Privacidade
+                    </button>
+
+                    <button
+                      type="button"
+                      class="menu-item-link text-start"
+                      [class.active]="activeView() === 'accessibility'"
+                      (click)="setActiveView('accessibility')"
+                    >
+                      Acessibilidade
                     </button>
 
                     <button 
@@ -225,6 +242,21 @@
                 
                 <h1 class="view-header-title mb-4">Painel</h1>
 
+                @if (user() && !user()?.cpf) {
+                  <div class="alert alert-warning border-0 rounded-3 shadow-sm p-3 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2" style="background: rgba(254, 243, 199, 0.95); color: #92400e;">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-shield-exclamation fs-4 text-warning" aria-hidden="true"></i>
+                      <div>
+                        <div class="fw-bold small">Por favor, complete seu cadastro</div>
+                        <div class="small" style="font-size: 0.82rem;">Para conseguir aproveitar ao máximo o Horizon sem restrição, finalize o seu cadastro preenchendo as informações pendentes!</div>
+                      </div>
+                    </div>
+                    <button type="button" class="btn btn-sm fw-bold text-white shadow-sm border-0 px-3 py-1.5 rounded-2" style="background-color: #5BA4D8;" (click)="setActiveView('personal-info'); startEditing()">
+                      Cadastrar CPF
+                    </button>
+                  </div>
+                }
+
                 <!-- BANNER DO MEIO (meio-usuarios.png) -->
                 <img 
                   src="/assets/meio-usuarios.png" 
@@ -252,6 +284,23 @@
                 </div>
 
                 <!-- CARD TABELA DE DADOS PESSOAIS (REPRODUÇÃO FIEL AO FIGMA SCREEN 2) -->
+                @if (user() && !user()?.cpf) {
+                  <div class="alert alert-warning border-0 rounded-3 shadow-sm p-3 mb-4 d-flex align-items-center justify-content-between flex-wrap gap-2" style="background: rgba(254, 243, 199, 0.95); color: #92400e;">
+                    <div class="d-flex align-items-center gap-2">
+                      <i class="bi bi-shield-exclamation fs-4 text-warning" aria-hidden="true"></i>
+                      <div>
+                        <div class="fw-bold small">Por favor, complete seu cadastro</div>
+                        <div class="small" style="font-size: 0.82rem;">Para conseguir aproveitar ao máximo o Horizon sem restrição, finalize o seu cadastro preenchendo as informações pendentes!</div>
+                      </div>
+                    </div>
+                    @if (!isEditingPersonalInfo()) {
+                      <button type="button" class="btn btn-sm fw-bold text-white shadow-sm border-0 px-3 py-1.5 rounded-2" style="background-color: #5BA4D8;" (click)="startEditing()">
+                        Cadastrar Agora
+                      </button>
+                    }
+                  </div>
+                }
+
                 <div class="figma-white-card p-3 p-sm-4 p-md-5 mb-4 shadow-sm">
                   
                   <!-- Bloco 1: Suas informações pessoais -->
@@ -302,6 +351,23 @@
                         <span class="info-item-value font-monospace">{{ formattedCpf() }}</span>
                       </div>
                     </div>
+
+                    <!-- Senha de Acesso -->
+                    <div class="info-item-row">
+                      <div class="info-item-content">
+                        <span class="info-item-label">Senha de Acesso</span>
+                        <span class="info-item-value">
+                          @if (user()?.authProvider === 'GOOGLE') {
+                            <span class="text-secondary"><i class="bi bi-google me-1" aria-hidden="true"></i> Conectado com o Google</span>
+                          } @else {
+                            <span>••••••••••••</span>
+                          }
+                        </span>
+                      </div>
+                      <button type="button" class="btn btn-figma-mini-edit" (click)="openChangePasswordModal()">
+                        {{ user()?.authProvider === 'GOOGLE' ? 'Verificar' : 'Alterar' }}
+                      </button>
+                    </div>
                   </div>
 
                   <!-- Bloco 2: Seus dados de contato -->
@@ -321,16 +387,16 @@
                     <div class="info-item-row">
                       <div class="info-item-content">
                         <span class="info-item-label">Telefone</span>
-                        <span class="info-item-value">(11) 98765-4321</span>
+                        <span class="info-item-value">{{ formatPhone(user()?.phone) || 'Não informado' }}</span>
                       </div>
                       <button type="button" class="btn btn-figma-mini-edit" (click)="startEditing()">Editar</button>
                     </div>
 
-                    <!-- Endereço / Região -->
+                    <!-- País de Residência -->
                     <div class="info-item-row">
                       <div class="info-item-content">
                         <span class="info-item-label">País de Residência</span>
-                        <span class="info-item-value">Brasil</span>
+                        <span class="info-item-value">{{ user()?.country || 'Brasil' }}</span>
                       </div>
                       <button type="button" class="btn btn-figma-mini-edit" (click)="startEditing()">Editar</button>
                     </div>
@@ -351,7 +417,7 @@
                   @if (!isEditingPersonalInfo()) {
                     <div class="d-flex justify-content-end">
                       <button type="button" class="btn btn-figma-blue px-4 py-2 rounded-3 fw-semibold shadow-sm" (click)="startEditing()">
-                        <i class="bi bi-pencil-square me-1"></i> Abrir Formulário de Edição
+                        <i class="bi bi-pencil-square me-1" aria-hidden="true"></i> Abrir Formulário de Edição
                       </button>
                     </div>
                   }
@@ -380,7 +446,7 @@
                       <div class="flex-grow-1">
                         <strong class="d-block text-dark small mb-2">Foto de Perfil</strong>
                         <div class="d-flex gap-2 flex-wrap">
-                          <input type="file" #formFileInput class="d-none" accept="image/*" (change)="onFileSelected($event)" />
+                          <input aria-label="Selecionar imagem" type="file" #formFileInput class="d-none" accept="image/*" (change)="onFileSelected($event)" />
                           <button 
                             type="button" 
                             class="btn btn-horizon btn-sm rounded-2 px-3 shadow-sm" 
@@ -391,7 +457,7 @@
                               <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
                               Enviando...
                             } @else {
-                              <i class="bi bi-camera me-1"></i> Escolher Nova Foto
+                              <i class="bi bi-camera me-1" aria-hidden="true"></i> Escolher Nova Foto
                             }
                           </button>
                           @if (user()?.profileImageUrl) {
@@ -407,7 +473,7 @@
                       <div class="row g-3">
                         <div class="col-12 col-md-6">
                           <label class="form-label small fw-semibold text-secondary">Nome Completo</label>
-                          <input type="text" formControlName="name" class="form-control rounded-3" />
+                          <input aria-label="Nome Completo" type="text" formControlName="name" class="form-control rounded-3" />
                           @if (profileForm.get('name')?.invalid && profileForm.get('name')?.touched) {
                             <div class="text-danger small mt-1">Nome completo é obrigatório (mínimo 3 letras).</div>
                           }
@@ -415,38 +481,85 @@
 
                         <div class="col-12 col-md-6">
                           <label class="form-label small fw-semibold text-secondary">Nome Social</label>
-                          <input type="text" formControlName="socialName" class="form-control rounded-3" placeholder="Como prefere ser chamado(a)" />
+                          <input aria-label="Nome Social" type="text" formControlName="socialName" class="form-control rounded-3" placeholder="Como prefere ser chamado(a)" />
                         </div>
 
                         <div class="col-12 col-md-6">
                           <label class="form-label small fw-semibold text-secondary">E-mail</label>
-                          <input type="email" formControlName="email" class="form-control rounded-3" />
+                          <input aria-label="E-mail" type="email" formControlName="email" class="form-control rounded-3" />
                           @if (profileForm.get('email')?.invalid && profileForm.get('email')?.touched) {
                             <div class="text-danger small mt-1">Informe um e-mail válido.</div>
                           }
                         </div>
 
                         <div class="col-12 col-md-6">
+                          <label class="form-label small fw-semibold text-secondary">Telefone / Celular</label>
+                          <input aria-label="Telefone" 
+                            type="tel" 
+                            formControlName="phone" 
+                            (input)="onPhoneInput($event)"
+                            placeholder="(00) 00000-0000"
+                            maxlength="15"
+                            class="form-control rounded-3" 
+                          />
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                          <label class="form-label small fw-semibold text-secondary">País de Residência</label>
+                          <select aria-label="País de Residência" formControlName="country" class="form-select rounded-3">
+                            <option value="Brasil">Brasil</option>
+                            <option value="Argentina">Argentina</option>
+                            <option value="Chile">Chile</option>
+                            <option value="Uruguai">Uruguai</option>
+                            <option value="Estados Unidos">Estados Unidos</option>
+                            <option value="Portugal">Portugal</option>
+                            <option value="Espanha">Espanha</option>
+                            <option value="França">França</option>
+                            <option value="Itália">Itália</option>
+                            <option value="Reino Unido">Reino Unido</option>
+                            <option value="Alemanha">Alemanha</option>
+                            <option value="Japão">Japão</option>
+                            <option value="Canadá">Canadá</option>
+                            <option value="Outro">Outro</option>
+                          </select>
+                        </div>
+
+                        <div class="col-12 col-md-6">
                           <label class="form-label small fw-semibold text-secondary">CPF</label>
                           <div class="position-relative">
-                            <input 
+                            <input aria-label="CPF" 
                               type="text" 
                               formControlName="cpf" 
-                              class="form-control rounded-3 font-monospace input-prohibited" 
-                              readonly 
+                              (input)="onCpfInput($event)"
+                              placeholder="000.000.000-00"
+                              maxlength="14"
+                              class="form-control rounded-3 font-monospace" 
+                              [class.input-prohibited]="!!user()?.cpf"
+                              [readonly]="!!user()?.cpf"
                             />
-                            <span class="prohibited-lock-icon" title="Campo bloqueado para edição">
-                              <i class="bi bi-lock-fill"></i>
-                            </span>
+                            @if (user()?.cpf) {
+                              <span class="prohibited-lock-icon" title="CPF já vinculado e protegido">
+                                <i class="bi bi-lock-fill" aria-hidden="true"></i>
+                              </span>
+                            }
                           </div>
+                          @if (profileForm.get('cpf')?.invalid && profileForm.get('cpf')?.touched) {
+                            <div class="text-danger small mt-1">Informe um CPF válido (11 dígitos).</div>
+                          }
                         </div>
 
                         <div class="col-12 col-md-6">
                           <label class="form-label small fw-semibold text-secondary">Data de Nascimento</label>
-                          <app-date-picker
-                            inputId="profileBirthDate"
-                            formControlName="birthDate"
-                          />
+                          <div class="position-relative">
+                            <app-date-picker
+                              inputId="profileBirthDate"
+                              formControlName="birthDate"
+                              [disabled]="!!user()?.birthDate"
+                            />
+                          </div>
+                          @if (profileForm.get('birthDate')?.invalid && profileForm.get('birthDate')?.touched) {
+                            <div class="text-danger small mt-1">Data de nascimento é obrigatória (mínimo 18 anos).</div>
+                          }
                         </div>
                       </div>
 
@@ -492,7 +605,7 @@
                   <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center gap-3">
                     <div>
                       <div class="d-flex align-items-center gap-2 mb-1">
-                        <i class="bi bi-shield-exclamation text-danger fs-5"></i>
+                        <i class="bi bi-shield-exclamation text-danger fs-5" aria-hidden="true"></i>
                         <h3 class="figma-box-title text-danger mb-0">Excluir Conta Horizon</h3>
                       </div>
                       <p class="text-secondary small mb-0">
@@ -504,7 +617,7 @@
                       class="btn btn-outline-danger btn-sm px-3 py-2 rounded-3 fw-semibold flex-shrink-0"
                       (click)="openDeactivateModal()"
                     >
-                      <i class="bi bi-trash3 me-1"></i> Excluir Conta
+                      <i class="bi bi-trash3 me-1" aria-hidden="true"></i> Excluir Conta
                     </button>
                   </div>
                 </div>
@@ -800,7 +913,7 @@
                     <!-- Estado Vazio quando não há cartões -->
                     <div class="text-center py-5 px-3">
                       <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-3" style="width: 58px; height: 58px; background: rgba(91, 164, 216, 0.12); color: #5BA4D8;">
-                        <i class="bi bi-credit-card-2-front fs-2"></i>
+                        <i class="bi bi-credit-card-2-front fs-2" aria-hidden="true"></i>
                       </div>
                       <h4 class="fw-bold text-dark mb-2" style="font-size: 1.15rem;">Nenhum cartão cadastrado</h4>
                       <p class="text-secondary mx-auto mb-4" style="max-width: 440px; font-size: 0.9rem; line-height: 1.6;">
@@ -811,12 +924,24 @@
                         class="btn btn-horizon px-4 py-2 rounded-2 fw-semibold shadow-sm"
                         (click)="openAddCardModal()"
                       >
-                        <i class="bi bi-plus-lg me-1"></i> Cadastrar Cartão
+                        <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> Cadastrar Cartão
                       </button>
                     </div>
                   }
                 </div>
 
+              </div>
+            }
+
+            @if (activeView() === 'accessibility') {
+              <div class="view-container">
+                <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                  <h1 class="view-header-title mb-0">Acessibilidade</h1>
+                  <button type="button" class="btn-back-dashboard" (click)="setActiveView('dashboard')">
+                    Voltar ao Painel
+                  </button>
+                </div>
+                <app-accessibility-settings></app-accessibility-settings>
               </div>
             }
 
@@ -950,7 +1075,7 @@
 
                   <div class="privacy-contact-card mb-4">
                     <div class="d-flex align-items-center gap-2 mb-1">
-                      <i class="bi bi-envelope-at-fill fs-5" style="color: #5BA4D8;"></i>
+                      <i class="bi bi-envelope-at-fill fs-5" style="color: #5BA4D8;" aria-hidden="true"></i>
                       <strong class="text-dark">Canal Oficial de Privacidade Horizon</strong>
                     </div>
                     <span class="text-secondary small d-block">
@@ -1043,9 +1168,9 @@
                               [class.visual-resolved]="ticket.status === 'RESOLVIDO'"
                               (click)="openTicketDetails(ticket)"
                             >
-                              <i class="bi {{ getSubjectIcon(ticket.subject) }} support-visual-watermark"></i>
+                              <i class="bi {{ getSubjectIcon(ticket.subject) }} support-visual-watermark" aria-hidden="true"></i>
                               <div class="support-visual-icon-badge mb-2">
-                                <i class="bi {{ getSubjectIcon(ticket.subject) }} fs-4 text-white"></i>
+                                <i class="bi {{ getSubjectIcon(ticket.subject) }} fs-4 text-white" aria-hidden="true"></i>
                               </div>
                               <span class="text-white fw-bold small d-block">Suporte Horizon</span>
                             </div>
@@ -1125,7 +1250,7 @@
                   <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
                     <div class="d-flex align-items-center gap-3 flex-wrap">
                       <span class="horizon-tag-green px-3 py-1 fw-bold">
-                        <i class="bi bi-check-circle-fill me-1"></i> Embarque Confirmado
+                        <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i> Embarque Confirmado
                       </span>
 
                       <!-- Picker para alternar viagens sem poluir a tela -->
@@ -1135,10 +1260,10 @@
                           class="trip-picker-btn d-flex align-items-center gap-2 px-3 py-1"
                           (click)="toggleConfirmedPicker()"
                         >
-                          <i class="bi bi-geo-alt-fill text-horizon"></i>
+                          <i class="bi bi-geo-alt-fill text-horizon" aria-hidden="true"></i>
                           <span class="fw-bold text-dark">{{ currentTrip.destinationName }}</span>
                           @if ((trips()?.confirmed?.length || 0) > 1) {
-                            <i class="bi bi-chevron-down small text-horizon ms-1"></i>
+                            <i class="bi bi-chevron-down small text-horizon ms-1" aria-hidden="true"></i>
                           }
                         </button>
 
@@ -1157,7 +1282,7 @@
                                   <small class="opacity-75">{{ cTrip.outboundFlight?.flightDate | date:'dd/MM/yyyy' }}</small>
                                 </span>
                                 @if (selectedConfirmedIndex() === idx) {
-                                  <i class="bi bi-check2 fw-bold"></i>
+                                  <i class="bi bi-check2 fw-bold" aria-hidden="true"></i>
                                 }
                               </button>
                             }
@@ -1173,7 +1298,7 @@
                           class="btn btn-outline-horizon btn-sm rounded-2 px-3 py-2 fw-semibold"
                           (click)="downloadTicket(currentTrip.tickets[0].ticketNumber, currentTrip.tickets[0].passengerName, currentTrip.outboundFlight?.flightDate)"
                         >
-                          <i class="bi bi-download me-1"></i> Baixar PDF
+                          <i class="bi bi-download me-1" aria-hidden="true"></i> Baixar PDF
                         </button>
                       }
                       <button 
@@ -1249,11 +1374,11 @@
 
                 <div class="d-flex flex-column gap-2 mb-4">
                   <div class="d-flex align-items-center gap-2 text-secondary small">
-                    <i class="bi bi-phone text-horizon fs-5"></i>
+                    <i class="bi bi-phone text-horizon fs-5" aria-hidden="true"></i>
                     <span>(11) 98765-4321</span>
                   </div>
                   <div class="d-flex align-items-center gap-2 text-secondary small">
-                    <i class="bi bi-envelope text-horizon fs-5"></i>
+                    <i class="bi bi-envelope text-horizon fs-5" aria-hidden="true"></i>
                     <span>{{ user()?.email }}</span>
                   </div>
                 </div>
@@ -1544,6 +1669,156 @@
       </div>
     }
 
+    <!-- MODAL ALTERAR SENHA -->
+    @if (isChangePasswordModalOpen()) {
+      <div class="deactivate-modal-backdrop" (click)="closeChangePasswordModal()"></div>
+      <div class="deactivate-modal-wrapper" (click)="closeChangePasswordModal()" role="dialog" aria-modal="true" aria-labelledby="change-password-modal-title">
+        <div class="deactivate-modal-card" style="max-width: 480px;" (click)="$event.stopPropagation()">
+          
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex align-items-center gap-2">
+              <div class="d-flex align-items-center justify-content-center rounded-3 text-white" style="width: 36px; height: 36px; background-color: #5BA4D8;">
+                <i class="bi bi-shield-lock-fill fs-5" aria-hidden="true"></i>
+              </div>
+              <h2 id="change-password-modal-title" class="h5 fw-bold text-dark mb-0">Alterar Senha</h2>
+            </div>
+            <button 
+              type="button" 
+              class="btn-close small" 
+              (click)="closeChangePasswordModal()" 
+              [disabled]="isChangingPassword() || isSendingResetEmail()"
+              aria-label="Fechar"
+            ></button>
+          </div>
+
+          <p class="text-secondary small mb-4">
+            Defina uma nova senha segura para acessar sua conta Horizon.
+          </p>
+
+          <form [formGroup]="changePasswordForm" (ngSubmit)="submitChangePassword()">
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-secondary">Senha Atual</label>
+              <div class="position-relative">
+                <input 
+                  [type]="showCurrentPassword() ? 'text' : 'password'"
+                  formControlName="currentPassword"
+                  class="form-control rounded-3 pe-5"
+                  placeholder="Digite sua senha atual"
+                  autocomplete="current-password"
+                />
+                <button 
+                  type="button" 
+                  class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-secondary text-decoration-none pe-3"
+                  (click)="toggleShowCurrentPassword()"
+                  tabindex="-1"
+                  aria-label="Alternar visibilidade da senha atual"
+                >
+                  <i class="bi" [class.bi-eye]="!showCurrentPassword()" [class.bi-eye-slash]="showCurrentPassword()" aria-hidden="true"></i>
+                </button>
+              </div>
+              @if (changePasswordForm.get('currentPassword')?.invalid && changePasswordForm.get('currentPassword')?.touched) {
+                <div class="text-danger small mt-1">Informe sua senha atual.</div>
+              }
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small fw-semibold text-secondary">Nova Senha</label>
+              <div class="position-relative">
+                <input 
+                  [type]="showNewPassword() ? 'text' : 'password'"
+                  formControlName="newPassword"
+                  class="form-control rounded-3 pe-5"
+                  placeholder="Mínimo de 6 caracteres"
+                  autocomplete="new-password"
+                />
+                <button 
+                  type="button" 
+                  class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-secondary text-decoration-none pe-3"
+                  (click)="toggleShowNewPassword()"
+                  tabindex="-1"
+                  aria-label="Alternar visibilidade da nova senha"
+                >
+                  <i class="bi" [class.bi-eye]="!showNewPassword()" [class.bi-eye-slash]="showNewPassword()" aria-hidden="true"></i>
+                </button>
+              </div>
+              @if (changePasswordForm.get('newPassword')?.invalid && changePasswordForm.get('newPassword')?.touched) {
+                <div class="text-danger small mt-1">A nova senha deve ter no mínimo 6 caracteres.</div>
+              }
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label small fw-semibold text-secondary">Confirmar Nova Senha</label>
+              <div class="position-relative">
+                <input 
+                  [type]="showConfirmPassword() ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  class="form-control rounded-3 pe-5"
+                  placeholder="Repita a nova senha"
+                  autocomplete="new-password"
+                />
+                <button 
+                  type="button" 
+                  class="btn btn-link position-absolute end-0 top-50 translate-middle-y text-secondary text-decoration-none pe-3"
+                  (click)="toggleShowConfirmPassword()"
+                  tabindex="-1"
+                  aria-label="Alternar visibilidade da confirmação de senha"
+                >
+                  <i class="bi" [class.bi-eye]="!showConfirmPassword()" [class.bi-eye-slash]="showConfirmPassword()" aria-hidden="true"></i>
+                </button>
+              </div>
+              @if (changePasswordForm.get('confirmPassword')?.invalid && changePasswordForm.get('confirmPassword')?.touched) {
+                <div class="text-danger small mt-1">Confirme sua nova senha.</div>
+              }
+            </div>
+
+            <!-- Opção de recuperação caso tenha esquecido a senha atual -->
+            <div class="p-3 rounded-3 bg-light mb-4">
+              <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <span class="text-secondary small">Esqueceu sua senha atual?</span>
+                <button 
+                  type="button" 
+                  class="btn btn-link p-0 small fw-bold text-decoration-none"
+                  style="color: #5BA4D8;"
+                  (click)="requestPasswordResetEmail()"
+                  [disabled]="isSendingResetEmail()"
+                >
+                  @if (isSendingResetEmail()) {
+                    <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Enviando link...
+                  } @else {
+                    Redefinir por e-mail
+                  }
+                </button>
+              </div>
+            </div>
+
+            <div class="d-flex align-items-center justify-content-end gap-2">
+              <button 
+                type="button" 
+                class="btn btn-light btn-sm px-3 py-2 rounded-2 fw-semibold text-secondary" 
+                (click)="closeChangePasswordModal()"
+                [disabled]="isChangingPassword() || isSendingResetEmail()"
+              >
+                Cancelar
+              </button>
+              <button 
+                type="submit" 
+                class="btn btn-sm px-4 py-2 rounded-2 fw-bold text-white shadow-sm"
+                style="background-color: #5BA4D8;"
+                [disabled]="changePasswordForm.invalid || isChangingPassword() || isSendingResetEmail()"
+              >
+                @if (isChangingPassword()) {
+                  <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Alterando...
+                } @else {
+                  Salvar Nova Senha
+                }
+              </button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    }
+
     <!-- MODAL 2: CONFIRMAÇÃO DE EXCLUSÃO DE CONTA (PERSONALIZADO COM FUNDO DESFOCADO) -->
     
     @if (isDeactivateModalOpen()) {
@@ -1568,7 +1843,7 @@
 
           <div class="p-3 rounded-3 bg-light mb-4">
             <div class="d-flex align-items-start gap-2">
-              <i class="bi bi-info-circle text-secondary mt-1 flex-shrink-0"></i>
+              <i class="bi bi-info-circle text-secondary mt-1 flex-shrink-0" aria-hidden="true"></i>
               <span class="text-secondary small">
                 Caso tenha viagens futuras reservadas, certifique-se de salvar ou baixar seus bilhetes antes de continuar.
               </span>
@@ -1658,14 +1933,14 @@
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
             <div class="modal-header border-0 px-4 py-3 text-white" style="background-color: #5BA4D8;">
-              <h2 class="h6 fw-bold mb-0"><i class="bi bi-credit-card-2-front me-2"></i>Adicionar Cartão</h2>
+              <h2 class="h6 fw-bold mb-0"><i class="bi bi-credit-card-2-front me-2" aria-hidden="true"></i>Adicionar Cartão</h2>
               <button type="button" class="btn-close btn-close-white" (click)="closeAddCardModal()" aria-label="Fechar"></button>
             </div>
             <div class="modal-body p-4">
               <div class="row g-3">
                 <div class="col-12">
                   <label class="form-label small fw-semibold text-secondary">Bandeira</label>
-                  <select class="form-select horizon-select" [value]="newCardBrand()" (change)="onNewCardBrandChange($event)">
+                  <select aria-label="Bandeira" class="form-select horizon-select" [value]="newCardBrand()" (change)="onNewCardBrandChange($event)">
                     <option value="Mastercard">Mastercard</option>
                     <option value="Visa">Visa</option>
                     <option value="Elo">Elo</option>
@@ -1675,7 +1950,7 @@
 
                 <div class="col-12">
                   <label class="form-label small fw-semibold text-secondary">Número do Cartão</label>
-                  <input 
+                  <input aria-label="Número do Cartão" 
                     type="text" 
                     class="form-control rounded-2 font-monospace" 
                     placeholder="0000 0000 0000 0000" 
@@ -1687,7 +1962,7 @@
 
                 <div class="col-12 col-sm-7">
                   <label class="form-label small fw-semibold text-secondary">Nome no Cartão</label>
-                  <input 
+                  <input aria-label="Nome no Cartão" 
                     type="text" 
                     class="form-control rounded-2 text-uppercase" 
                     placeholder="GABRIEL SANTANA"
@@ -1698,7 +1973,7 @@
 
                 <div class="col-12 col-sm-5">
                   <label class="form-label small fw-semibold text-secondary">Validade (MM/AA)</label>
-                  <input 
+                  <input aria-label="Validade (MM/AA)" 
                     type="text" 
                     class="form-control rounded-2 font-monospace" 
                     placeholder="08/29" 

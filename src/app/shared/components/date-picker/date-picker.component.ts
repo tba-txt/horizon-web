@@ -44,6 +44,7 @@ export class DatePickerComponent implements ControlValueAccessor, OnDestroy {
   inputId = input<string>('');
   placeholder = input<string>('dd/mm/aaaa');
   invalid = input<boolean>(false);
+  disabledInput = input<boolean>(false, { alias: 'disabled' });
 
   readonly weekdays = WEEKDAYS;
   readonly months = MONTHS;
@@ -51,7 +52,8 @@ export class DatePickerComponent implements ControlValueAccessor, OnDestroy {
   readonly maxDate = new Date(this.today.getFullYear() - 18, this.today.getMonth(), this.today.getDate());
 
   open = signal(false);
-  disabled = signal(false);
+  private isControlDisabled = signal(false);
+  disabled = computed(() => this.disabledInput() || this.isControlDisabled());
   view = signal<PickerView>('days');
   selected = signal<Date | null>(null);
   viewYear = signal(this.maxDate.getFullYear());
@@ -92,7 +94,7 @@ export class DatePickerComponent implements ControlValueAccessor, OnDestroy {
   }
   registerOnChange(fn: (value: string | null) => void): void { this.onChange = fn; }
   registerOnTouched(fn: () => void): void { this.onTouched = fn; }
-  setDisabledState(isDisabled: boolean): void { this.disabled.set(isDisabled); }
+  setDisabledState(isDisabled: boolean): void { this.isControlDisabled.set(isDisabled); }
 
   // ---- Interação ----
   toggle(): void {

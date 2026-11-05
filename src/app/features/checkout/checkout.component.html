@@ -68,8 +68,34 @@
         </div>
       }
 
+      <!-- Bloqueio por Cadastro Incompleto (Redirecionamento para Perfil) -->
+      @if (isProfileIncomplete()) {
+        <div class="card border-0 rounded-4 p-5 text-center bg-white my-4 shadow-sm">
+          <div class="mb-3">
+            <div class="d-inline-flex p-3 rounded-circle" style="background: rgba(91, 164, 216, 0.12); color: #5BA4D8;">
+              <i class="bi bi-person-fill-exclamation fs-1"></i>
+            </div>
+          </div>
+          <h2 class="h4 fw-bold mb-2" style="color: #0f172a;">Complete seu cadastro para prosseguir</h2>
+          <p class="text-secondary small mb-4 col-md-7 mx-auto" style="line-height: 1.6;">
+            Para emitir passagens aéreas e prosseguir com a sua reserva no Horizon de acordo com as normas da ANAC, é necessário preencher as informações pendentes da sua conta (CPF e data de nascimento).
+          </p>
+          <div class="d-flex flex-column align-items-center gap-2">
+            <button 
+              type="button" 
+              class="btn text-white fw-bold px-4 py-2.5 rounded-3 shadow-sm" 
+              style="background-color: #5BA4D8; border: none;" 
+              (click)="redirectToProfile()"
+            >
+              Completar Cadastro no Perfil
+            </button>
+            <span class="text-muted small">Redirecionando para o seu perfil em instantes...</span>
+          </div>
+        </div>
+      }
+
       <!-- Loading State Global -->
-      @if (isLoading()) {
+      @else if (isLoading()) {
         <div class="text-center py-5">
           <div class="spinner"><div></div><div></div><div></div><div></div><div></div></div>
           <p class="text-muted fw-medium mt-3">{{ loadingMessage() }}</p>
@@ -190,9 +216,9 @@
                     <div class="d-flex align-items-start gap-3">
                       <div class="doc-icon-badge flex-shrink-0">
                         @if (travelDocumentationInfo().type === 'MERCOSUL') {
-                          <i class="bi bi-person-vcard"></i>
+                          <i class="bi bi-person-vcard" aria-hidden="true"></i>
                         } @else {
-                          <i class="bi bi-passport"></i>
+                          <i class="bi bi-passport" aria-hidden="true"></i>
                         }
                       </div>
                       <div class="flex-grow-1">
@@ -251,7 +277,7 @@
                                   <label class="form-label small fw-semibold text-secondary mb-0">Nome Completo</label>
                                   <span class="text-muted" style="font-size: 0.72rem;">Como consta no documento (RG/Passaporte)</span>
                                 </div>
-                                <input 
+                                <input aria-label="Nome Completo" 
                                   type="text" 
                                   formControlName="name"
                                   class="form-control rounded-2 horizon-input"
@@ -273,7 +299,7 @@
 
                               <div class="col-12 col-sm-4">
                                 <label class="form-label small fw-semibold text-secondary mb-1">Idade</label>
-                                <input 
+                                <input aria-label="Idade" 
                                   type="text" 
                                   inputmode="numeric"
                                   formControlName="age"
@@ -391,7 +417,7 @@
                     <div class="input-group max-w-500 mx-auto">
                       <input 
                         type="text" 
-                        class="form-control font-monospace small bg-white horizon-input" 
+                        aria-label="Código Pix copia e cola" class="form-control font-monospace small bg-white horizon-input" 
                         [value]="pixCode" 
                         readonly 
                       />
@@ -440,7 +466,7 @@
                     <div class="row g-3">
                       <div class="col-12">
                         <label class="form-label small fw-semibold text-secondary mb-1">Nome Impresso no Cartão *</label>
-                        <input 
+                        <input aria-label="Nome Impresso no Cartão" 
                           type="text" 
                           class="form-control rounded-2 text-uppercase horizon-input" 
                           [(ngModel)]="cardHolderName" 
@@ -452,7 +478,7 @@
                       </div>
                       <div class="col-12 col-sm-8">
                         <label class="form-label small fw-semibold text-secondary mb-1">Número do Cartão *</label>
-                        <input 
+                        <input aria-label="Número do Cartão" 
                           type="text" 
                           inputmode="numeric"
                           class="form-control rounded-2 font-monospace horizon-input" 
@@ -466,7 +492,7 @@
                       </div>
                       <div class="col-6 col-sm-2">
                         <label class="form-label small fw-semibold text-secondary mb-1">Validade *</label>
-                        <input 
+                        <input aria-label="Validade" 
                           type="text" 
                           inputmode="numeric"
                           class="form-control rounded-2 font-monospace horizon-input" 
@@ -480,7 +506,7 @@
                       </div>
                       <div class="col-6 col-sm-2">
                         <label class="form-label small fw-semibold text-secondary mb-1">CVV *</label>
-                        <input 
+                        <input aria-label="CVV" 
                           type="password" 
                           inputmode="numeric"
                           class="form-control rounded-2 font-monospace horizon-input" 
@@ -494,7 +520,7 @@
                       </div>
                       <div class="col-12">
                         <label class="form-label small fw-semibold text-secondary mb-1">Parcelamento</label>
-                        <select class="form-select rounded-2 horizon-input" [(ngModel)]="installments">
+                        <select aria-label="Parcelamento" class="form-select rounded-2 horizon-input" [(ngModel)]="installments">
                           <option value="1">1x de {{ formatCurrency(getTotalPrice()) }} sem juros</option>
                           <option value="2">2x de {{ formatCurrency(getTotalPrice() / 2) }} sem juros</option>
                           <option value="3">3x de {{ formatCurrency(getTotalPrice() / 3) }} sem juros</option>
@@ -533,7 +559,7 @@
                       [disabled]="isProcessing()"
                       (click)="onPayLater()"
                     >
-                      <i class="bi bi-clock-history"></i>
+                      <i class="bi bi-clock-history" aria-hidden="true"></i>
                       <span>Pagar depois</span>
                     </button>
 
@@ -544,7 +570,7 @@
                       [disabled]="isProcessing()"
                       (click)="onCancelReservation()"
                     >
-                      <i class="bi bi-x-circle"></i>
+                      <i class="bi bi-x-circle" aria-hidden="true"></i>
                       <span>Cancelar reserva</span>
                     </button>
                   </div>
@@ -580,7 +606,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                       <div class="d-flex align-items-center gap-2">
                         <span class="fw-bold text-dark fs-6">{{ out.originAirportCode }}</span>
-                        <span style="color: #5BA4D8;" class="fw-bold">➔</span>
+                        <i class="bi bi-airplane-fill" style="color: #5BA4D8; font-size: 0.85rem;" aria-hidden="true"></i>
                         <span class="fw-bold text-dark fs-6">{{ out.destinationAirportCode }}</span>
                       </div>
                       <span class="text-secondary small fw-medium">{{ out.flightDate | date:'dd/MM/yyyy' }}</span>
@@ -591,7 +617,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                       <div class="d-flex align-items-center gap-2">
                         <span class="fw-bold text-dark fs-6">{{ ret.originAirportCode }}</span>
-                        <span style="color: #5BA4D8;" class="fw-bold">➔</span>
+                        <i class="bi bi-airplane-fill" style="color: #5BA4D8; font-size: 0.85rem;" aria-hidden="true"></i>
                         <span class="fw-bold text-dark fs-6">{{ ret.destinationAirportCode }}</span>
                       </div>
                       <span class="text-secondary small fw-medium">{{ ret.flightDate | date:'dd/MM/yyyy' }}</span>
@@ -639,7 +665,7 @@
                     @if (isCouponDropdownOpen()) {
                       <div class="mt-2 pt-1">
                         <div class="input-group input-group-sm">
-                          <input 
+                          <input aria-label="Cupom de desconto" 
                             type="text" 
                             class="form-control text-uppercase font-monospace horizon-input" 
                             placeholder="Ex: HORIZON10-U..." 
@@ -715,7 +741,7 @@
                         <div class="fs-5 fw-bold text-dark">{{ out.originAirportCode }}</div>
                         <div class="small text-secondary">{{ out.departureTime }}</div>
                       </div>
-                      <div class="text-center text-secondary small">➔</div>
+                      <div class="text-center text-secondary small"><i class="bi bi-airplane-fill" style="color: #5BA4D8;" aria-hidden="true"></i></div>
                       <div class="text-end">
                         <div class="fs-5 fw-bold text-dark">{{ out.destinationAirportCode }}</div>
                         <div class="small text-secondary">{{ out.arrivalTime }}</div>
@@ -738,7 +764,7 @@
                         <div class="fs-5 fw-bold text-dark">{{ ret.originAirportCode }}</div>
                         <div class="small text-secondary">{{ ret.departureTime }}</div>
                       </div>
-                      <div class="text-center text-secondary small">➔</div>
+                      <div class="text-center text-secondary small"><i class="bi bi-airplane-fill" style="color: #5BA4D8;" aria-hidden="true"></i></div>
                       <div class="text-end">
                         <div class="fs-5 fw-bold text-dark">{{ ret.destinationAirportCode }}</div>
                         <div class="small text-secondary">{{ ret.arrivalTime }}</div>

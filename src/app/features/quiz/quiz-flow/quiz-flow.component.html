@@ -7,7 +7,7 @@
     alt="Quiz Hero" 
     class="w-100 hero-image"
     fetchpriority="high"
-    (error)="handleHeroError($event)"
+    decoding="async"
   />
 </header>
 
@@ -203,7 +203,7 @@
       <!-- Estado: Erro -->
       @else if (errorMessage()) {
         <div class="alert alert-danger p-4 rounded-4 shadow-sm text-center" role="alert">
-          <div class="display-6 mb-2 text-danger"><i class="bi bi-exclamation-triangle-fill"></i></div>
+          <div class="display-6 mb-2 text-danger"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i></div>
           <h5 class="fw-bold mb-2">Ops! Ocorreu um problema ao carregar o quiz.</h5>
           <p class="mb-3 small text-danger-emphasis">{{ errorMessage() }}</p>
           <button class="btn btn-outline-danger btn-sm px-4 rounded-2 fw-semibold" (click)="loadQuiz()">
@@ -379,7 +379,7 @@
                 
                 <div class="rounded-3 d-flex align-items-center justify-content-center mb-3 shadow-lg"
                      style="width: 64px; height: 64px; background-color: #5BA4D8; color: #ffffff;">
-                  <i class="bi" [class]="currentStepOverlayData().icon" style="font-size: 1.85rem;"></i>
+                  <i class="bi" [class]="currentStepOverlayData().icon" style="font-size: 1.85rem;" aria-hidden="true"></i>
                 </div>
 
                 <span class="badge rounded-2 px-3 py-1 mb-2 fw-bold text-white shadow-sm"
@@ -464,7 +464,7 @@
                       (mousedown)="card.offset === 0 ? startDrag($event, card.index) : null"
                       (touchstart)="card.offset === 0 ? startDrag($event, card.index) : null"
                     >
-                      <img [src]="getOptionVisual(card.answer.text).image" class="w-100 h-100 object-fit-cover rounded-4" style="pointer-events: none;" />
+                      <img [src]="getOptionVisual(card.answer.text).image" alt="" class="w-100 h-100 object-fit-cover rounded-4" style="pointer-events: none;" [loading]="card.offset === 0 ? 'eager' : 'lazy'" decoding="async" draggable="false" />
                       
                       <!-- Gradiente e Rótulo Limpo no Rodapé do Card -->
                       <div class="position-absolute bottom-0 start-0 w-100 p-3 pt-5"
@@ -501,7 +501,7 @@
                       (click)="goToPrevExperienceCard()"
                       aria-label="Experiência anterior"
                     >
-                      <i class="bi bi-chevron-left fw-bold" style="font-size: 0.9rem;"></i>
+                      <i class="bi bi-chevron-left fw-bold" style="font-size: 0.9rem;" aria-hidden="true"></i>
                     </button>
 
                     <div class="d-flex align-items-center gap-2">
@@ -526,7 +526,7 @@
                         (click)="goToNextExperienceCard()"
                         aria-label="Próxima opção"
                       >
-                        <i class="bi bi-chevron-right fw-bold" style="font-size: 0.9rem;"></i>
+                        <i class="bi bi-chevron-right fw-bold" style="font-size: 0.9rem;" aria-hidden="true"></i>
                       </button>
 
                       @if (experienceCardIndex() === 0) {
@@ -553,7 +553,7 @@
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <span class="badge rounded-2 px-3 py-2 fw-bold bg-white text-primary">
                     @if (selectedAnswers()[currentQuestion.id]) {
-                      <i class="bi bi-check-lg me-1"></i> Escolha Selecionada
+                      <i class="bi bi-check-lg me-1" aria-hidden="true"></i> Escolha Selecionada
                     } @else {
                       Pergunta {{ currentStep() + 1 }} de {{ quiz()!.questions.length }}
                     }
@@ -590,8 +590,16 @@
                       (touchstart)="card.offset === 0 ? startDrag($event, card.index) : null"
                       (click)="card.offset > 0 ? goToCard(card.index) : null"
                       (dblclick)="card.offset === 0 ? handleSwipeRight() : null"
+                       [attr.role]="card.offset === 0 ? 'button' : null"
+                       [attr.tabindex]="card.offset === 0 ? 0 : -1"
+                       [attr.aria-hidden]="card.offset === 0 ? null : 'true'"
+                       [attr.aria-label]="card.offset === 0 ? 'Selecionar opção: ' + card.answer.text : null"
+                       (keydown.enter)="card.offset === 0 ? handleSwipeRight() : null"
+                       (keydown.space)="$event.preventDefault(); card.offset === 0 ? handleSwipeRight() : null"
+                       (keydown.arrowRight)="card.offset === 0 ? goToNextCard() : null"
+                       (keydown.arrowLeft)="card.offset === 0 ? goToPrevCard() : null"
                     >
-                      <img [src]="getOptionVisual(card.answer.text).image" class="w-100 h-100 object-fit-cover rounded-4" style="pointer-events: none;" />
+                      <img [src]="getOptionVisual(card.answer.text).image" class="w-100 h-100 object-fit-cover rounded-4" style="pointer-events: none;" [loading]="card.offset === 0 ? 'eager' : 'lazy'" decoding="async" draggable="false" />
                       
                       <div class="position-absolute bottom-0 start-0 w-100 p-3 pt-5"
                            style="background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.92) 100%);">
@@ -628,7 +636,7 @@
                       aria-label="Ver opção anterior"
                       title="Opção anterior"
                     >
-                      <i class="bi bi-chevron-left fw-bold" style="font-size: 0.95rem;"></i>
+                      <i class="bi bi-chevron-left fw-bold" style="font-size: 0.95rem;" aria-hidden="true"></i>
                     </button>
 
                     <!-- Segmentos das opções -->
@@ -654,7 +662,7 @@
                         aria-label="Ver próxima opção"
                         title="Próxima opção"
                       >
-                        <i class="bi bi-chevron-right fw-bold" style="font-size: 0.95rem;"></i>
+                        <i class="bi bi-chevron-right fw-bold" style="font-size: 0.95rem;" aria-hidden="true"></i>
                       </button>
 
                       <!-- Balão Indicativo -->
@@ -667,7 +675,7 @@
                     </div>
                   </div>
 
-                  <div class="text-center text-muted small fw-semibold">
+                  <div class="text-center text-muted small fw-semibold" aria-live="polite" aria-atomic="true">
                     Opção {{ (topCardIndex() % currentQuestion.answers.length) + 1 }} de {{ currentQuestion.answers.length }}: 
                     <span class="text-dark fw-bold">{{ currentQuestion.answers[topCardIndex() % currentQuestion.answers.length]?.text }}</span>
                   </div>
@@ -707,7 +715,7 @@
                 <!-- Input Principal -->
                 <div class="d-flex align-items-center rounded-3 border border-2 shadow-sm mx-auto position-relative bg-white px-3 py-2" style="border-color: #cbd5e1 !important;">
                   <span class="fw-bold fs-4 me-2" style="color: #5BA4D8;">R$</span>
-                  <input 
+                  <input aria-label="Informe ou ajuste o valor desejado" 
                     type="text" 
                     class="border-0 text-dark fw-bold shadow-none fs-4 flex-grow-1 bg-transparent p-0" 
                     style="outline: none !important; box-shadow: none !important; border: none !important;"
@@ -724,7 +732,7 @@
 
                 <!-- Slider Discreto -->
                 <div class="mt-3 px-1">
-                  <input
+                  <input aria-label="Orçamento máximo da viagem"
                     type="range"
                     class="form-range custom-slider w-100"
                     min="1000"
@@ -745,10 +753,11 @@
                     <div class="col-6">
                       <button
                         type="button"
-                        class="btn w-100 py-2 rounded-2 fw-semibold small transition-all"
-                        [style.background-color]="budget() === preset ? 'rgba(91, 164, 216, 0.12)' : '#f8fafc'"
-                        [style.border]="budget() === preset ? '1.5px solid #5BA4D8' : '1px solid #e2e8f0'"
-                        [style.color]="budget() === preset ? '#2b7bb9' : '#475569'"
+                        class="btn w-100 py-2 rounded-2 fw-semibold small transition-all quiz-budget-preset-btn"
+                        [class.is-active]="budget() === preset"
+
+
+
                         (click)="setBudgetPreset(preset)"
                       >
                         {{ formatCurrency(preset) }}
@@ -759,18 +768,20 @@
 
                 <!-- CHAVE RÁPIDA: PASSAPORTE PARA VIAGENS INTERNACIONAIS (DESIGN HORIZON) -->
                 <div 
-                  class="p-3 rounded-3 text-start w-100 mt-3 cursor-pointer user-select-none transition-all shadow-sm"
-                  [style.background-color]="hasPassport() ? 'rgba(91, 164, 216, 0.08)' : '#f8fafc'"
-                  [style.border]="hasPassport() ? '1.5px solid #5BA4D8' : '1.5px solid #e2e8f0'"
+                  class="quiz-passport-card p-3 rounded-3 text-start w-100 mt-3 cursor-pointer user-select-none transition-all shadow-sm"
+                  [class.is-active]="hasPassport()"
+
+
                   (click)="togglePassportDirect()"
                 >
                   <div class="d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center gap-3">
                       <!-- Ícone Exclusivo Horizon (Sem Emojis) -->
                       <div 
-                        class="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 transition-all shadow-sm"
-                        [style.background-color]="hasPassport() ? '#5BA4D8' : '#e2e8f0'"
-                        [style.color]="hasPassport() ? '#ffffff' : '#64748b'"
+                        class="quiz-passport-icon rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 transition-all shadow-sm"
+                        [class.is-active]="hasPassport()"
+
+
                         style="width: 44px; height: 44px;"
                       >
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -784,16 +795,16 @@
 
                       <div>
                         <div class="d-flex align-items-center gap-2">
-                          <span class="fw-bold text-dark small mb-0 d-block">
+                          <span class="quiz-passport-title fw-bold small mb-0 d-block">
                             Possuo passaporte válido
                           </span>
                           @if (hasPassport()) {
-                            <span class="badge rounded-1 px-2 py-0 fw-bold text-white" style="background-color: #65A30D; font-size: 0.65rem; line-height: 1.4;">
+                            <span class="quiz-passport-badge-active badge rounded-1 px-2 py-0 fw-bold text-white" style="background-color: #65A30D; font-size: 0.65rem; line-height: 1.4;">
                               ATIVO
                             </span>
                           }
                         </div>
-                        <span class="text-secondary small d-block" style="font-size: 0.74rem; line-height: 1.25;">
+                        <span class="quiz-passport-desc text-secondary small d-block" style="font-size: 0.74rem; line-height: 1.25;">
                           @if (hasPassport()) {
                             Destinos no mundo inteiro habilitados
                           } @else {
@@ -940,7 +951,7 @@
             <!-- Arquétipo Dominante sem emojis -->
             <div class="text-center mt-2">
               <span class="badge rounded-2 px-3 py-2 fw-bold bg-white text-dark shadow-sm">
-                <i class="bi" [class]="dominantArchetype().icon" style="color: #5BA4D8;"></i>
+                <i class="bi" [class]="dominantArchetype().icon" style="color: #5BA4D8;" aria-hidden="true"></i>
                 <span class="ms-1">{{ dominantArchetype().name }}</span>
               </span>
               <span class="text-white text-opacity-75 small d-block mt-2" style="font-size: 0.76rem;">
@@ -959,7 +970,7 @@
         
         <!-- Topo: Imagem Banner Horizon em tamanho natural -->
         <img 
-          src="/assets/Group14.png" 
+          src="/assets/Group14.webp" 
           alt="Horizon" 
           class="w-100 d-block h-auto" 
           style="border-radius: 1rem 1rem 0 0;"
@@ -1097,7 +1108,7 @@
 <!-- OFF-CANVAS / MODAL DO DNA DO VIAJANTE NO MOBILE -->
 @if (isMobileDnaSheetOpen()) {
   <div class="modal-backdrop fade show" style="background: rgba(11, 37, 69, 0.75); z-index: 1055;" (click)="isMobileDnaSheetOpen.set(false)"></div>
-  <div class="modal fade show d-block" tabindex="-1" role="dialog" style="z-index: 1060;" (click)="isMobileDnaSheetOpen.set(false)">
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" style="z-index: 1060;" (click)="isMobileDnaSheetOpen.set(false)">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 440px;" (click)="$event.stopPropagation()">
       <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden p-0 text-white" style="background-color: #5BA4D8;">
         
@@ -1113,7 +1124,7 @@
             (click)="isMobileDnaSheetOpen.set(false)"
             aria-label="Fechar perfil"
           >
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -1206,12 +1217,12 @@
 <!-- MODAL DE CADASTRO / LOGIN PARA CONVIDADOS DO QUIZ -->
 @if (showGuestAuthModal()) {
   <div class="modal-backdrop fade show" style="background: rgba(11, 37, 69, 0.75); z-index: 1055;" (click)="showGuestAuthModal.set(false)"></div>
-  <div class="modal fade show d-block" tabindex="-1" role="dialog" style="z-index: 1060;" (click)="showGuestAuthModal.set(false)">
+  <div class="modal fade show d-block" tabindex="-1" role="dialog" aria-modal="true" style="z-index: 1060;" (click)="showGuestAuthModal.set(false)">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;" (click)="$event.stopPropagation()">
       <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden p-4 p-md-5 text-center bg-white">
         <div class="d-flex justify-content-center mb-3">
           <div class="rounded-circle d-flex align-items-center justify-content-center text-white" style="width: 64px; height: 64px; background-color: #5BA4D8;">
-            <i class="bi bi-person-check-fill fs-2"></i>
+            <i class="bi bi-person-check-fill fs-2" aria-hidden="true"></i>
           </div>
         </div>
 

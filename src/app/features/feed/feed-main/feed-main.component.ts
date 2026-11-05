@@ -123,7 +123,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
           this.couponUsed.set(true);
           return; // Já consumido em uma viagem anterior, não reativa
         }
-      } catch {}
+      } catch { }
     }
 
     if (this.allMissionsCompleted()) {
@@ -156,7 +156,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
           this.syncCouponIfEligible();
         }
       },
-      error: () => {}
+      error: () => { }
     });
   }
 
@@ -169,25 +169,55 @@ export class FeedMainComponent implements OnInit, OnDestroy {
     }
   }
 
-  visibleCount = signal<number>(15);
+  visibleCount = signal<number>(8);
+  loadedCarousels = signal<Record<number, boolean>>({});
+  private isScrollingThrottled = false;
+  private isLoadingMore = false;
+
+  isSlideLoaded(postId: number, index: number): boolean {
+    if (index === 0) return true;
+    if (this.loadedCarousels()[postId]) return true;
+    return (this.activeImageIndex()[postId] ?? 0) === index;
+  }
+
+  ensureCarouselLoaded(postId: number): void {
+    if (!this.loadedCarousels()[postId]) {
+      this.loadedCarousels.update(m => ({ ...m, [postId]: true }));
+    }
+  }
 
   @HostListener('window:scroll')
   onWindowScroll(): void {
-    if (typeof window !== 'undefined') {
-      this.showBackToTop.set(window.scrollY > 400);
+    if (typeof window === 'undefined' || this.isScrollingThrottled) return;
 
-      const scrollPosition = window.innerHeight + window.scrollY;
-      const threshold = document.documentElement.scrollHeight - 700;
-      if (scrollPosition >= threshold && this.visibleCount() < this.filteredPosts().length) {
-        this.loadMorePosts();
+    this.isScrollingThrottled = true;
+    requestAnimationFrame(() => {
+      this.isScrollingThrottled = false;
+
+      const scrollY = window.scrollY;
+      const shouldShowBackToTop = scrollY > 400;
+      if (this.showBackToTop() !== shouldShowBackToTop) {
+        this.showBackToTop.set(shouldShowBackToTop);
       }
-    }
+
+      if (this.isLoadingMore) return;
+
+      const scrollPosition = window.innerHeight + scrollY;
+      const threshold = document.documentElement.scrollHeight - 800;
+      if (scrollPosition >= threshold && this.visibleCount() < this.filteredPosts().length) {
+        this.isLoadingMore = true;
+        this.loadMorePosts();
+        setTimeout(() => {
+          this.isLoadingMore = false;
+        }, 300);
+      }
+    });
   }
 
   loadMorePosts(): void {
     const total = this.filteredPosts().length;
     if (this.visibleCount() < total) {
-      this.visibleCount.update(current => Math.min(current + 15, total));
+      this.visibleCount.update(current => Math.min(current + 6, total));
     }
   }
 
@@ -217,9 +247,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
     { id: 'ALL', label: 'Tudo', icon: 'bi-compass' },
     { id: 'ARTICLE', label: 'Posts', icon: 'bi-journal-richtext' },
     { id: 'THIS_OR_THAT', label: 'Isso ou Aquilo', icon: 'bi-arrows-collapse' },
-    { id: 'TRIVIA', label: 'Trivias', icon: 'bi-patch-question' },
-    { id: 'ECO', label: 'Ecoturismo', icon: 'bi-tree' },
-    { id: 'CULTURE', label: 'Cultura & História', icon: 'bi-bank' }
+    { id: 'TRIVIA', label: 'Trivias', icon: 'bi-patch-question' }
   ];
 
   selectedCategory = signal<string>('ALL');
@@ -257,7 +285,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
 
   posts = signal<Post[]>([]);
   isLoading = signal(true);
-  
+
   selectedArticle = signal<Post | null>(null);
   activeImageIndex = signal<Record<number, number>>({});
 
@@ -269,10 +297,10 @@ export class FeedMainComponent implements OnInit, OnDestroy {
     let list = [...this.posts()];
     const query = this.searchQuery().trim().toLowerCase();
     const cat = this.selectedCategory();
-    
+
     if (query) {
-      list = list.filter(p => 
-        p.title?.toLowerCase().includes(query) || 
+      list = list.filter(p =>
+        p.title?.toLowerCase().includes(query) ||
         p.caption?.toLowerCase().includes(query) ||
         p.triviaData?.question?.toLowerCase().includes(query) ||
         p.thisOrThatOptions?.some(o => o.label.toLowerCase().includes(query))
@@ -287,7 +315,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       } else if (cat === 'TRIVIA') {
         list = list.filter(p => p.postType === 'TRIVIA');
       } else if (cat === 'ECO') {
-        list = list.filter(p => 
+        list = list.filter(p =>
           p.title?.toLowerCase().includes('patagônia') ||
           p.title?.toLowerCase().includes('amazônia') ||
           p.title?.toLowerCase().includes('bonito') ||
@@ -300,7 +328,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
           p.attributes?.some(a => a.attributeName?.toUpperCase().includes('ECO'))
         );
       } else if (cat === 'CULTURE') {
-        list = list.filter(p => 
+        list = list.filter(p =>
           p.title?.toLowerCase().includes('incas') ||
           p.title?.toLowerCase().includes('toscana') ||
           p.title?.toLowerCase().includes('paraty') ||
@@ -322,7 +350,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
 
   setCategory(catId: string): void {
     this.selectedCategory.set(catId);
-    this.visibleCount.set(15);
+    this.visibleCount.set(8);
     this.triggerFeedAnimation();
   }
 
@@ -431,7 +459,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
           if (parsed?.used) {
             this.couponUsed.set(true);
           }
-        } catch {}
+        } catch { }
       }
     }
 
@@ -466,7 +494,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
     // Balão sutil de lembrete das missões: aparece a cada 5 minutos (300.000 ms) e recolhe após 8 segundos
     this.noticeIntervalId = setInterval(() => {
       if (!this.allMissionsCompleted() && !this.isMissionsOpen()) {
-        this.subtleNotice.set('Clique aqui pra ganhar 10% OFF ✨');
+        this.subtleNotice.set('Clique aqui pra ganhar 10% OFF');
         if (this.noticeTimeoutId) clearTimeout(this.noticeTimeoutId);
         this.noticeTimeoutId = setTimeout(() => {
           this.subtleNotice.set(null);
@@ -486,7 +514,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
     this.searchQuery.set('');
     this.sortBy.set('recent');
     this.selectedCategory.set('ALL');
-    this.visibleCount.set(15);
+    this.visibleCount.set(8);
     this.triggerFeedAnimation();
   }
 
@@ -495,7 +523,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       return;
     }
     setTimeout(() => {
-      const cards = document.querySelectorAll('.post-card');
+      const cards = Array.from(document.querySelectorAll('.post-card')).slice(0, 6);
       if (cards.length > 0) {
         animate(cards, { opacity: [0, 1], y: [20, 0] }, { delay: stagger(0.06), duration: 0.35, ease: 'easeOut' });
       }
@@ -510,11 +538,11 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Desbravar a Patagônia Selvagem', image: '/assets/feed/id01-eco.webp', votes: 0 },
-        { id: 2, label: 'Viver as Luzes de Tóquio à Noite', image: '/assets/feed/id01-city.webp', votes: 0 }
+        { id: 1, label: 'Desbravar a Patagônia Selvagem', image: '/assets/feed/id01-eco.webp', votes: 7 },
+        { id: 2, label: 'Viver as Luzes de Tóquio à Noite', image: '/assets/feed/id01-city.webp', votes: 5 }
       ],
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 6,
+      dislikesCount: 1
     },
     {
       id: 90002,
@@ -522,22 +550,10 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Mergulho nas Águas de Noronha', image: '/assets/feed/id02-eco.webp', votes: 0 },
-        { id: 2, label: 'Chalé com Lareira na Serra Gaúcha', image: '/assets/feed/id02-city.webp', votes: 0 }
+        { id: 1, label: 'Mergulho nas Águas de Noronha', image: '/assets/feed/id02-eco.webp', votes: 8 },
+        { id: 2, label: 'Chalé com Lareira na Serra Gaúcha', image: '/assets/feed/id02-city.webp', votes: 6 }
       ],
-      likesCount: 0,
-      dislikesCount: 0
-    },
-    {
-      id: 90003,
-      title: 'Isso ou Aquilo: Adrenalina e Ritmo',
-      caption: '',
-      postType: 'THIS_OR_THAT',
-      thisOrThatOptions: [
-        { id: 1, label: 'Expedição pelos Lençóis Maranhenses', image: '/assets/feed/id03-eco.webp', votes: 0 },
-        { id: 2, label: 'Fim de Semana em Nova York', image: '/assets/feed/id03-city.webp', votes: 0 }
-      ],
-      likesCount: 0,
+      likesCount: 9,
       dislikesCount: 0
     },
     {
@@ -546,11 +562,11 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Trilha na Floresta Amazônica', image: '/assets/feed/id04-eco.webp', votes: 0 },
-        { id: 2, label: 'Tour Histórico e Gastronômico em Roma', image: '/assets/feed/id04-city.webp', votes: 0 }
+        { id: 1, label: 'Trilha na Floresta Amazônica', image: '/assets/feed/id04-eco.webp', votes: 5 },
+        { id: 2, label: 'Tour Histórico e Gastronômico em Roma', image: '/assets/feed/id04-city.webp', votes: 7 }
       ],
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 7,
+      dislikesCount: 1
     },
     {
       id: 90005,
@@ -558,11 +574,11 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Acampar sob as Estrelas no Atacama', image: '/assets/feed/id05-eco.webp', votes: 0 },
-        { id: 2, label: 'Jantar Romântico com Luzes de Paris', image: '/assets/feed/id05-city.webp', votes: 0 }
+        { id: 1, label: 'Acampar sob as Estrelas no Atacama', image: '/assets/feed/id05-eco.webp', votes: 8 },
+        { id: 2, label: 'Jantar Romântico com Luzes de Paris', image: '/assets/feed/id05-city.webp', votes: 9 }
       ],
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 10,
+      dislikesCount: 1
     },
     {
       id: 90006,
@@ -570,11 +586,11 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Safári Selvagem no Serengeti', image: '/assets/feed/id06-eco.webp', votes: 0 },
-        { id: 2, label: 'Arranha-Céus e Luxo em Dubai', image: '/assets/feed/id06-city.webp', votes: 0 }
+        { id: 1, label: 'Safári Selvagem no Serengeti', image: '/assets/feed/id06-eco.webp', votes: 9 },
+        { id: 2, label: 'Arranha-Céus e Luxo em Dubai', image: '/assets/feed/id06-city.webp', votes: 6 }
       ],
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 8,
+      dislikesCount: 1
     },
     {
       id: 90007,
@@ -582,10 +598,10 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Flutuação nas Nascentes de Bonito', image: '/assets/feed/id07-eco.webp', votes: 0 },
-        { id: 2, label: 'Praias e Festas em Cancún', image: '/assets/feed/id07-city.webp', votes: 0 }
+        { id: 1, label: 'Flutuação nas Nascentes de Bonito', image: '/assets/feed/id07-eco.webp', votes: 7 },
+        { id: 2, label: 'Praias e Festas em Cancún', image: '/assets/feed/id07-city.webp', votes: 5 }
       ],
-      likesCount: 0,
+      likesCount: 6,
       dislikesCount: 0
     },
     {
@@ -594,11 +610,11 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Trilhas na Chapada Diamantina', image: '/assets/feed/id08-eco.webp', votes: 0 },
-        { id: 2, label: 'Museus e Pubs Históricos em Londres', image: '/assets/feed/id08-city.webp', votes: 0 }
+        { id: 1, label: 'Trilhas na Chapada Diamantina', image: '/assets/feed/id08-eco.webp', votes: 6 },
+        { id: 2, label: 'Museus e Pubs Históricos em Londres', image: '/assets/feed/id08-city.webp', votes: 5 }
       ],
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 5,
+      dislikesCount: 1
     },
     {
       id: 90009,
@@ -606,11 +622,11 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Geleiras e Fiordes em Reykjavík', image: '/assets/feed/id09-eco.webp', votes: 0 },
-        { id: 2, label: 'Calçadão e Pôr do Sol no Rio de Janeiro', image: '/assets/feed/id09-city.webp', votes: 0 }
+        { id: 1, label: 'Geleiras e Fiordes em Reykjavík', image: '/assets/feed/id09-eco.webp', votes: 8 },
+        { id: 2, label: 'Calçadão e Pôr do Sol no Rio de Janeiro', image: '/assets/feed/id09-city.webp', votes: 7 }
       ],
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 9,
+      dislikesCount: 1
     },
     {
       id: 90010,
@@ -618,10 +634,10 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       caption: '',
       postType: 'THIS_OR_THAT',
       thisOrThatOptions: [
-        { id: 1, label: 'Vida Selvagem e Safári no Pantanal', image: '/assets/feed/id10-eco.webp', votes: 0 },
-        { id: 2, label: 'Cassinos e Espetáculos em Las Vegas', image: '/assets/feed/id10-city.webp', votes: 0 }
+        { id: 1, label: 'Vida Selvagem e Safári no Pantanal', image: '/assets/feed/id10-eco.webp', votes: 7 },
+        { id: 2, label: 'Cassinos e Espetáculos em Las Vegas', image: '/assets/feed/id10-city.webp', votes: 5 }
       ],
-      likesCount: 0,
+      likesCount: 6,
       dislikesCount: 0
     }
   ];
@@ -639,8 +655,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
         correctIndex: 1,
         explanation: 'Yellowstone foi fundado em 1872 nos Estados Unidos e abriga mais da metade dos gêiseres ativos do planeta, incluindo o famoso Old Faithful e fontes hidrotermais multicoloridas.'
       },
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 7,
+      dislikesCount: 1
     },
     {
       id: 95002,
@@ -653,8 +669,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
         correctIndex: 0,
         explanation: 'Petra fica no sudoeste da Jordânia e floresceu como capital do antigo Reino Nabateu há mais de 2.000 anos, esculpida em desfiladeiros de arenito rosa.'
       },
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 6,
+      dislikesCount: 1
     },
     {
       id: 95003,
@@ -667,7 +683,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
         correctIndex: 1,
         explanation: 'O Parque Nacional de Anavilhanas fica no Rio Negro, no Amazonas, formando um labirinto fluvial com centenas de ilhas cuja paisagem muda drasticamente entre as cheias e secas.'
       },
-      likesCount: 0,
+      likesCount: 8,
       dislikesCount: 0
     },
     {
@@ -681,8 +697,8 @@ export class FeedMainComponent implements OnInit, OnDestroy {
         correctIndex: 0,
         explanation: 'O Salar de Uyuni cobre mais de 10.000 km² a 3.600 metros de altitude na Bolívia e se transforma no maior espelho natural do planeta quando coberto por uma fina lâmina d\'água de chuva.'
       },
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 9,
+      dislikesCount: 1
     },
     {
       id: 95005,
@@ -695,12 +711,12 @@ export class FeedMainComponent implements OnInit, OnDestroy {
         correctIndex: 0,
         explanation: 'A Grande Barreira de Corais se estende por mais de 2.300 km no litoral nordeste da Austrália, sendo o maior organismo vivo da Terra composto por bilhões de pólipos de coral.'
       },
-      likesCount: 0,
-      dislikesCount: 0
+      likesCount: 11,
+      dislikesCount: 1
     }
   ];
 
-    // ==================== 25 ARTIGOS EDITORIAIS ====================
+  // ==================== 25 ARTIGOS EDITORIAIS ====================
   private readonly curatedArticles: Post[] = [
     {
       id: 101,
@@ -930,18 +946,79 @@ export class FeedMainComponent implements OnInit, OnDestroy {
   ];
 
   // ==================== INTERLEAVING 40 ITEMS ====================
-  private clonePost(post: Post): Post {
-    const hasLocalArticleGallery =
-      post.id === 8 ||
-      (post.id >= 17 && post.id <= 20) ||
-      (post.id >= 101 && post.id <= 125);
+  private getDefaultLikes(postId: number, title?: string): { likes: number; dislikes: number } {
+    const baseMap: Record<number, { likes: number; dislikes: number }> = {
+      101: { likes: 3, dislikes: 1 },
+      102: { likes: 1, dislikes: 3 },
+      103: { likes: 3, dislikes: 2 },
+      104: { likes: 4, dislikes: 2 },
+      105: { likes: 6, dislikes: 2 },
+      106: { likes: 2, dislikes: 5 },
+      107: { likes: 4, dislikes: 1 },
+      108: { likes: 3, dislikes: 3 },
+      109: { likes: 3, dislikes: 1 },
+      110: { likes: 7, dislikes: 0 },
+      111: { likes: 1, dislikes: 3 },
+      112: { likes: 5, dislikes: 1 },
+      113: { likes: 2, dislikes: 1 },
+      114: { likes: 3, dislikes: 1 },
+      115: { likes: 3, dislikes: 1 },
+      116: { likes: 4, dislikes: 2 },
+      117: { likes: 4, dislikes: 2 },
+      118: { likes: 3, dislikes: 2 },
+      119: { likes: 5, dislikes: 2 },
+      120: { likes: 5, dislikes: 1 },
+      121: { likes: 2, dislikes: 2 },
+      122: { likes: 4, dislikes: 1 },
+      123: { likes: 3, dislikes: 2 },
+      124: { likes: 4, dislikes: 1 },
+      125: { likes: 2, dislikes: 0 },
+      4: { likes: 1, dislikes: 1 },
+      8: { likes: 2, dislikes: 3 },
+      17: { likes: 5, dislikes: 4 },
+      18: { likes: 4, dislikes: 1 },
+      19: { likes: 4, dislikes: 1 },
+      20: { likes: 2, dislikes: 2 }
+    };
 
-    const galleryImages = hasLocalArticleGallery
-      ? [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`)
-      : (post.imageUrl ? [post.imageUrl] : []);
+    if (baseMap[postId]) {
+      return baseMap[postId];
+    }
+
+    const seed = Math.abs(Number(postId) || 1);
+    const likes = 2 + (seed % 9); // Sempre número realista entre 2 e 10
+    const dislikes = seed % 3;    // Sempre entre 0 e 2
+    return { likes, dislikes };
+  }
+
+  private resolvePostGallery(post: Post): string[] {
+    // 1. Prioridade absoluta: Se o post é um dos artigos editoriais ricos (101..125), usa a galeria do próprio ID!
+    if (post.id >= 101 && post.id <= 125) {
+      return [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`);
+    }
+
+    if (post.galleryImages && post.galleryImages.length >= 3 && !post.galleryImages[0].includes('photo-1469854523086')) {
+      return post.galleryImages;
+    }
+
+    if (post.id === 8 || (post.id >= 17 && post.id <= 20)) {
+      return [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`);
+    }
+
+    return [1, 2, 3].map(index => `/assets/feed/id101-${index}.webp`);
+  }
+
+  private clonePost(post: Post): Post {
+    const galleryImages = this.resolvePostGallery(post);
+    const defaults = this.getDefaultLikes(post.id, post.title);
+    const baseLikes = (post.likesCount !== undefined && post.likesCount !== null) ? post.likesCount : defaults.likes;
+    const baseDislikes = (post.dislikesCount !== undefined && post.dislikesCount !== null) ? post.dislikesCount : defaults.dislikes;
 
     return {
       ...post,
+      likesCount: baseLikes,
+      dislikesCount: baseDislikes,
+      imageUrl: (!post.imageUrl || post.imageUrl.includes('photo-1469854523086')) && galleryImages.length > 0 ? galleryImages[0] : post.imageUrl,
       galleryImages,
       thisOrThatOptions: post.thisOrThatOptions
         ? post.thisOrThatOptions.map(opt => ({ ...opt }))
@@ -1071,18 +1148,27 @@ export class FeedMainComponent implements OnInit, OnDestroy {
         : null;
       const localInt = userInteractions[p.id] || null;
 
-      // Se o post veio do backend (PostgreSQL), o banco é a fonte única da verdade para curtidas do usuário
-      const effectiveInt = isFromBackend ? backendInt : (backendInt || localInt || null);
+      // Se o backend tem interação, usa ela; se não, preserva a interação salva localmente
+      const effectiveInt = backendInt || localInt || null;
+
+      const defaults = this.getDefaultLikes(p.id, p.title);
+      let currentLikes = (p.likesCount !== undefined && p.likesCount !== null) ? p.likesCount : defaults.likes;
+      let currentDislikes = (p.dislikesCount !== undefined && p.dislikesCount !== null) ? p.dislikesCount : defaults.dislikes;
+
+      // Se o usuário tem like/dislike local ativo que ainda não sincronizou com o backend, reflete na contagem
+      if (effectiveInt === 'LIKE' && backendInt !== 'LIKE') {
+        currentLikes += 1;
+      } else if (effectiveInt === 'DISLIKE' && backendInt !== 'DISLIKE') {
+        currentDislikes += 1;
+      }
 
       p.userInteraction = effectiveInt;
-      p.likesCount = p.likesCount ?? 0;
-      p.dislikesCount = p.dislikesCount ?? 0;
+      p.likesCount = currentLikes;
+      p.dislikesCount = currentDislikes;
 
       if (effectiveInt) {
         userInteractions[p.id] = effectiveInt;
         validInteractedIds.add(p.id);
-      } else {
-        delete userInteractions[p.id];
       }
     }
 
@@ -1230,7 +1316,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       }
       this.removeInteraction(postId);
       this.feedService.clearCache();
-      this.feedService.interact(postId, 'VOTE', currentSelection).subscribe({ error: () => {} });
+      this.feedService.interact(postId, 'VOTE', currentSelection).subscribe({ error: () => { } });
     }
   }
 
@@ -1289,10 +1375,13 @@ export class FeedMainComponent implements OnInit, OnDestroy {
       (post.id >= 101 && post.id <= 125);
 
     if (hasLocalArticleGallery) {
-      return [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`);
+      post.galleryImages = [1, 2, 3].map(index => `/assets/feed/id${post.id}-${index}.webp`);
+      return post.galleryImages;
     }
 
-    return post.imageUrl ? [post.imageUrl] : [];
+    const defaultImg = post.imageUrl ? [post.imageUrl] : [];
+    post.galleryImages = defaultImg;
+    return defaultImg;
   }
 
   getActiveImage(post: Post): string {
@@ -1304,6 +1393,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
   // ==================== CAROUSEL DRAG & SWIPE ====================
 
   onMouseDown(event: MouseEvent, postId: number, trackEl: HTMLElement): void {
+    this.ensureCarouselLoaded(postId);
     this.isDragging[postId] = true;
     this.startX[postId] = event.pageX - trackEl.offsetLeft;
     this.scrollLeftPos[postId] = trackEl.scrollLeft;
@@ -1331,6 +1421,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
 
   onCarouselScroll(postId: number, trackEl: HTMLElement): void {
     if (this.isDragging[postId]) return;
+    this.ensureCarouselLoaded(postId);
     const slideWidth = trackEl.clientWidth;
     if (slideWidth > 0) {
       const idx = Math.round(trackEl.scrollLeft / slideWidth);
@@ -1342,6 +1433,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
 
   scrollCarousel(post: Post, direction: number, event: Event, trackEl: HTMLElement): void {
     event.stopPropagation();
+    this.ensureCarouselLoaded(post.id);
     const total = this.getPostImages(post).length;
     const current = this.activeImageIndex()[post.id] ?? 0;
     let nextIdx = current + direction;
@@ -1354,6 +1446,7 @@ export class FeedMainComponent implements OnInit, OnDestroy {
 
   goToSlide(post: Post, index: number, event: Event, trackEl: HTMLElement): void {
     event.stopPropagation();
+    this.ensureCarouselLoaded(post.id);
     trackEl.scrollTo({ left: index * trackEl.clientWidth, behavior: 'smooth' });
     this.activeImageIndex.update(m => ({ ...m, [post.id]: index }));
   }

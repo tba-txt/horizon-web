@@ -8,11 +8,12 @@ import { AuthLayoutComponent } from '../../../shared/layouts/auth-layout/auth-la
 import { AuthService } from '../../../core/auth/services/auth.service';
 import { cpfValidator, birthDateValidator, formatCpf, nameValidator, strictEmailValidator } from '../../../shared/validators/custom-validators';
 import { DatePickerComponent } from '../../../shared/components/date-picker/date-picker.component';
+import { GoogleSignInComponent } from '../../../shared/components/google-sign-in/google-sign-in.component';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, AuthLayoutComponent, DatePickerComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, AuthLayoutComponent, DatePickerComponent, GoogleSignInComponent],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })

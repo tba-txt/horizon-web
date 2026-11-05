@@ -7,6 +7,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 import { QuizService } from '../services/quiz.service';
 import { Quiz, SubmitQuizRequest, AnswerOption } from '../models/quiz.model';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { UserService } from '../../../core/user/services/user.service';
 import { TokenStorageService } from '../../../core/auth/services/token-storage.service';
 import { TravelerIdentityService } from '../../recommendations/services/traveler-identity.service';
 import { TravelerIdentityState } from '../../recommendations/models/traveler-identity.model';
@@ -42,6 +43,7 @@ export class QuizFlowComponent implements OnInit {
   private tokenStorage = inject(TokenStorageService);
   private identityService = inject(TravelerIdentityService);
   private authService = inject(AuthService);
+  private userService = inject(UserService);
   private router = inject(Router);
 
   showGuestAuthModal = signal(false);
@@ -767,6 +769,11 @@ export class QuizFlowComponent implements OnInit {
       next: (data) => {
         this.quiz.set(data);
         this.isLoading.set(false);
+        if (data?.questions) {
+          for (const q of data.questions) {
+            this.preloadCardImages(q.answers);
+          }
+        }
       },
       error: (error) => {
         this.isLoading.set(false);
@@ -778,12 +785,16 @@ export class QuizFlowComponent implements OnInit {
   // ========================================================
   // DRAG E SWIPE LOGIC
   // ========================================================
+  private dragRafId: number | null = null;
+  private pendingClientX: number = 0;
+
   startDrag(event: MouseEvent | TouchEvent, idx: number): void {
     if (this.isDragging()) return;
     this.isDragging.set(true);
     const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
     this.dragStartX.set(clientX);
     this.dragCurrentX.set(clientX);
+    this.pendingClientX = clientX;
     
     document.addEventListener('mousemove', this.onDragMove);
     document.addEventListener('touchmove', this.onDragMove, { passive: false });
@@ -796,12 +807,24 @@ export class QuizFlowComponent implements OnInit {
     if (event instanceof TouchEvent && event.cancelable) {
       event.preventDefault();
     }
-    const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
-    this.dragCurrentX.set(clientX);
+    this.pendingClientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
+    if (this.dragRafId === null) {
+      this.dragRafId = requestAnimationFrame(() => {
+        this.dragRafId = null;
+        if (this.isDragging()) {
+          this.dragCurrentX.set(this.pendingClientX);
+        }
+      });
+    }
   };
 
   onDragEnd = () => {
     if (!this.isDragging()) return;
+    if (this.dragRafId !== null) {
+      cancelAnimationFrame(this.dragRafId);
+      this.dragRafId = null;
+    }
+    this.dragCurrentX.set(this.pendingClientX);
     const delta = this.dragDeltaX;
     this.isDragging.set(false);
     
@@ -1043,22 +1066,42 @@ export class QuizFlowComponent implements OnInit {
     return this.isBudgetValid();
   }
 
+  private visualCache = new Map<string, OptionVisual>();
+
   getOptionVisual(answerText: string): OptionVisual {
+    const cached = this.visualCache.get(answerText);
+    if (cached) return cached;
+
     const normalized = answerText.toLowerCase().trim();
     if (this.visualMap[normalized]) {
+      this.visualCache.set(answerText, this.visualMap[normalized]);
       return this.visualMap[normalized];
     }
     for (const [key, val] of Object.entries(this.visualMap)) {
       if (normalized.includes(key)) {
+        this.visualCache.set(answerText, val);
         return val;
       }
     }
-    return {
+    const fallback: OptionVisual = {
       image: '/assets/eco.webp',
       icon: '✈️',
       subtitle: 'Uma jornada única personalizada ao seu perfil de exploração.',
       tag: 'Experiência Horizon'
     };
+    this.visualCache.set(answerText, fallback);
+    return fallback;
+  }
+
+  private preloadCardImages(answers: AnswerOption[]): void {
+    if (!answers || typeof window === 'undefined') return;
+    for (const a of answers) {
+      const visual = this.getOptionVisual(a.text);
+      if (visual?.image) {
+        const img = new Image();
+        img.src = visual.image;
+      }
+    }
   }
 
   isBudgetValid(): boolean {
@@ -1157,6 +1200,23 @@ export class QuizFlowComponent implements OnInit {
       return;
     }
 
+    // Validação de cadastro completo (CPF e Data de Nascimento)
+    this.userService.getProfile().subscribe({
+      next: (profile) => {
+        if (!profile.cpf || !profile.birthDate) {
+          alert('Por favor, complete seu cadastro (CPF e Data de Nascimento) para vincular suas preferências de viagem!');
+          this.router.navigate(['/profile'], { queryParams: { view: 'personal-info', edit: 'true' } });
+          return;
+        }
+        this.proceedSubmitQuiz(quizId, payload);
+      },
+      error: () => {
+        this.proceedSubmitQuiz(quizId, payload);
+      }
+    });
+  }
+
+  private proceedSubmitQuiz(quizId: number | null, payload: SubmitQuizRequest): void {
     this.isSubmitting.set(true);
     this.submitErrorMessage.set(null);
 

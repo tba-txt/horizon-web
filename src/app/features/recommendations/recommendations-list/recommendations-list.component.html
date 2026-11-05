@@ -21,11 +21,11 @@
 
     <div class="d-flex align-items-center gap-2 mt-3 mt-sm-0">
       <a routerLink="/quiz" class="btn-quiz-header text-decoration-none">
-        <i class="bi bi-patch-question-fill"></i>
+        <i class="bi bi-patch-question-fill" aria-hidden="true"></i>
         <span>{{ quizButtonLabel() }}</span>
       </a>
       <button type="button" (click)="loadRecommendations()" class="btn-refresh-header" [disabled]="isLoading()" title="Atualizar recomendações">
-        <i class="bi bi-arrow-clockwise" [class.spin-active]="isLoading()"></i>
+        <i class="bi bi-arrow-clockwise" [class.spin-active]="isLoading()" aria-hidden="true"></i>
         <span>Atualizar</span>
       </button>
     </div>
@@ -52,7 +52,7 @@
   <!-- Estado: Lista Vazia -->
   @else if (recommendations().length === 0) {
     <div class="card border shadow-sm rounded-4 text-center p-5 bg-white">
-      <div class="display-4 text-secondary mb-3">🧭</div>
+      <div class="display-4 text-secondary mb-3"><i class="bi bi-compass" aria-hidden="true"></i></div>
       <h3 class="h5 fw-bold text-dark mb-2">Nenhuma recomendação gerada ainda</h3>
       <p class="text-muted small mb-4 col-md-6 mx-auto">
         Responda ao nosso Quiz de Viagens para descobrirmos suas preferências de clima, aventura e orçamento!
@@ -114,7 +114,7 @@
                     <div class="card-3d-content card-3d-item z-60">
                       <div class="card-3d-item z-40 mb-1">
                         <span class="destination-country-tag">
-                          <i class="bi bi-geo-alt-fill me-1"></i>{{ rec.country }}
+                          <i class="bi bi-geo-alt-fill me-1" aria-hidden="true"></i>{{ rec.country }}
                         </span>
                       </div>
                       
@@ -157,7 +157,7 @@
                           </span>
                         }
                         <p class="text-muted small mb-0 fw-medium location-text">
-                          <i class="bi bi-pin-map-fill me-1 location-icon"></i>
+                          <i class="bi bi-pin-map-fill me-1 location-icon" aria-hidden="true"></i>
                           {{ rec.city }}, {{ rec.country }}
                         </p>
                       </div>

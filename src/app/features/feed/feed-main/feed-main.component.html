@@ -33,7 +33,7 @@
                   [attr.aria-pressed]="sortBy() === 'recent'"
                   (click)="sortBy.set('recent')"
                 >
-                  <i class="bi bi-clock me-1"></i> Recentes
+                  <i class="bi bi-clock me-1" aria-hidden="true"></i> Recentes
                 </button>
                 <button 
                   type="button" 
@@ -42,7 +42,7 @@
                   [attr.aria-pressed]="sortBy() === 'popular'"
                   (click)="sortBy.set('popular')"
                 >
-                  <i class="bi bi-fire me-1"></i> Populares
+                  <i class="bi bi-fire me-1" aria-hidden="true"></i> Populares
                 </button>
               </div>
             </div>
@@ -51,7 +51,7 @@
             <div class="search-box-wrapper mb-3">
               <div class="input-group search-input-group shadow-xs">
                 <span class="input-group-text bg-white border-end-0 text-muted ps-3" aria-hidden="true">
-                  <i class="bi bi-search" style="color: #5BA4D8;"></i>
+                  <i class="bi bi-search" style="color: #5BA4D8;" aria-hidden="true"></i>
                 </span>
                 <input 
                   type="text" 
@@ -63,7 +63,7 @@
                 />
                 @if (searchQuery()) {
                   <button class="btn btn-clean-clear border-start-0 pe-3 text-muted" type="button" (click)="searchQuery.set('')" aria-label="Limpar campo de busca">
-                    <i class="bi bi-x-circle-fill"></i>
+                    <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
                   </button>
                 }
               </div>
@@ -78,7 +78,7 @@
                   [class.active]="selectedCategory() === cat.id"
                   (click)="setCategory(cat.id)"
                 >
-                  <i class="bi me-1" [class]="cat.icon"></i>
+                  <i class="bi me-1" [class]="cat.icon" aria-hidden="true"></i>
                   <span>{{ cat.label }}</span>
                 </button>
               }
@@ -106,7 +106,7 @@
                     <!-- Aba Superior Centralizada para Isso ou Aquilo (Azul Horizon Glassmorphism) -->
                     <div class="post-glass-tabs-bar d-flex justify-content-center px-3">
                       <div class="post-glass-folder-tab tab-center-blue">
-                        <i class="bi bi-arrows-collapse me-2"></i>
+                        <i class="bi bi-arrows-collapse me-2" aria-hidden="true"></i>
                         <span>Isso ou Aquilo</span>
                       </div>
                     </div>
@@ -127,7 +127,7 @@
                       </div>
 
                       <div class="post-glass-folder-tab tab-right">
-                        <i class="bi bi-clock me-2" style="color: #5BA4D8;"></i>
+                        <i class="bi bi-clock me-2" style="color: #5BA4D8;" aria-hidden="true"></i>
                         <span>{{ getPostReadTime(post) }}</span>
                       </div>
                     </div>
@@ -164,7 +164,7 @@
                                     <img [src]="opt.image" loading="lazy" decoding="async" class="w-100 h-100 object-fit-cover option-img" style="transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);" alt="Option" (error)="handleImageError($event)">
                                   } @else {
                                     <div class="w-100 h-100 d-flex flex-column align-items-center justify-content-center" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
-                                      <i class="bi bi-image text-white-50" style="font-size: 2.5rem; opacity: 0.35;"></i>
+                                      <i class="bi bi-image text-white-50" style="font-size: 2.5rem; opacity: 0.35;" aria-hidden="true"></i>
                                     </div>
                                   }
                                   
@@ -194,8 +194,8 @@
                           
                           <div class="d-flex justify-content-center" style="min-height: 40px; margin-top: 1rem; transition: opacity 0.6s ease;" [style.opacity]="thisOrThatSelection()[post.id] ? '1' : '0'">
                             @if (thisOrThatSelection()[post.id]) {
-                              <button class="btn btn-sm text-white fw-semibold px-4 rounded-3 shadow-sm" style="background-color: #65A30D; border: none; font-size: 0.8rem;" (click)="resetThisOrThat(post.id)">
-                                <i class="bi bi-arrow-counterclockwise me-1"></i> Refazer Escolha
+                              <button class="btn btn-sm btn-reset-this-or-that fw-semibold px-4 rounded-3 shadow-sm" (click)="resetThisOrThat(post.id)">
+                                <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i> Refazer Escolha
                               </button>
                             }
                           </div>
@@ -227,11 +227,11 @@
                                 <div class="d-flex align-items-center gap-3">
                                   <span class="trivia-radio-dot">
                                     @if (triviaSelection()[post.id] === idx && idx === post.triviaData!.correctIndex) {
-                                      <i class="bi bi-check-lg text-success fw-bold" style="font-size: 0.85rem;"></i>
+                                      <i class="bi bi-check-lg text-success fw-bold" style="font-size: 0.85rem;" aria-hidden="true"></i>
                                     } @else if (triviaSelection()[post.id] === idx && idx !== post.triviaData!.correctIndex) {
-                                      <i class="bi bi-x-lg text-danger fw-bold" style="font-size: 0.85rem;"></i>
+                                      <i class="bi bi-x-lg text-danger fw-bold" style="font-size: 0.85rem;" aria-hidden="true"></i>
                                     } @else if (triviaSelection()[post.id] !== undefined && idx === post.triviaData!.correctIndex) {
-                                      <i class="bi bi-check-lg text-success fw-bold" style="font-size: 0.85rem;"></i>
+                                      <i class="bi bi-check-lg text-success fw-bold" style="font-size: 0.85rem;" aria-hidden="true"></i>
                                     }
                                   </span>
                                   <span>{{ opt }}</span>
@@ -267,7 +267,7 @@
                           <!-- Contador de Fotos no canto inferior direito da imagem -->
                           <div class="post-photo-bottom-info position-absolute bottom-0 end-0 p-3 z-3 pointer-events-none">
                             <span class="post-glass-badge photo-count-badge">
-                              <i class="bi bi-camera-fill me-1"></i>
+                              <i class="bi bi-camera-fill me-1" aria-hidden="true"></i>
                               {{ (activeImageIndex()[post.id] ?? 0) + 1 }}/{{ getPostImages(post).length }}
                             </span>
                           </div>
@@ -280,6 +280,8 @@
                           #trackRef
                           class="carousel-track"
                           [class.is-dragging]="isDragging[post.id]"
+                          (mouseenter)="ensureCarouselLoaded(post.id)"
+                          (touchstart)="ensureCarouselLoaded(post.id)"
                           (mousedown)="onMouseDown($event, post.id, trackRef)"
                           (mousemove)="onMouseMove($event, post.id, trackRef)"
                           (mouseup)="onMouseUp(post.id, trackRef)"
@@ -288,17 +290,19 @@
                         >
                           @for (img of getPostImages(post); track $index) {
                             <div class="carousel-slide">
-                              <img 
-                                [src]="img" 
-                                [alt]="post.title" 
-                                class="w-100 h-100 object-fit-cover pointer-events-none"
-                                loading="lazy"
-                                decoding="async"
-                                width="800"
-                                height="450"
-                                draggable="false"
-                                (error)="handleImageError($event)"
-                              />
+                              @if (isSlideLoaded(post.id, $index)) {
+                                <img 
+                                  [src]="img" 
+                                  [alt]="post.title" 
+                                  class="w-100 h-100 object-fit-cover pointer-events-none"
+                                  loading="lazy"
+                                  decoding="async"
+                                  width="800"
+                                  height="450"
+                                  draggable="false"
+                                  (error)="handleImageError($event)"
+                                />
+                              }
                             </div>
                           }
                         </div>
@@ -369,7 +373,7 @@
                             aria-label="Curtir post"
                             title="Curtir e ensinar o algoritmo"
                           >
-                            <i class="bi fs-5" [class.bi-hand-thumbs-up-fill]="post.userInteraction === 'LIKE'" [class.bi-hand-thumbs-up]="post.userInteraction !== 'LIKE'"></i>
+                            <i class="bi fs-5" [class.bi-hand-thumbs-up-fill]="post.userInteraction === 'LIKE'" [class.bi-hand-thumbs-up]="post.userInteraction !== 'LIKE'" aria-hidden="true"></i>
                             <span class="btn-text">Curtir</span>
                             <span class="action-count">{{ post.likesCount || 0 }}</span>
                           </button>
@@ -383,7 +387,7 @@
                             aria-label="Dislike no post"
                             title="Não curtir e refinar preferências"
                           >
-                            <i class="bi fs-5" [class.bi-hand-thumbs-down-fill]="post.userInteraction === 'DISLIKE'" [class.bi-hand-thumbs-down]="post.userInteraction !== 'DISLIKE'"></i>
+                            <i class="bi fs-5" [class.bi-hand-thumbs-down-fill]="post.userInteraction === 'DISLIKE'" [class.bi-hand-thumbs-down]="post.userInteraction !== 'DISLIKE'" aria-hidden="true"></i>
                             <span class="btn-text">Dislike</span>
                             <span class="action-count">{{ post.dislikesCount || 0 }}</span>
                           </button>
@@ -396,7 +400,7 @@
                             title="Copiar link da crônica"
                             aria-label="Compartilhar crônica"
                           >
-                            <i class="bi bi-share"></i>
+                            <i class="bi bi-share" aria-hidden="true"></i>
                           </button>
                         </div>
 
@@ -484,7 +488,7 @@
                   (click)="toggleInteraction(article, 'LIKE', $event)" 
                   aria-label="Gostei da matéria"
                 >
-                  <i class="bi fs-5" [class.bi-hand-thumbs-up-fill]="article.userInteraction === 'LIKE'" [class.bi-hand-thumbs-up]="article.userInteraction !== 'LIKE'"></i>
+                  <i class="bi fs-5" [class.bi-hand-thumbs-up-fill]="article.userInteraction === 'LIKE'" [class.bi-hand-thumbs-up]="article.userInteraction !== 'LIKE'" aria-hidden="true"></i>
                   <span class="fw-semibold">Like</span>
                   <span class="reaction-count">{{ article.likesCount || 0 }}</span>
                 </button>
@@ -496,7 +500,7 @@
                   (click)="toggleInteraction(article, 'DISLIKE', $event)" 
                   aria-label="Não gostei da matéria"
                 >
-                  <i class="bi fs-5" [class.bi-hand-thumbs-down-fill]="article.userInteraction === 'DISLIKE'" [class.bi-hand-thumbs-down]="article.userInteraction !== 'DISLIKE'"></i>
+                  <i class="bi fs-5" [class.bi-hand-thumbs-down-fill]="article.userInteraction === 'DISLIKE'" [class.bi-hand-thumbs-down]="article.userInteraction !== 'DISLIKE'" aria-hidden="true"></i>
                   <span class="fw-semibold">Dislike</span>
                   <span class="reaction-count">{{ article.dislikesCount || 0 }}</span>
                 </button>
@@ -526,9 +530,9 @@
         <div class="missions-tab-inner">
           <div class="missions-tab-icon">
             @if (allMissionsCompleted()) {
-              <i class="bi bi-gift-fill text-warning fs-5"></i>
+              <i class="bi bi-gift-fill text-warning fs-5" aria-hidden="true"></i>
             } @else {
-              <i class="bi bi-compass-fill fs-5" style="color: #ffffff;"></i>
+              <i class="bi bi-compass-fill fs-5" style="color: #ffffff;" aria-hidden="true"></i>
             }
           </div>
           <div class="missions-tab-info d-none d-sm-flex flex-column text-start">
@@ -552,7 +556,7 @@
             aria-label="Fechar aviso"
             title="Fechar aviso"
           >
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
           </button>
         </div>
       }
@@ -567,7 +571,7 @@
         aria-labelledby="missions-modal-title"
       >
         <div class="missions-modal-dialog" (click)="$event.stopPropagation()">
-          <div class="missions-modal-shell text-white position-relative overflow-hidden">
+          <div class="missions-modal-shell position-relative overflow-hidden">
             
             <!-- Orbs luminosos de fundo para profundidade premium -->
             <div class="missions-glow-orb orb-1 pointer-events-none"></div>
@@ -578,7 +582,7 @@
               <!-- Header com Badge de Desconto & Botão Fechar Glass -->
               <div class="d-flex align-items-center justify-content-between mb-3">
                 <span class="missions-discount-badge">
-                  <i class="bi bi-tag-fill me-1"></i> 10% OFF EXCLUSIVO
+                  <i class="bi bi-tag-fill me-1" aria-hidden="true"></i> 10% OFF EXCLUSIVO
                 </span>
                 <div class="d-flex align-items-center gap-2">
                   <span class="missions-counter-label">
@@ -590,7 +594,7 @@
                     (click)="isMissionsOpen.set(false)"
                     aria-label="Fechar modal de missões"
                   >
-                    <i class="bi bi-x-lg"></i>
+                    <i class="bi bi-x-lg" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -598,7 +602,7 @@
               <!-- Título & Subtítulo -->
               <h2 id="missions-modal-title" class="h4 fw-bold mb-1 text-white d-flex align-items-center gap-2">
                 <span>Libere 10% de Desconto</span>
-                <i class="bi bi-stars text-warning fs-5"></i>
+                <i class="bi bi-stars text-warning fs-5" aria-hidden="true"></i>
               </h2>
               <p class="missions-modal-desc mb-3">
                 Cumpra as 3 tarefas de viajante abaixo e receba um cupom pessoal exclusivo para aplicar na sua próxima reserva no checkout:
@@ -625,9 +629,9 @@
                   <div class="d-flex align-items-center gap-3">
                     <div class="task-icon-box" [class.completed]="quizMissionCompleted()">
                       @if (quizMissionCompleted()) {
-                        <i class="bi bi-check-lg"></i>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i>
                       } @else {
-                        <i class="bi bi-patch-question"></i>
+                        <i class="bi bi-patch-question" aria-hidden="true"></i>
                       }
                     </div>
                     <div>
@@ -654,9 +658,9 @@
                   <div class="d-flex align-items-center gap-3">
                     <div class="task-icon-box" [class.completed]="interactionsCount() >= 10">
                       @if (interactionsCount() >= 10) {
-                        <i class="bi bi-check-lg"></i>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i>
                       } @else {
-                        <i class="bi bi-hand-thumbs-up"></i>
+                        <i class="bi bi-hand-thumbs-up" aria-hidden="true"></i>
                       }
                     </div>
                     <div>
@@ -677,9 +681,9 @@
                   <div class="d-flex align-items-center gap-3">
                     <div class="task-icon-box" [class.completed]="articleRead()">
                       @if (articleRead()) {
-                        <i class="bi bi-check-lg"></i>
+                        <i class="bi bi-check-lg" aria-hidden="true"></i>
                       } @else {
-                        <i class="bi bi-book"></i>
+                        <i class="bi bi-book" aria-hidden="true"></i>
                       }
                     </div>
                     <div>
@@ -701,7 +705,7 @@
                 @if (couponUsed()) {
                   <div class="coupon-reward-box p-3 text-center animate-bounce-in">
                     <div class="d-flex align-items-center justify-content-center gap-2 text-secondary fw-bold small text-uppercase mb-1">
-                      <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                      <i class="bi bi-check-circle-fill text-success fs-5" aria-hidden="true"></i>
                       <span>Cupom Já Utilizado</span>
                     </div>
                     <div class="p-2 rounded-2 bg-light border my-2">
@@ -714,7 +718,7 @@
                 } @else {
                   <div class="coupon-reward-box p-3 text-center animate-bounce-in">
                     <div class="d-flex align-items-center justify-content-center gap-2 text-success fw-bold small text-uppercase mb-1">
-                      <i class="bi bi-gift-fill text-warning fs-5"></i>
+                      <i class="bi bi-gift-fill text-warning fs-5" aria-hidden="true"></i>
                       <span>Parabéns! Cupom Liberado!</span>
                     </div>
                     <div class="d-flex align-items-center justify-content-between p-2 rounded-2 bg-light border border-dashed my-2">
@@ -725,7 +729,7 @@
                         [class.copied]="couponCopied()"
                         (click)="copyCoupon()"
                       >
-                        <i class="bi" [class.bi-check-lg]="couponCopied()" [class.bi-clipboard]="!couponCopied()"></i>
+                        <i class="bi" [class.bi-check-lg]="couponCopied()" [class.bi-clipboard]="!couponCopied()" aria-hidden="true"></i>
                         {{ couponCopied() ? 'Copiado!' : 'Copiar' }}
                       </button>
                     </div>
@@ -736,7 +740,7 @@
                 }
               } @else {
                 <div class="missions-footer-hint text-center pt-2">
-                  <i class="bi bi-lightning-charge-fill text-warning me-1"></i>
+                  <i class="bi bi-lightning-charge-fill text-warning me-1" aria-hidden="true"></i>
                   <span>Falta pouco para liberar seu desconto exclusivo!</span>
                 </div>
               }
@@ -767,13 +771,13 @@
               aria-label="Fechar aviso"
               title="Fechar"
             >
-              <i class="bi bi-x-lg"></i>
+              <i class="bi bi-x-lg" aria-hidden="true"></i>
             </button>
 
             <!-- Ícone Central com Cor Padrão Horizon -->
             <div class="d-flex justify-content-center mb-3">
               <div class="guest-auth-icon-box">
-                <i class="bi bi-heart-fill"></i>
+                <i class="bi bi-heart-fill" aria-hidden="true"></i>
               </div>
             </div>
 
@@ -819,7 +823,7 @@
 
     @if (shareNotice()) {
       <div class="share-toast shadow-lg animate-pop">
-        <i class="bi bi-check2-circle text-success me-2 fs-5"></i>
+        <i class="bi bi-check2-circle text-success me-2 fs-5" aria-hidden="true"></i>
         <span>{{ shareNotice() }}</span>
       </div>
     }

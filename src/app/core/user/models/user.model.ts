@@ -5,7 +5,10 @@ export interface UserProfile {
   email: string;
   cpf: string;
   birthDate: string;
+  phone?: string | null;
+  country?: string | null;
   profileImageUrl?: string | null;
+  authProvider?: string | null;
   budgetPerPerson?: number | null;
   active: boolean;
   createdAt?: string;
@@ -18,5 +21,7 @@ export interface UserUpdateRequest {
   email: string;
   cpf: string;
   birthDate: string;
+  phone?: string | null;
+  country?: string | null;
   profileImageUrl?: string | null;
 }

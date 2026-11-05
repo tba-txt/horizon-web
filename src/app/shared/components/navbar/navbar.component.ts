@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-navbar',
@@ -14,6 +15,7 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 export class NavbarComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  themeService = inject(ThemeService);
 
   isLoggedIn = this.authService.isLoggedIn;
   isMenuOpen = false;
@@ -38,6 +40,7 @@ export class NavbarComponent implements OnInit {
                          url.includes('/profile') || 
                          url.includes('/checkout') || 
                          url.includes('/faq') || 
+                         url.includes('/accessibility') || 
                          url === '/';
   }
 

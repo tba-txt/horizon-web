@@ -1014,3 +1014,495 @@
 }
 
 
+
+
+/* ========================================================
+   Modo Escuro no Modal de Destino
+   ======================================================== */
+:host-context([data-theme='dark']) {
+  .modal-card-glass {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.75) !important;
+  }
+
+  .modal-scroll-content {
+    background: #0b1329 !important;
+    color: #f1f5f9 !important;
+
+    &::-webkit-scrollbar-thumb {
+      background: #334155 !important;
+    }
+  }
+
+  .glass-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  .weather-nav-btn {
+    border-color: #475569 !important;
+    background: #0f172a !important;
+
+    .weather-arrow-icon {
+      filter: brightness(0) invert(1);
+    }
+
+    &:hover:not(:disabled) {
+      background: #334155 !important;
+    }
+  }
+
+  .day-title {
+    color: #cbd5e1 !important;
+  }
+
+  .bar-track {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+  }
+
+  .hum-text {
+    color: #94a3b8 !important;
+  }
+
+  .planning-tip-card {
+    background: rgba(15, 23, 42, 0.7) !important;
+    border-color: #475569 !important;
+  }
+
+  .planning-amount {
+    color: #cbd5e1 !important;
+
+    strong {
+      color: #f8fafc !important;
+    }
+  }
+
+  .planning-desc {
+    color: #94a3b8 !important;
+
+    strong {
+      color: #f8fafc !important;
+    }
+  }
+
+  .weather-extra-strip .extra-item {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+
+    .extra-label {
+      color: #94a3b8 !important;
+    }
+
+    .extra-val {
+      color: #f8fafc !important;
+    }
+  }
+
+  .destination-headline {
+    color: #f8fafc !important;
+  }
+
+  .destination-text {
+    color: #cbd5e1 !important;
+  }
+
+  .section-heading {
+    color: #f8fafc !important;
+  }
+
+  .best-time-calendar-card {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    box-shadow: none !important;
+  }
+
+  .month-pill-col.month-normal {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+  }
+
+  .months-legend-row .legend-item {
+    color: #cbd5e1 !important;
+  }
+
+  .attraction-item {
+    border-color: #334155 !important;
+    color: #ffffff !important;
+
+    span,
+    i {
+      color: #ffffff !important;
+    }
+  }
+
+  .modal-glass-footer {
+    background: #0f172a !important;
+    border-top: 1px solid #334155 !important;
+
+    .text-secondary {
+      color: #94a3b8 !important;
+    }
+
+    strong.text-dark {
+      color: #f8fafc !important;
+    }
+
+    .flight-route-icon {
+      background: #1e293b !important;
+      border-color: #334155 !important;
+    }
+
+    .price-highlight {
+      color: #65A30D !important;
+    }
+  }
+}
+
+/* ========================================================
+   Alto Contraste no Modal de Destino
+   ======================================================== */
+:host-context(.a11y-high-contrast) {
+  .modal-card-glass {
+    background: #ffffff !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .modal-scroll-content {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .glass-card {
+    background: #ffffff !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+    color: #000000 !important;
+  }
+
+  .weather-nav-btn {
+    border: 2px solid #000000 !important;
+    background: #ffffff !important;
+
+    .weather-arrow-icon {
+      filter: brightness(0);
+    }
+  }
+
+  .day-title {
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .bar-track {
+    background: #f1f5f9 !important;
+    border: 2px solid #000000 !important;
+  }
+
+  .moving-bar {
+    border: 1px solid #000000 !important;
+  }
+
+  .hum-text {
+    color: #000000 !important;
+    font-weight: 800 !important;
+
+    i {
+      color: #000000 !important;
+    }
+  }
+
+  .section-heading {
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .planning-tip-card {
+    background: #ffffff !important;
+    border: 2px solid #000000 !important;
+  }
+
+  .planning-tag {
+    border: 1px solid #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .planning-amount {
+    color: #000000 !important;
+    font-weight: 800 !important;
+
+    strong {
+      color: #000000 !important;
+      font-weight: 900 !important;
+    }
+  }
+
+  .planning-desc {
+    color: #000000 !important;
+    font-weight: 700 !important;
+
+    strong {
+      color: #000000 !important;
+      font-weight: 900 !important;
+    }
+  }
+
+  .weather-extra-strip .extra-item {
+    background: #ffffff !important;
+    border: 2px solid #000000 !important;
+
+    .extra-label,
+    .extra-val {
+      color: #000000 !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .destination-headline {
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .destination-text {
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  .best-time-bar {
+    border: 2px solid #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .best-time-calendar-card {
+    background: #ffffff !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .month-pill-col.month-normal {
+    background: #f1f5f9 !important;
+    border: 1px solid #000000 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .month-pill-col.month-good,
+  .month-pill-col.month-best {
+    border: 1px solid #000000 !important;
+  }
+
+  .months-legend-row .legend-item {
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .attraction-item {
+    border: 2px solid #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .modal-glass-footer {
+    background: #ffffff !important;
+    border-top: 2px solid #000000 !important;
+
+    .text-secondary,
+    strong.text-dark {
+      color: #000000 !important;
+      font-weight: 800 !important;
+    }
+
+    .flight-route-icon {
+      border: 2px solid #000000 !important;
+    }
+
+    .price-highlight {
+      color: #000000 !important;
+      font-weight: 900 !important;
+    }
+
+    .btn-reserve-glow {
+      background: #000000 !important;
+      color: #ffffff !important;
+      border: 2px solid #000000 !important;
+      font-weight: 800 !important;
+      box-shadow: none !important;
+    }
+  }
+}
+
+/* ========================================================
+   Alto Contraste + Modo Escuro no Modal de Destino
+   ======================================================== */
+:host-context(.a11y-high-contrast[data-theme='dark']) {
+  .modal-card-glass {
+    background: #000000 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .modal-scroll-content {
+    background: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .glass-card {
+    background: #000000 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+  }
+
+  .weather-nav-btn {
+    border: 2px solid #ffffff !important;
+    background: #000000 !important;
+
+    .weather-arrow-icon {
+      filter: brightness(0) invert(1);
+    }
+  }
+
+  .day-title {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .bar-track {
+    background: #1e293b !important;
+    border: 2px solid #ffffff !important;
+  }
+
+  .moving-bar {
+    border: 1px solid #ffffff !important;
+  }
+
+  .hum-text {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+
+    i {
+      color: #ffffff !important;
+    }
+  }
+
+  .section-heading {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .planning-tip-card {
+    background: #000000 !important;
+    border: 2px solid #ffffff !important;
+  }
+
+  .planning-tag {
+    border: 1px solid #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .planning-amount {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+
+    strong {
+      color: #ffffff !important;
+      font-weight: 900 !important;
+    }
+  }
+
+  .planning-desc {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+
+    strong {
+      color: #ffffff !important;
+      font-weight: 900 !important;
+    }
+  }
+
+  .weather-extra-strip .extra-item {
+    background: #000000 !important;
+    border: 2px solid #ffffff !important;
+
+    .extra-label,
+    .extra-val {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .destination-headline {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .destination-text {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+
+  .best-time-bar {
+    border: 2px solid #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .best-time-calendar-card {
+    background: #000000 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .month-pill-col.month-normal {
+    background: #1e293b !important;
+    border: 1px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .month-pill-col.month-good,
+  .month-pill-col.month-best {
+    border: 1px solid #ffffff !important;
+  }
+
+  .months-legend-row .legend-item {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .attraction-item {
+    border: 2px solid #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .modal-glass-footer {
+    background: #000000 !important;
+    border-top: 2px solid #ffffff !important;
+
+    .text-secondary,
+    strong.text-dark {
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+
+    .flight-route-icon {
+      border: 2px solid #ffffff !important;
+    }
+
+    .price-highlight {
+      color: #ffffff !important;
+      font-weight: 900 !important;
+    }
+
+    .btn-reserve-glow {
+      background: #ffffff !important;
+      color: #000000 !important;
+      border: 2px solid #ffffff !important;
+      font-weight: 800 !important;
+      box-shadow: none !important;
+    }
+  }
+}

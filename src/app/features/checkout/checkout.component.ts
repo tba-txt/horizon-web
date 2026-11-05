@@ -10,6 +10,8 @@ import { FeedbackModalComponent } from '../../shared/components/feedback-modal/f
 import { ReservationService } from '../../core/reservations/services/reservation.service';
 import { PaymentService } from '../../core/reservations/services/payment.service';
 import { TokenStorageService } from '../../core/auth/services/token-storage.service';
+import { UserService } from '../../core/user/services/user.service';
+import { UserProfile } from '../../core/user/models/user.model';
 import { findLocalImage } from '../destinations/services/destinations.service';
 import { 
   CheckoutDraft, 
@@ -27,17 +29,23 @@ import {
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.scss']
 })
-export class CheckoutComponent implements OnInit {
+export class CheckoutComponent implements OnInit, OnDestroy {
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private reservationService = inject(ReservationService);
   private paymentService = inject(PaymentService);
   private tokenStorage = inject(TokenStorageService);
+  private userService = inject(UserService);
 
   draft = signal<CheckoutDraft | null>(null);
   currentReservation = signal<ReservationResponse | null>(null);
   selectedMethod = signal<PaymentMethod>('PIX');
+
+  // Perfil do Usuário e Verificação de Cadastro Completo
+  currentUser = signal<UserProfile | null>(null);
+  isProfileIncomplete = signal<boolean>(false);
+  private redirectTimeout: any = null;
 
   // Estados de UI Clean (Dropdowns / Modal)
   expandedPassengerIndex = signal<number>(0);
@@ -196,6 +204,21 @@ export class CheckoutComponent implements OnInit {
 
   ngOnInit(): void {
     const uid = this.tokenStorage.getUserId();
+    if (uid) {
+      this.userService.getProfile().subscribe({
+        next: (profile) => {
+          this.currentUser.set(profile);
+          if (!profile.cpf || !profile.birthDate) {
+            this.isProfileIncomplete.set(true);
+            this.redirectTimeout = setTimeout(() => {
+              this.redirectToProfile();
+            }, 2500);
+          }
+        },
+        error: () => {}
+      });
+    }
+
     if (uid && typeof localStorage !== 'undefined') {
       const savedCoupon = localStorage.getItem(`horizonCoupon_${uid}`);
       if (savedCoupon) {
@@ -223,6 +246,13 @@ export class CheckoutComponent implements OnInit {
           this.loadDraftFromService();
         }
       });
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.redirectTimeout) {
+      clearTimeout(this.redirectTimeout);
+      this.redirectTimeout = null;
     }
   }
 
@@ -513,7 +543,24 @@ export class CheckoutComponent implements OnInit {
     this.passengersMinorError.set(null);
   }
 
+  redirectToProfile(): void {
+    if (this.redirectTimeout) {
+      clearTimeout(this.redirectTimeout);
+      this.redirectTimeout = null;
+    }
+    this.router.navigate(['/profile'], {
+      queryParams: { view: 'personal-info', edit: 'true' }
+    });
+  }
+
   onCreateReservationFromDraft(): void {
+    const user = this.currentUser();
+    if (user && (!user.cpf || !user.birthDate)) {
+      this.isProfileIncomplete.set(true);
+      this.redirectToProfile();
+      return;
+    }
+
     if (this.passengersForm.invalid) {
       this.passengersForm.markAllAsTouched();
       const firstInvalid = this.passengersArray.controls.findIndex(c => c.invalid);
@@ -590,6 +637,13 @@ export class CheckoutComponent implements OnInit {
   }
 
   onConfirmPaymentNow(): void {
+    const user = this.currentUser();
+    if (user && (!user.cpf || !user.birthDate)) {
+      this.isProfileIncomplete.set(true);
+      this.redirectToProfile();
+      return;
+    }
+
     const res = this.currentReservation();
     if (!res) return;
 

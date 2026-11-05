@@ -41,6 +41,17 @@ export class AuthService {
     );
   }
 
+  public loginWithGoogle(idToken: string, rememberMe: boolean = true): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/google`, { idToken }).pipe(
+      tap(response => {
+        if (response?.token) {
+          this.tokenStorage.saveToken(response.token, rememberMe);
+          this.isLoggedIn.set(true);
+        }
+      })
+    );
+  }
+
   public register(data: RegisterRequest): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/auth/register`, data).pipe(
       tap(response => {

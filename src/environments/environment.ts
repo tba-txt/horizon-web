@@ -1,4 +1,5 @@
 export const environment = {
-  production: true,
-  apiUrl: 'https://horizon-back-mfec.onrender.com'
+  production: false,
+  apiUrl: 'http://localhost:8080',
+  googleClientId: '653931172715-re7hhim6rnn2d5bj4ctotvqobgblldu6.apps.googleusercontent.com'
 };

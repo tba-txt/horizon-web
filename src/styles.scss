@@ -362,3 +362,26 @@ body.modal-open {
   }
 }
 
+
+/* Acessibilidade (skip link, alvos de toque) e modo escuro */
+@import 'styles/horizon-a11y-dark';
+
+/* =========================================================
+   HORIZON FIGMA MULTIPLAYER CURSOR
+   ========================================================= */
+@media (hover: hover) and (pointer: fine) {
+  html,
+  body,
+  app-root,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  label,
+  [role="button"],
+  .btn,
+  .clickable {
+    cursor: none !important;
+  }
+}

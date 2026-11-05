@@ -85,6 +85,8 @@ export class TokenStorageService {
     localStorage.removeItem('userInteractions_guest');
     localStorage.removeItem('interactedPosts_guest');
     localStorage.removeItem('triviaSelection_guest');
+    localStorage.removeItem('horizon_user_profile');
+    localStorage.removeItem('horizon_user_name');
     localStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(TOKEN_KEY);
   }

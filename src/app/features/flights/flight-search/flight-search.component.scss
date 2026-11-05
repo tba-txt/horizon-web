@@ -418,21 +418,126 @@
       background-color: #ffffff;
     }
 
-    .destination-picker { position: relative; }
-    .destination-picker-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 38px; padding: 0.375rem 0.75rem; border: 1px solid #ced4da; border-radius: 0.75rem; background: #ffffff; color: #212529; font-size: 0.95rem; text-align: left; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-    .destination-picker-trigger:hover, .destination-picker-open { border-color: #5BA4D8; }
-    .destination-picker-trigger:focus-visible { outline: 0; border-color: #5BA4D8; box-shadow: 0 0 0 0.2rem rgba(91, 164, 216, 0.2); }
-    .destination-picker-caret { width: 0.5rem; height: 0.5rem; margin-left: 0.75rem; border-right: 2px solid #475569; border-bottom: 2px solid #475569; transform: rotate(45deg) translateY(-2px); transition: transform 0.2s ease; }
-    .destination-picker-open .destination-picker-caret { transform: rotate(225deg) translateY(-2px); }
-    .destination-picker-menu { position: absolute; z-index: 1060; bottom: calc(100% + 0.5rem); left: 0; width: min(21rem, calc(100vw - 2rem)); max-height: 22rem; overflow-y: auto; border: 1px solid #dbe7f0; border-radius: 0.875rem; background: #ffffff; box-shadow: 0 14px 32px rgba(11, 37, 69, 0.16); padding: 0.375rem; }
-    .destination-group-label { margin: 0.25rem 0.25rem 0.375rem; padding: 0.55rem 0.75rem; border-radius: 0.55rem; color: #ffffff; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.01em; }
-    .destination-group-label-common { background: #5BA4D8; }
-    .destination-group-label-eco { background: #65A30D; }
-    .destination-group-options + .destination-group-label { margin-top: 0.5rem; }
-    .destination-option { display: block; width: 100%; border: 0; border-radius: 0.5rem; background: transparent; color: #1e293b; padding: 0.5rem 0.75rem; font-size: 0.9rem; text-align: left; }
-    .destination-option:hover, .destination-option:focus-visible { background: #edf6fc; color: #0B2545; outline: 0; }
-    .destination-option-selected { background: #5BA4D8; color: #ffffff; font-weight: 600; }
-    .destination-option-selected:hover, .destination-option-selected:focus-visible { background: #4b8ebd; color: #ffffff; }
+    .destination-picker,
+    .passenger-picker { position: relative; }
+    .destination-picker-trigger,
+    .passenger-picker-trigger { display: flex; align-items: center; justify-content: space-between; width: 100%; min-height: 44px; height: 44px; padding: 0.375rem 0.75rem; border: 1px solid #ced4da; border-radius: 0.375rem; background: #ffffff; color: #212529; font-size: 0.95rem; text-align: left; transition: border-color 0.2s ease, box-shadow 0.2s ease; cursor: pointer; }
+    .destination-picker-trigger:hover, 
+    .destination-picker-open,
+    .passenger-picker-trigger:hover,
+    .passenger-picker-open { 
+      border-color: #5BA4D8; 
+    }
+
+    .destination-picker-trigger:focus-visible,
+    .passenger-picker-trigger:focus-visible { 
+      outline: 0; 
+      border-color: #5BA4D8; 
+      box-shadow: 0 0 0 0.2rem rgba(91, 164, 216, 0.2); 
+    }
+
+    .destination-picker-caret,
+    .passenger-picker-caret { 
+      width: 0.5rem; 
+      height: 0.5rem; 
+      margin-left: 0.75rem; 
+      border-right: 2px solid #475569; 
+      border-bottom: 2px solid #475569; 
+      transform: rotate(45deg) translateY(-2px); 
+      transition: transform 0.2s ease; 
+    }
+
+    .destination-picker-open .destination-picker-caret,
+    .passenger-picker-open .passenger-picker-caret { 
+      transform: rotate(225deg) translateY(-2px); 
+    }
+
+    .destination-picker-menu,
+    .passenger-picker-menu { 
+      position: absolute; 
+      z-index: 1060; 
+      bottom: calc(100% + 0.5rem); 
+      left: 0; 
+      width: min(21rem, calc(100vw - 2rem)); 
+      max-height: 22rem; 
+      overflow-y: auto; 
+      border: 1px solid #dbe7f0; 
+      border-radius: 0.75rem; 
+      background: #ffffff; 
+      box-shadow: 0 14px 32px rgba(11, 37, 69, 0.16); 
+      padding: 0.375rem; 
+    }
+
+    .passenger-picker-menu {
+      width: 100%;
+      min-width: 13rem;
+    }
+
+    .destination-group-label,
+    .passenger-group-label { 
+      margin: 0.25rem 0.25rem 0.375rem; 
+      padding: 0.55rem 0.75rem; 
+      border-radius: 0.5rem; 
+      color: #ffffff; 
+      font-size: 0.8rem; 
+      font-weight: 700; 
+      letter-spacing: 0.01em; 
+    }
+
+    .destination-group-label-common,
+    .passenger-group-label { 
+      background: #5BA4D8; 
+    }
+
+    .destination-group-label-eco { 
+      background: #65A30D; 
+    }
+
+    .destination-group-options + .destination-group-label,
+    .passenger-group-options + .passenger-group-label { 
+      margin-top: 0.5rem; 
+    }
+
+    .destination-option,
+    .passenger-option { 
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%; 
+      border: 0; 
+      border-radius: 0.5rem; 
+      background: transparent; 
+      color: #1e293b; 
+      padding: 0.55rem 0.75rem; 
+      font-size: 0.9rem; 
+      text-align: left; 
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .destination-option:hover, 
+    .destination-option:focus-visible,
+    .passenger-option:hover,
+    .passenger-option:focus-visible { 
+      background: #edf6fc; 
+      color: #0B2545; 
+      outline: 0; 
+    }
+
+    .destination-option-selected,
+    .passenger-option-selected { 
+      background: #5BA4D8; 
+      color: #ffffff; 
+      font-weight: 600; 
+    }
+
+    .destination-option-selected:hover, 
+    .destination-option-selected:focus-visible,
+    .passenger-option-selected:hover,
+    .passenger-option-selected:focus-visible { 
+      background: #4b8ebd; 
+      color: #ffffff; 
+    }
 
     @media (max-width: 991.98px) {
       .hero-container, .hero-image {
@@ -1388,5 +1493,223 @@
 
   .comp-col {
     font-size: 0.74rem;
+  }
+}
+
+
+/* Modo Escuro em Consulta de Voos */
+:host-context([data-theme='dark']) {
+  .destination-picker-trigger {
+    background: #111c30 !important;
+    color: #f1f5f9 !important;
+    border-color: #475569 !important;
+  }
+
+  .destination-picker-caret {
+    border-right-color: #94a3b8 !important;
+    border-bottom-color: #94a3b8 !important;
+  }
+
+  .destination-picker-menu {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .destination-option {
+    color: #e2e8f0 !important;
+
+    &:hover,
+    &:focus-visible {
+      background: #334155 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .destination-option-selected {
+    background: #5BA4D8 !important;
+    color: #ffffff !important;
+  }
+  .passenger-picker-trigger {
+    background: #111c30 !important;
+    color: #f1f5f9 !important;
+    border-color: #475569 !important;
+  }
+
+  .passenger-picker-caret {
+    border-right-color: #94a3b8 !important;
+    border-bottom-color: #94a3b8 !important;
+  }
+
+  .passenger-picker-menu {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 14px 32px rgba(0, 0, 0, 0.5) !important;
+  }
+
+  .passenger-option {
+    color: #e2e8f0 !important;
+
+    &:hover,
+    &:focus-visible {
+      background: #334155 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .passenger-option-selected {
+    background: #5BA4D8 !important;
+    color: #ffffff !important;
+  }
+
+
+  .flight-card {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e2e8f0 !important;
+  }
+
+  .bg-light {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+  }
+}
+
+
+/* ========================================================
+   Alto Contraste em Consulta de Voos
+   ======================================================== */
+:host-context(.a11y-high-contrast) {
+  .search-card-container {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .destination-picker-trigger,
+  .passenger-picker-trigger {
+    border: 2px solid #000000 !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
+  }
+
+  .destination-picker-caret,
+  .passenger-picker-caret {
+    border-right: 2px solid #000000 !important;
+    border-bottom: 2px solid #000000 !important;
+  }
+
+  .destination-picker-menu,
+  .passenger-picker-menu {
+    background: #ffffff !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+  }
+
+  .destination-group-label,
+  .passenger-group-label {
+    background: #000000 !important;
+    color: #ffffff !important;
+    border: 1px solid #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .destination-option,
+  .passenger-option {
+    color: #000000 !important;
+    font-weight: 700 !important;
+
+    &:hover,
+    &:focus-visible {
+      background: #f1f5f9 !important;
+      color: #000000 !important;
+    }
+
+    &.destination-option-selected,
+    &.passenger-option-selected {
+      background: #000000 !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .btn-outline-primary,
+  .btn-outline-secondary {
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .flight-card {
+    border: 2px solid #000000 !important;
+  }
+}
+
+:host-context(.a11y-high-contrast[data-theme='dark']) {
+  .search-card-container {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .destination-picker-trigger,
+  .passenger-picker-trigger {
+    border: 2px solid #ffffff !important;
+    background: #000000 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+  }
+
+  .destination-picker-caret,
+  .passenger-picker-caret {
+    border-right: 2px solid #ffffff !important;
+    border-bottom: 2px solid #ffffff !important;
+  }
+
+  .destination-picker-menu,
+  .passenger-picker-menu {
+    background: #000000 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .destination-group-label,
+  .passenger-group-label {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 1px solid #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .destination-option,
+  .passenger-option {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+
+    &:hover,
+    &:focus-visible {
+      background: #1e293b !important;
+      color: #ffffff !important;
+    }
+
+    &.destination-option-selected,
+    &.passenger-option-selected {
+      background: #ffffff !important;
+      color: #000000 !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .btn-outline-primary,
+  .btn-outline-secondary {
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .flight-card {
+    border: 2px solid #ffffff !important;
   }
 }

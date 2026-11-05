@@ -97,6 +97,12 @@ export class FlightSearchComponent implements OnInit {
   startDate = signal<string>('');
   endDate = signal<string>('');
   passengers = signal<number>(1);
+  isPassengerDropdownOpen = signal<boolean>(false);
+  readonly passengerOptions = [1, 2, 3, 4, 5];
+  passengerLabel = computed(() => {
+    const p = this.passengers();
+    return p === 1 ? '1 adulto' : `${p} adultos`;
+  });
 
   // Estados dos calendários interativos (Ida e Volta)
   isOutboundCalendarOpen = signal<boolean>(false);
@@ -290,6 +296,17 @@ export class FlightSearchComponent implements OnInit {
     event.stopPropagation();
     this.isDestinationDropdownOpen.set(false);
     this.onDestinationChange(destination.id);
+  }
+
+  togglePassengerDropdown(event: Event): void {
+    event.stopPropagation();
+    this.isPassengerDropdownOpen.update(isOpen => !isOpen);
+  }
+
+  selectPassengers(count: number, event: Event): void {
+    event.stopPropagation();
+    this.passengers.set(count);
+    this.isPassengerDropdownOpen.set(false);
   }
   loadDestinationFlights(destId: number, callback?: () => void): void {
     this.isLoadingFlightDates.set(true);
@@ -502,6 +519,9 @@ export class FlightSearchComponent implements OnInit {
     }
     if (!target.closest('.destination-picker')) {
       this.isDestinationDropdownOpen.set(false);
+    }
+    if (!target.closest('.passenger-picker')) {
+      this.isPassengerDropdownOpen.set(false);
     }
   }
 

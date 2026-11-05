@@ -20,11 +20,12 @@ import { SupportTicketResponse } from '../../core/support/models/support.model';
 import { PlaneLoaderComponent } from '../../shared/components/plane-loader/plane-loader.component';
 import { DatePickerComponent } from '../../shared/components/date-picker/date-picker.component';
 import { BackToTopComponent } from '../../shared/components/back-to-top/back-to-top.component';
+import { AccessibilitySettingsComponent } from '../accessibility/accessibility-settings.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, NavbarComponent, FooterComponent, FeedbackModalComponent, TicketComponent, PlaneLoaderComponent, DatePickerComponent, BackToTopComponent, DatePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, NavbarComponent, FooterComponent, FeedbackModalComponent, TicketComponent, PlaneLoaderComponent, DatePickerComponent, BackToTopComponent, AccessibilitySettingsComponent, DatePipe],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
@@ -40,10 +41,24 @@ export class ProfileComponent implements OnInit {
   trips = signal<MyTripsResponse | null>(null);
 
   // Navegação inspirada no Figma
-  activeView = signal<'dashboard' | 'personal-info' | 'trips' | 'payments' | 'privacy' | 'support'>('dashboard');
+  activeView = signal<'dashboard' | 'personal-info' | 'trips' | 'payments' | 'privacy' | 'support' | 'accessibility'>('dashboard');
   isHorizonMenuOpen = signal<boolean>(true);
   isDadosMenuOpen = signal<boolean>(true);
   isEditingPersonalInfo = signal<boolean>(false);
+
+  // Gerenciamento e Alteração de Senha
+  isChangePasswordModalOpen = signal<boolean>(false);
+  isChangingPassword = signal<boolean>(false);
+  isSendingResetEmail = signal<boolean>(false);
+  showCurrentPassword = signal<boolean>(false);
+  showNewPassword = signal<boolean>(false);
+  showConfirmPassword = signal<boolean>(false);
+
+  changePasswordForm = this.fb.group({
+    currentPassword: ['', [Validators.required]],
+    newPassword: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
+    confirmPassword: ['', [Validators.required]]
+  });
 
   // Pickers interativos do Painel
   selectedConfirmedIndex = signal<number>(0);
@@ -201,10 +216,29 @@ export class ProfileComponent implements OnInit {
     name: ['', [Validators.required, Validators.minLength(3)]],
     socialName: [''],
     email: ['', [Validators.required, Validators.email]],
-    cpf: [{ value: '', disabled: true }, [Validators.required, cpfValidator()]],
-    birthDate: [{ value: '', disabled: true }, [Validators.required, birthDateValidator(18)]],
+    phone: [''],
+    country: ['Brasil'],
+    cpf: ['', [Validators.required, cpfValidator()]],
+    birthDate: ['', [Validators.required, birthDateValidator(18)]],
     profileImageUrl: ['']
   });
+
+  formatPhone(value?: string | null): string {
+    if (!value) return '';
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    if (digits.length === 0) return '';
+    if (digits.length <= 2) return '(' + digits;
+    if (digits.length <= 6) return '(' + digits.slice(0, 2) + ') ' + digits.slice(2);
+    if (digits.length <= 10) return '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 6) + '-' + digits.slice(6);
+    return '(' + digits.slice(0, 2) + ') ' + digits.slice(2, 7) + '-' + digits.slice(7, 11);
+  }
+
+  onPhoneInput(event: any): void {
+    const input = event.target as HTMLInputElement;
+    const formatted = this.formatPhone(input.value);
+    input.value = formatted;
+    this.profileForm.get('phone')?.setValue(formatted, { emitEvent: false });
+  }
 
   formattedCpf = computed(() => {
     const raw = this.user()?.cpf;
@@ -439,7 +473,7 @@ export class ProfileComponent implements OnInit {
     return '/assets/Horizon 1.webp';
   }
 
-  setActiveView(view: 'dashboard' | 'personal-info' | 'trips' | 'payments' | 'privacy' | 'support'): void {
+  setActiveView(view: 'dashboard' | 'personal-info' | 'trips' | 'payments' | 'privacy' | 'support' | 'accessibility'): void {
     this.activeView.set(view);
     if (view === 'support') {
       this.loadSupportTickets();
@@ -456,6 +490,7 @@ export class ProfileComponent implements OnInit {
   }
 
   startEditing(): void {
+    this.resetProfileForm();
     this.isEditingPersonalInfo.set(true);
     setTimeout(() => {
       window.scrollTo({ top: 400, behavior: 'smooth' });
@@ -489,8 +524,13 @@ export class ProfileComponent implements OnInit {
         this.activeView.set('payments');
       } else if (tab === 'personal-info') {
         this.activeView.set('personal-info');
+        if (params['edit'] === 'true') {
+          setTimeout(() => this.startEditing(), 200);
+        }
       } else if (tab === 'support') {
         this.activeView.set('support');
+      } else if (tab === 'accessibility') {
+        this.activeView.set('accessibility');
       } else if (tab === 'feedback') {
         this.openPlatformFeedback();
       }
@@ -533,10 +573,22 @@ export class ProfileComponent implements OnInit {
           name: profile.name,
           socialName: profile.socialName || '',
           email: profile.email,
+          phone: this.formatPhone(profile.phone || ''),
+          country: profile.country || 'Brasil',
           cpf: formatCpf(profile.cpf),
           birthDate: profile.birthDate,
           profileImageUrl: profile.profileImageUrl || ''
         });
+        if (profile.cpf) {
+          this.profileForm.get('cpf')?.disable();
+        } else {
+          this.profileForm.get('cpf')?.enable();
+        }
+        if (profile.birthDate) {
+          this.profileForm.get('birthDate')?.disable();
+        } else {
+          this.profileForm.get('birthDate')?.enable();
+        }
         this.isLoadingProfile.set(false);
       },
       error: (err) => {
@@ -588,6 +640,8 @@ export class ProfileComponent implements OnInit {
       name: val.name!,
       socialName: val.socialName || undefined,
       email: val.email!,
+      phone: val.phone ? val.phone.trim() : undefined,
+      country: val.country || 'Brasil',
       cpf: finalCpf,
       birthDate: finalBirthDate,
       profileImageUrl: val.profileImageUrl || undefined
@@ -596,6 +650,7 @@ export class ProfileComponent implements OnInit {
     this.userService.updateProfile(req).subscribe({
       next: (updated) => {
         this.user.set(updated);
+        this.resetProfileForm();
         this.isSavingProfile.set(false);
         this.isEditingPersonalInfo.set(false);
         this.showSuccess('Perfil atualizado com sucesso!');
@@ -640,10 +695,22 @@ export class ProfileComponent implements OnInit {
         name: profile.name,
         socialName: profile.socialName || '',
         email: profile.email,
+        phone: this.formatPhone(profile.phone || ''),
+        country: profile.country || 'Brasil',
         cpf: formatCpf(profile.cpf),
         birthDate: profile.birthDate,
         profileImageUrl: profile.profileImageUrl || ''
       });
+      if (profile.cpf) {
+        this.profileForm.get('cpf')?.disable();
+      } else {
+        this.profileForm.get('cpf')?.enable();
+      }
+      if (profile.birthDate) {
+        this.profileForm.get('birthDate')?.disable();
+      } else {
+        this.profileForm.get('birthDate')?.enable();
+      }
     }
   }
 
@@ -815,6 +882,97 @@ export class ProfileComponent implements OnInit {
   logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  openChangePasswordModal(): void {
+    if (this.user()?.authProvider === 'GOOGLE') {
+      this.showError('Sua conta utiliza login seguro com o Google. A alteração de credenciais deve ser feita diretamente na sua conta Google.');
+      return;
+    }
+    this.changePasswordForm.reset();
+    this.showCurrentPassword.set(false);
+    this.showNewPassword.set(false);
+    this.showConfirmPassword.set(false);
+    this.isChangePasswordModalOpen.set(true);
+  }
+
+  closeChangePasswordModal(): void {
+    this.isChangePasswordModalOpen.set(false);
+    this.changePasswordForm.reset();
+  }
+
+  toggleShowCurrentPassword(): void {
+    this.showCurrentPassword.update(v => !v);
+  }
+
+  toggleShowNewPassword(): void {
+    this.showNewPassword.update(v => !v);
+  }
+
+  toggleShowConfirmPassword(): void {
+    this.showConfirmPassword.update(v => !v);
+  }
+
+  submitChangePassword(): void {
+    if (this.changePasswordForm.invalid) {
+      this.changePasswordForm.markAllAsTouched();
+      return;
+    }
+
+    const { currentPassword, newPassword, confirmPassword } = this.changePasswordForm.value;
+
+    if (!newPassword || newPassword.length < 6) {
+      this.showError('A nova senha deve ter no mínimo 6 caracteres.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      this.showError('A nova senha e a confirmação de senha não conferem.');
+      return;
+    }
+
+    if (currentPassword === newPassword) {
+      this.showError('A nova senha não pode ser idêntica à senha atual.');
+      return;
+    }
+
+    this.isChangingPassword.set(true);
+    this.userService.changePassword({
+      currentPassword: currentPassword!,
+      newPassword: newPassword!,
+      confirmPassword: confirmPassword!
+    }).subscribe({
+      next: () => {
+        this.isChangingPassword.set(false);
+        this.closeChangePasswordModal();
+        this.showSuccess('Senha alterada com sucesso! Utilize sua nova senha no próximo login.');
+      },
+      error: (err) => {
+        this.isChangingPassword.set(false);
+        this.showError(err.error?.message || err.message || 'Falha ao alterar senha. Verifique a senha atual informada.');
+      }
+    });
+  }
+
+  requestPasswordResetEmail(): void {
+    const email = this.user()?.email;
+    if (!email) {
+      this.showError('E-mail do usuário não localizado.');
+      return;
+    }
+
+    this.isSendingResetEmail.set(true);
+    this.authService.forgotPassword({ email }).subscribe({
+      next: () => {
+        this.isSendingResetEmail.set(false);
+        this.closeChangePasswordModal();
+        this.showSuccess(`Enviamos um link de redefinição de senha para ${email}. Verifique seu e-mail.`);
+      },
+      error: (err) => {
+        this.isSendingResetEmail.set(false);
+        this.showError(err.error?.message || err.message || 'Falha ao solicitar link de redefinição.');
+      }
+    });
   }
 
   getUserInitials(): string {

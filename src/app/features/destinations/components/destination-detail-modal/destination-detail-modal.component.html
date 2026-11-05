@@ -80,7 +80,7 @@
               <div class="weather-loading-container d-flex flex-column align-items-center justify-content-center my-auto py-5">
                 <div class="weather-mini-spinner mb-3">
                   <div class="spinner-ring" [class.eco-spinner]="isEcoDestination()"></div>
-                  <i class="bi bi-cloud-sun fs-4" [class.text-success]="isEcoDestination()" [class.text-primary]="!isEcoDestination()"></i>
+                  <i class="bi bi-cloud-sun fs-4" [class.text-success]="isEcoDestination()" [class.text-primary]="!isEcoDestination()" aria-hidden="true"></i>
                 </div>
                 <span class="fw-semibold text-dark small">Consultando dados meteorológicos...</span>
                 <span class="text-muted mt-1" style="font-size: 0.75rem;">Conectando à Open-Meteo em tempo real</span>
@@ -107,7 +107,7 @@
 
                       <!-- Detalhes Climáticos do Dia -->
                       <div class="day-metrics">
-                        <span class="hum-text"><i class="bi bi-droplet-fill"></i> {{ day.humidity }}%</span>
+                        <span class="hum-text"><i class="bi bi-droplet-fill" aria-hidden="true"></i> {{ day.humidity }}%</span>
                       </div>
                     </div>
                   }
@@ -119,12 +119,12 @@
                 <h4 class="section-heading mb-2">Planejamento recomendado</h4>
                 <div class="planning-tip-card" [class.eco-planning-card]="isEcoDestination()">
                   <div class="planning-icon-box" [style.background-color]="destinationAccent()">
-                    <i class="bi bi-wallet2 text-white"></i>
+                    <i class="bi bi-wallet2 text-white" aria-hidden="true"></i>
                   </div>
                   <div class="planning-content">
                     <div class="planning-badges-row">
                       <span class="planning-tag" [style.background-color]="destinationAccent()">
-                        <i class="bi bi-calendar3 me-1"></i>{{ travelPlanningTip().daysLabel }}
+                        <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>{{ travelPlanningTip().daysLabel }}
                       </span>
                       <span class="planning-amount">
                         Média sugerida: <strong>{{ travelPlanningTip().suggestedBudget }}</strong>
@@ -140,21 +140,21 @@
               <!-- Faixa de Dados Extras do Clima Open-Meteo -->
               <div class="weather-extra-strip mt-3 pt-1">
                 <div class="extra-item">
-                  <i class="bi bi-thermometer-half text-danger"></i>
+                  <i class="bi bi-thermometer-half text-danger" aria-hidden="true"></i>
                   <div class="extra-item-texts">
                     <span class="extra-label">Sensação</span>
                     <strong class="extra-val">{{ apparentTemp() }}°C</strong>
                   </div>
                 </div>
                 <div class="extra-item">
-                  <i class="bi bi-wind text-primary"></i>
+                  <i class="bi bi-wind text-primary" aria-hidden="true"></i>
                   <div class="extra-item-texts">
                     <span class="extra-label">Vento</span>
                     <strong class="extra-val">{{ windSpeed() }} km/h</strong>
                   </div>
                 </div>
                 <div class="extra-item extra-item-condition">
-                  <i class="bi bi-info-circle text-secondary"></i>
+                  <i class="bi bi-info-circle text-secondary" aria-hidden="true"></i>
                   <div class="extra-item-texts">
                     <span class="extra-label">Condição</span>
                     <strong class="extra-val condition-val" [attr.title]="weatherCondition()">{{ weatherCondition() }}</strong>
@@ -183,7 +183,7 @@
                 <div class="best-time-bar mb-2 px-3 py-2 rounded-3 text-white d-flex align-items-center"
                      [style.background-color]="destinationAccent()"
                      [style.border]="'1px solid ' + destinationAccentBorder()">
-                  <i class="bi bi-calendar2-week me-2 flex-shrink-0 fs-6"></i>
+                  <i class="bi bi-calendar2-week me-2 flex-shrink-0 fs-6" aria-hidden="true"></i>
                   <span class="small fw-semibold lh-base">{{ curated().bestTime }}</span>
                 </div>
                 
@@ -240,7 +240,7 @@
         <div class="glass-card p-4 mt-2">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="gallery-heading m-0">
-              <i class="bi bi-camera me-2 text-primary"></i>Galeria de Fotos de {{ destination.name }}
+              <i class="bi bi-camera me-2 text-primary" aria-hidden="true"></i>Galeria de Fotos de {{ destination.name }}
             </h4>
             <span class="text-secondary small fw-medium">Experiências inspiradoras</span>
           </div>

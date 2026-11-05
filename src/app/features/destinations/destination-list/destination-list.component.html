@@ -7,6 +7,8 @@
     alt="Horizon - Descubra o mundo com conforto e segurança" 
     class="w-100 hero-image"
     fetchpriority="high"
+    loading="eager"
+    decoding="async"
     (error)="handleHeroError($event)"
   />
   
@@ -20,14 +22,14 @@
      <div class="d-flex overflow-hidden shadow-sm search-mode-tabs">
         <button class="border-0 px-4 py-2 fw-bold transition-all d-flex align-items-center gap-2" 
                 [style.background-color]="activeSearchMode() === 'COMMON' ? primaryColor() : 'transparent'"
-                [style.color]="activeSearchMode() === 'COMMON' ? 'white' : '#6c757d'"
+                [style.color]="activeSearchMode() === 'COMMON' ? 'white' : '#374151'"
                 (click)="setSearchMode('COMMON')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.2-1.1.6L3 8l6 5-3 3-3-1-2 2 4 4 4 4 2-2-1-3 3-3 5 6 1.2-.7c.4-.2.7-.6.6-1.1z"/></svg>
           Viagem Comum
         </button>
         <button class="border-0 px-4 py-2 fw-bold transition-all d-flex align-items-center gap-2" 
                 [style.background-color]="activeSearchMode() === 'ECO' ? primaryColor() : 'transparent'"
-                [style.color]="activeSearchMode() === 'ECO' ? 'white' : '#6c757d'"
+                [style.color]="activeSearchMode() === 'ECO' ? 'white' : '#374151'"
                 (click)="setSearchMode('ECO')">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-6"/><path d="M12 16a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v6"/><path d="M12 16a4 4 0 0 1 4-4h2a4 4 0 0 1 4 4v6"/><path d="M12 2C8.686 2 6 4.686 6 8s2.686 6 6 6 6-2.686 6-6-2.686-6-6-6z"/></svg>
           Ecoturismo
@@ -40,7 +42,7 @@
     <!-- Top controls -->
     <div class="d-flex align-items-center gap-3 mb-3 flex-wrap">
       <div class="dropdown position-relative">
-        <button class="btn btn-sm px-3 py-2 rounded-2 fw-semibold text-white theme-transition d-flex align-items-center gap-2" type="button" 
+        <button class="filter-dropdown-btn px-3 py-2 rounded-2 fw-semibold text-white theme-transition d-flex align-items-center gap-2" type="button" 
                 [style.background-color]="primaryColor()" style="border: none;"
                 (click)="toggleDropdown('type', $event)">
           @if (searchType() === 'IDA') {
@@ -109,7 +111,7 @@
       </div>
 
       <div class="dropdown position-relative">
-        <button class="btn btn-sm px-3 py-2 rounded-2 fw-semibold text-white theme-transition d-flex align-items-center gap-2" type="button" 
+        <button class="filter-dropdown-btn px-3 py-2 rounded-2 fw-semibold text-white theme-transition d-flex align-items-center gap-2" type="button" 
                 [style.background-color]="primaryColor()" style="border: none;"
                 (click)="toggleDropdown('class', $event)">
           @if (searchClass() === 'Básico') {
@@ -212,10 +214,10 @@
         <div class="p-2 px-3 rounded-2 cursor-pointer position-relative dropdown-wrapper theme-transition" 
              [style.background-color]="secondaryColor()" 
              (click)="toggleDropdown('origin', $event)">
-          <div class="small text-white-50 mb-1" style="font-size: 0.8rem;">A partir de</div>
+          <div class="small text-white opacity-90 mb-1" style="font-size: 0.8rem;">A partir de</div>
           <div class="text-white fw-bold d-flex justify-content-between align-items-center">
             <span>{{ getOriginLabel() }}</span>
-            <span class="fs-6 opacity-50">▼</span>
+            <span class="fs-6 opacity-75">▼</span>
           </div>
           
           @if (isOriginDropdownOpen()) {
@@ -230,10 +232,10 @@
         <div class="p-2 px-3 rounded-2 cursor-pointer position-relative dropdown-wrapper theme-transition" 
              [style.background-color]="secondaryColor()" 
              (click)="toggleDropdown('dest', $event)">
-          <div class="small text-white-50 mb-1" style="font-size: 0.8rem;">Para</div>
+          <div class="small text-white opacity-90 mb-1" style="font-size: 0.8rem;">Para</div>
           <div class="text-white fw-bold d-flex justify-content-between align-items-center">
             <span>{{ getDestinationLabel() || 'Selecione o destino' }}</span>
-            <span class="fs-6 opacity-50">▼</span>
+            <span class="fs-6 opacity-75">▼</span>
           </div>
           
           @if (isDestinationDropdownOpen()) {
@@ -248,7 +250,7 @@
               <div class="dropdown-header-block d-flex align-items-center justify-content-between p-3 pb-2">
                 <div class="d-flex align-items-center gap-2 min-w-0">
                   <span class="mode-icon-circle">
-                    <i class="bi" [ngClass]="activeSearchMode() === 'ECO' ? 'bi-tree-fill' : 'bi-airplane-fill'"></i>
+                    <i class="bi" [ngClass]="activeSearchMode() === 'ECO' ? 'bi-tree-fill' : 'bi-airplane-fill'" aria-hidden="true"></i>
                   </span>
                   <div class="min-w-0">
                     <div class="header-mode-title text-truncate">
@@ -278,13 +280,14 @@
                           [src]="dest.imageUrl || placeholderImage" 
                           [alt]="dest.name"
                           class="dest-thumb-img" 
+                          loading="lazy"
                           (error)="handleImageError($event)"
                         />
                       </div>
                       <div class="min-w-0">
                         <div class="fw-bold dest-name text-truncate">{{ dest.name }}</div>
                         <div class="small dest-location text-truncate">
-                          <i class="bi bi-geo-alt-fill me-1 location-icon"></i>
+                          <i class="bi bi-geo-alt-fill me-1 location-icon" aria-hidden="true"></i>
                           <span>{{ dest.city }}, {{ dest.country }}</span>
                         </div>
                       </div>
@@ -292,14 +295,14 @@
 
                     @if (dest.id === searchDestinationId()) {
                       <div class="dest-selected-check flex-shrink-0 ms-2">
-                        <i class="bi bi-check-circle-fill"></i>
+                        <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
                       </div>
                     }
                   </div>
                 }
                 @if (currentModeDestinations().length === 0) {
                   <div class="text-center p-4 dest-empty-state">
-                    <i class="bi bi-compass mb-2 d-block fs-3 opacity-50"></i>
+                    <i class="bi bi-compass mb-2 d-block fs-3 opacity-50" aria-hidden="true"></i>
                     <span>Nenhum destino encontrado nesta categoria.</span>
                   </div>
                 }
@@ -314,7 +317,7 @@
           
           <!-- Bloco Ida -->
           <div class="flex-grow-1 cursor-pointer position-relative" (click)="toggleOutboundCalendar($event)">
-            <div class="small text-white-50 mb-1 d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
+            <div class="small text-white opacity-90 mb-1 d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
               <span>Ida</span>
               @if (isLoadingFlightDates()) {
                 <span class="spinner-border spinner-border-sm text-white" role="status" style="width: 10px; height: 10px;"></span>
@@ -323,16 +326,16 @@
             <div class="text-white fw-bold d-flex justify-content-between align-items-center">
               <span class="text-truncate">
                 @if (!searchDestinationId()) {
-                  <span class="text-white-50 small" style="font-size: 0.82rem;">1º Escolha o destino</span>
+                  <span class="text-white opacity-75 small" style="font-size: 0.82rem;">1º Escolha o destino</span>
                 } @else if (isLoadingFlightDates()) {
                   <span class="small" style="font-size: 0.82rem;">Buscando datas...</span>
                 } @else if (searchStartDate()) {
                   <span>{{ formatDisplayDate(searchStartDate()) }}</span>
                 } @else {
-                  <span class="text-white-50 small" style="font-size: 0.82rem;">Selecione a data</span>
+                  <span class="text-white opacity-75 small" style="font-size: 0.82rem;">Selecione a data</span>
                 }
               </span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white-50 flex-shrink-0 ms-1">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white opacity-75 flex-shrink-0 ms-1">
                 <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -399,23 +402,23 @@
           <!-- Bloco Volta (se Ida e Volta) -->
           @if (searchType() === 'IDA_VOLTA') {
             <div class="border-start border-white-50 ps-3 flex-grow-1 cursor-pointer position-relative" (click)="toggleReturnCalendar($event)">
-              <div class="small text-white-50 mb-1 d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
+              <div class="small text-white opacity-90 mb-1 d-flex justify-content-between align-items-center" style="font-size: 0.8rem;">
                 <span>Volta</span>
                 @if (searchEndDate()) {
-                  <span class="text-white-50" style="font-size: 0.7rem; cursor: pointer;" (click)="clearReturnDate($event)" title="Remover volta">✕ Limpar</span>
+                  <span class="text-white opacity-75" style="font-size: 0.7rem; cursor: pointer;" (click)="clearReturnDate($event)" title="Remover volta">✕ Limpar</span>
                 }
               </div>
               <div class="text-white fw-bold d-flex justify-content-between align-items-center">
                 <span class="text-truncate">
                   @if (!searchStartDate()) {
-                    <span class="text-white-50 small" style="font-size: 0.82rem;">2º Escolha a ida</span>
+                    <span class="text-white opacity-75 small" style="font-size: 0.82rem;">2º Escolha a ida</span>
                   } @else if (searchEndDate()) {
                     <span>{{ formatDisplayDate(searchEndDate()) }}</span>
                   } @else {
-                    <span class="text-white-50 small" style="font-size: 0.82rem;">Opcional</span>
+                    <span class="text-white opacity-75 small" style="font-size: 0.82rem;">Opcional</span>
                   }
                 </span>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white-50 flex-shrink-0 ms-1">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white opacity-75 flex-shrink-0 ms-1">
                   <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                   <line x1="16" y1="2" x2="16" y2="6"></line>
                   <line x1="8" y1="2" x2="8" y2="6"></line>
@@ -487,10 +490,10 @@
         <div class="p-2 px-3 rounded-2 cursor-pointer position-relative dropdown-wrapper theme-transition" 
              [style.background-color]="secondaryColor()" 
              (click)="toggleDropdown('passengers', $event)">
-          <div class="small text-white-50 mb-1" style="font-size: 0.8rem;">Passageiros</div>
+          <div class="small text-white opacity-90 mb-1" style="font-size: 0.8rem;">Passageiros</div>
           <div class="text-white fw-bold d-flex justify-content-between align-items-center">
             <span>{{ searchPassengers() }} pessoa{{ searchPassengers() > 1 ? 's' : '' }}</span>
-            <span class="fs-6 opacity-50">▼</span>
+            <span class="fs-6 opacity-75">▼</span>
           </div>
           
           @if (isPassengersDropdownOpen()) {
@@ -580,7 +583,9 @@
       <!-- SEÇÃO 1: DESTINOS COMUNS -->
       <section class="mb-5" id="section-common">
         <div class="dest-section-header header-common mb-4">
-          <h2 class="dest-title mb-1">Destinos <span style="color: #5BA4D8;">Comuns</span></h2>
+          <h2 class="dest-title dest-title-animated dest-title-common mb-1">
+            <span class="dest-word-main">Destinos</span> <span class="dest-word-accent">Comuns</span>
+          </h2>
           <p class="dest-subtitle text-secondary mb-0">
             Explore cidades vibrantes, história e os roteiros urbanos mais procurados no mundo.
           </p>
@@ -616,7 +621,9 @@
       <!-- SEÇÃO 2: ECOTURISMO -->
       <section class="mt-5 pt-3" id="section-eco">
         <div class="dest-section-header header-eco mb-4 scroll-reveal">
-          <h2 class="dest-title mb-1">Eco<span style="color: #65A30D;">turismo</span></h2>
+          <h2 class="dest-title dest-title-animated dest-title-eco mb-1">
+            <span class="dest-word-main">Eco</span><span class="dest-word-accent">turismo</span>
+          </h2>
           <p class="dest-subtitle text-secondary mb-0">
             Santuários ecológicos, florestas preservadas e paisagens extraordinárias.
           </p>
@@ -678,38 +685,32 @@
             <div class="col-12 col-lg-6 d-flex justify-content-center">
               <div class="quiz-swipe-stage-outer position-relative w-100 d-flex flex-column align-items-center">
 
-                <!-- Guias com Setas Streetwear / Curvadas Modernas -->
+                <!-- Guias Informativas de Deslize (Sem setas, sem formato pill) -->
                 <div class="swipe-canvas-background-guides w-100 d-flex justify-content-between align-items-center mb-2 px-2" aria-hidden="true">
                   <!-- Guia Esquerda (Rejeitar) -->
                   <div class="swipe-guide-streetwear guide-left" [class.is-active]="swipeFeedback() === 'pass'">
-                    <svg width="26" height="18" viewBox="0 0 32 22" fill="none" class="streetwear-arrow arrow-left">
-                      <path d="M28 6 C20 3, 11 8, 5 14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-                      <path d="M5 8 L4 14.5 L11 14.5" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    <span class="guide-indicator-dot dot-left"></span>
                     <span class="guide-text">Deslize aqui para rejeitar</span>
                   </div>
 
                   <!-- Guia Direita (Combinar) -->
                   <div class="swipe-guide-streetwear guide-right" [class.is-active]="swipeFeedback() === 'like'">
                     <span class="guide-text">Deslize aqui para combinar</span>
-                    <svg width="26" height="18" viewBox="0 0 32 22" fill="none" class="streetwear-arrow arrow-right">
-                      <path d="M4 6 C12 3, 21 8, 27 14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
-                      <path d="M21 14.5 L28 14.5 L27 8" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
+                    <span class="guide-indicator-dot dot-right"></span>
                   </div>
                 </div>
 
                 <!-- Palco do Baralho de Cards Empilhados (Stacked Deck) -->
-                <div class="quiz-deck-stack-container position-relative">
+                <div class="quiz-deck-stack-container position-relative" [class.is-swiping-out]="!!isCardAnimatingOut()">
                   
                   <!-- Marcadores d'água no fundo (aparecem conforme o card é arrastado) -->
                   <div class="deck-watermark-hints" aria-hidden="true">
                     <div class="watermark-hint hint-left-side" [class.is-lit]="swipeFeedback() === 'pass'">
-                      <i class="bi bi-x-circle-fill d-block mb-1 fs-2 text-danger"></i>
+                      <i class="bi bi-x-circle-fill d-block mb-1 fs-2 text-danger" aria-hidden="true"></i>
                       <span>NÃO COMBINA COMIGO</span>
                     </div>
                     <div class="watermark-hint hint-right-side" [class.is-lit]="swipeFeedback() === 'like'">
-                      <i class="bi bi-check-circle-fill d-block mb-1 fs-2 text-success"></i>
+                      <i class="bi bi-check-circle-fill d-block mb-1 fs-2 text-success" aria-hidden="true"></i>
                       <span>COMBINA COMIGO</span>
                     </div>
                   </div>
@@ -717,7 +718,7 @@
                   <!-- Card 2 (Mais ao Fundo do Baralho - Aparecendo atrás à esquerda) -->
                   @if (visibleQuizPreviewStack()[2]; as cardBack) {
                     <div class="quiz-deck-layer layer-back shadow-sm">
-                      <img [src]="cardBack.card.image" [alt]="cardBack.card.label" class="w-100 h-100 object-fit-cover" (error)="handleImageError($event)">
+                      <img [src]="cardBack.card.image" [alt]="cardBack.card.label" class="w-100 h-100 object-fit-cover" loading="lazy" (error)="handleImageError($event)">
                       <div class="deck-layer-overlay"></div>
                       <div class="position-absolute bottom-0 start-0 w-100 p-3 text-start z-2">
                         <span class="fw-bold text-white small d-block text-truncate">{{ cardBack.card.label }}</span>
@@ -728,7 +729,7 @@
                   <!-- Card 1 (Meio do Baralho - Aparecendo atrás à direita) -->
                   @if (visibleQuizPreviewStack()[1]; as cardMid) {
                     <div class="quiz-deck-layer layer-mid shadow">
-                      <img [src]="cardMid.card.image" [alt]="cardMid.card.label" class="w-100 h-100 object-fit-cover" (error)="handleImageError($event)">
+                      <img [src]="cardMid.card.image" [alt]="cardMid.card.label" class="w-100 h-100 object-fit-cover" loading="lazy" (error)="handleImageError($event)">
                       <div class="deck-layer-overlay-mid"></div>
                       <div class="position-absolute bottom-0 start-0 w-100 p-3 text-start z-2">
                         <span class="fw-bold text-white small d-block text-truncate">{{ cardMid.card.label }}</span>
@@ -757,6 +758,7 @@
                         [alt]="topCard.card.label" 
                         class="w-100 h-100 object-fit-cover"
                         draggable="false"
+                        loading="lazy"
                         (error)="handleImageError($event)"
                       >
 
@@ -764,11 +766,11 @@
                        <div class="swipe-tint-overlay" [class.tint-like]="swipeFeedback() === 'like'" [class.tint-pass]="swipeFeedback() === 'pass'" aria-hidden="true"></div>
                       @if (swipeFeedback() === 'like') {
                         <div class="swipe-stamp-feedback stamp-like animate-pop">
-                          <i class="bi bi-check-circle-fill me-1"></i> COMBINA COMIGO
+                          <i class="bi bi-check-circle-fill me-1" aria-hidden="true"></i> COMBINA COMIGO
                         </div>
                       } @else if (swipeFeedback() === 'pass') {
                         <div class="swipe-stamp-feedback stamp-pass animate-pop">
-                          <i class="bi bi-x-circle-fill me-1"></i> NÃO COMBINA COMIGO
+                          <i class="bi bi-x-circle-fill me-1" aria-hidden="true"></i> NÃO COMBINA COMIGO
                         </div>
                       }
 
@@ -797,7 +799,7 @@
                     (click)="performSwipe('left', $event)"
                     aria-label="Não combina comigo"
                   >
-                    <i class="bi bi-x-lg" style="font-size: 1.15rem;"></i>
+                    <i class="bi bi-x-lg" style="font-size: 1.15rem;" aria-hidden="true"></i>
                   </button>
 
                   <div class="d-flex flex-column align-items-center">
@@ -823,7 +825,7 @@
                     (click)="performSwipe('right', $event)"
                     aria-label="Combina comigo"
                   >
-                    <i class="bi bi-check-lg" style="font-size: 1.35rem;"></i>
+                    <i class="bi bi-check-lg" style="font-size: 1.35rem;" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -948,7 +950,7 @@
                           [attr.x]="axis.textX" 
                           [attr.y]="axis.textY" 
                           [attr.text-anchor]="axis.anchor" 
-                          fill="#1e293b" 
+                          class="radar-axis-label"
                           font-size="11.5" 
                           font-weight="700"
                         >{{ axis.label }}</text>
@@ -956,6 +958,7 @@
                           [attr.x]="axis.textX" 
                           [attr.y]="axis.pctY" 
                           [attr.text-anchor]="axis.anchor" 
+                          class="radar-axis-pct"
                           [attr.fill]="quizRadarAxisPct(axis.key) >= 75 ? '#65A30D' : '#5BA4D8'" 
                           font-size="10.5" 
                           font-weight="800"
@@ -968,7 +971,7 @@
                 <!-- Barra de Arquétipo Dominante Integrada -->
                 <div class="radar-archetype-box">
                   <div class="archetype-icon-box">
-                    <i class="bi bi-compass-fill"></i>
+                    <i class="bi bi-compass-fill" aria-hidden="true"></i>
                   </div>
                   <div class="archetype-text">
                     <span class="archetype-label">Arquétipo dominante</span>
@@ -1059,7 +1062,7 @@
                       style="width: 48px; height: 48px; font-size: 1.2rem;"
                       [style.background-color]="currentQuizPreview().isEco ? '#65A30D' : '#5BA4D8'"
                     >
-                      <i class="bi bi-person-check-fill"></i>
+                      <i class="bi bi-person-check-fill" aria-hidden="true"></i>
                     </div>
                     <div>
                       <span class="text-uppercase fw-bold d-block" style="font-size: 0.72rem; letter-spacing: 0.08em;" [style.color]="currentQuizPreview().isEco ? '#65A30D' : '#5BA4D8'">
@@ -1080,6 +1083,7 @@
                       [src]="currentQuizPreview().cardImg" 
                       alt="Cartão Horizon" 
                       class="w-100 h-100 object-fit-cover"
+                      loading="lazy"
                       (error)="handleImageError($event)"
                     >
                   </div>
@@ -1102,6 +1106,10 @@
                           <div 
                             class="progress-bar" 
                             role="progressbar" 
+                            [attr.aria-label]="aff.label"
+                            [attr.aria-valuenow]="aff.pct"
+                            aria-valuemin="0"
+                            aria-valuemax="100"
                             [style.width.%]="aff.pct"
                             [style.background-color]="aff.color"
                             style="border-radius: 6px; transition: width 0.5s cubic-bezier(0.16, 1, 0.3, 1);"
@@ -1154,7 +1162,7 @@
             Leva menos de 3 minutos e o resultado é feito sob medida para você.
           </p>
           <a routerLink="/quiz" class="btn quiz-final-cta-btn fw-bold text-white text-decoration-none d-inline-flex align-items-center justify-content-center gap-2">
-            <i class="bi bi-compass-fill"></i>
+            <i class="bi bi-compass-fill" aria-hidden="true"></i>
             <span>Fazer meu Quiz agora</span>
           </a>
         </div>
@@ -1250,7 +1258,7 @@
           <!-- Botão CTA Centralizado para o Feed (sem setas, rounded-3) -->
           <div class="d-flex justify-content-center mt-5 mb-2 explore-btn-wrapper scroll-reveal">
             <a routerLink="/feed" class="btn fw-bold px-4 py-2.5 rounded-3 shadow text-decoration-none d-inline-flex align-items-center justify-content-center gap-2 btn-feed-community">
-              <i class="bi bi-collection-fill fs-5 btn-icon"></i>
+              <i class="bi bi-collection-fill fs-5 btn-icon" aria-hidden="true"></i>
               <span>Acessar Feed Horizon</span>
             </a>
           </div>
@@ -1283,7 +1291,7 @@
          [style.background-color]="toastType() === 'error' ? '#dc3545' : (toastType() === 'warning' ? '#ff9800' : '#2e7d32')"
          role="alert" style="min-width: 320px; animation: slideInRight 0.3s ease-out;">
       <div class="d-flex align-items-center w-100">
-        <i class="bi fs-5 me-2" [class.bi-exclamation-triangle-fill]="toastType() === 'warning'" [class.bi-x-circle-fill]="toastType() === 'error'" [class.bi-check-circle-fill]="toastType() === 'success'"></i>
+        <i class="bi fs-5 me-2" [class.bi-exclamation-triangle-fill]="toastType() === 'warning'" [class.bi-x-circle-fill]="toastType() === 'error'" [class.bi-check-circle-fill]="toastType() === 'success'" aria-hidden="true"></i>
         <div class="toast-body p-0 flex-grow-1 fw-medium">
           {{ toastMessage() }}
         </div>
@@ -1335,7 +1343,7 @@
         (click)="$event.stopPropagation(); quizSubtleNotice.set(null)" 
         aria-label="Fechar aviso"
       >
-        <i class="bi bi-x"></i>
+        <i class="bi bi-x" aria-hidden="true"></i>
       </button>
     </div>
   }

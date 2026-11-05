@@ -1189,3 +1189,417 @@
   position: relative;
   z-index: 1;
 }
+
+
+/* Modo Escuro em Perfil (/profile) */
+:host-context([data-theme='dark']) {
+  .user-layout-bg {
+    background-color: #0f172a !important;
+    color: #e5e7eb !important;
+  }
+
+  .card,
+  .bg-white,
+  .sidebar-card,
+  .figma-white-card,
+  .profile-card,
+  .settings-card,
+  .privacy-principle-card,
+  .privacy-contact-card {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35) !important;
+  }
+
+  .sidebar-user-name {
+    color: #8cc4ec !important; /* Horizon Bright Blue no fundo escuro para nunca sumir */
+  }
+
+  .avatar-circle {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #8cc4ec !important;
+  }
+
+  .menu-item-link {
+    color: #cbd5e1 !important;
+
+    &:hover {
+      background-color: #273449 !important;
+      color: #ffffff !important;
+    }
+
+    &.active {
+      background-color: rgba(91, 164, 216, 0.22) !important;
+      color: #8cc4ec !important;
+      font-weight: 700 !important;
+    }
+  }
+
+  .sidebar-btn-logout {
+    background-color: rgba(220, 38, 38, 0.18) !important;
+    color: #f87171 !important;
+
+    &:hover {
+      background-color: rgba(220, 38, 38, 0.3) !important;
+      color: #fca5a5 !important;
+    }
+  }
+
+  .btn-back-dashboard {
+    background-color: #273449 !important;
+    border-color: #475569 !important;
+    color: #8cc4ec !important;
+
+    &:hover {
+      background-color: #334155 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .view-header-title {
+    color: #ffffff !important;
+  }
+
+  .nav-pills .nav-link,
+  .sidebar-link {
+    color: #94a3b8 !important;
+
+    &:hover:not(.active) {
+      background-color: #273449 !important;
+      color: #ffffff !important;
+    }
+
+    &.active {
+      background-color: #5BA4D8 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .form-control,
+  .form-select {
+    background-color: #111c30 !important;
+    border-color: #475569 !important;
+    color: #f1f5f9 !important;
+
+    &:disabled,
+    &[readonly] {
+      background-color: #1e293b !important;
+      color: #94a3b8 !important;
+      border-color: #334155 !important;
+    }
+
+    &::placeholder {
+      color: #64748b !important;
+    }
+  }
+
+  label,
+  .form-label,
+  .text-dark,
+  h1, h2:not(.sidebar-user-name), h3, h4, h5, h6 {
+    color: #f1f5f9 !important;
+  }
+
+  .text-muted,
+  .text-secondary {
+    color: #94a3b8 !important;
+  }
+
+  .bg-light {
+    background-color: #273449 !important;
+    color: #e2e8f0 !important;
+  }
+
+  .border {
+    border-color: #334155 !important;
+  }
+
+  .modal-content {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+  }
+
+  .info-item-label {
+    color: #94a3b8 !important;
+  }
+
+  .info-item-value {
+    color: #f1f5f9 !important;
+  }
+
+  .info-item-row:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  /* Política de Privacidade no Modo Escuro */
+  .privacy-lead-text,
+  .privacy-section-text {
+    color: #cbd5e1 !important;
+  }
+
+  .privacy-section-title {
+    color: #8cc4ec !important;
+  }
+
+  .privacy-list li {
+    color: #cbd5e1 !important;
+
+    strong {
+      color: #f1f5f9 !important;
+    }
+
+    &::before {
+      color: #8cc4ec !important;
+    }
+  }
+
+  .privacy-principle-card {
+    background-color: #273449 !important;
+    border-color: #334155 !important;
+
+    strong,
+    .text-dark {
+      color: #f1f5f9 !important;
+    }
+
+    .text-secondary {
+      color: #94a3b8 !important;
+    }
+
+    &:hover {
+      background-color: #334155 !important;
+      border-color: #5BA4D8 !important;
+    }
+  }
+
+  .privacy-contact-card {
+    background-color: #273449 !important;
+    border-color: #334155 !important;
+
+    strong,
+    .text-dark {
+      color: #f1f5f9 !important;
+    }
+
+    .text-secondary,
+    .text-muted {
+      color: #cbd5e1 !important;
+    }
+  }
+}
+
+/* ========================================================
+   Alto Contraste em Perfil (/profile)
+   ======================================================== */
+:host-context(.a11y-high-contrast) {
+  .user-layout-bg {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .view-container {
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .sidebar-card,
+  .figma-white-card,
+  .card,
+  .profile-card,
+  .settings-card,
+  .privacy-principle-card,
+  .privacy-contact-card {
+    background-color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    box-shadow: none !important;
+    color: #000000 !important;
+  }
+
+  .sidebar-user-name,
+  .view-header-title,
+  .info-item-label,
+  .info-item-value,
+  .privacy-lead-text,
+  .privacy-section-title,
+  .privacy-section-text,
+  .privacy-list li,
+  .privacy-list li strong,
+  h1:not(.text-white),
+  h2:not(.text-white),
+  h3:not(.text-white),
+  h4:not(.text-white),
+  h5:not(.text-white),
+  h6:not(.text-white),
+  label, .form-label {
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .text-white,
+  .text-white * {
+    color: #ffffff !important;
+  }
+
+  .avatar-circle {
+    border: 3px solid #000000 !important;
+    background-color: #f1f5f9 !important;
+  }
+
+  .menu-group-btn {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .menu-item-link {
+    color: #000000 !important;
+    font-weight: 700 !important;
+
+    &:hover {
+      background-color: #e2e8f0 !important;
+      color: #000000 !important;
+    }
+
+    &.active {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .sidebar-btn-evaluate {
+    border: 2px solid #000000 !important;
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .sidebar-btn-logout {
+    border: 2px solid #dc2626 !important;
+    background-color: #ffffff !important;
+    color: #dc2626 !important;
+    font-weight: 800 !important;
+
+    &:hover {
+      background-color: #dc2626 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .btn-back-dashboard {
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    font-weight: 800 !important;
+
+    &:hover {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+    }
+  }
+}
+
+:host-context(.a11y-high-contrast[data-theme='dark']) {
+  .user-layout-bg {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+  }
+
+  .view-container {
+    border: none !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .sidebar-card,
+  .figma-white-card,
+  .card,
+  .profile-card,
+  .settings-card,
+  .privacy-principle-card,
+  .privacy-contact-card {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+  }
+
+  .sidebar-user-name,
+  .view-header-title,
+  .info-item-label,
+  .info-item-value,
+  .privacy-lead-text,
+  .privacy-section-title,
+  .privacy-section-text,
+  .privacy-list li,
+  .privacy-list li strong,
+  h1, h2, h3, h4, h5, h6,
+  label, .form-label {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .avatar-circle {
+    border: 3px solid #ffffff !important;
+    background-color: #000000 !important;
+  }
+
+  .menu-group-btn {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .menu-item-link {
+    color: #ffffff !important;
+    font-weight: 700 !important;
+
+    &:hover {
+      background-color: #1e293b !important;
+      color: #ffffff !important;
+    }
+
+    &.active {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      font-weight: 800 !important;
+    }
+  }
+
+  .sidebar-btn-evaluate {
+    border: 2px solid #ffffff !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+
+  .sidebar-btn-logout {
+    border: 2px solid #f87171 !important;
+    background-color: #000000 !important;
+    color: #f87171 !important;
+    font-weight: 800 !important;
+
+    &:hover {
+      background-color: #f87171 !important;
+      color: #000000 !important;
+    }
+  }
+
+  .btn-back-dashboard {
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    background-color: #000000 !important;
+    font-weight: 800 !important;
+
+    &:hover {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+    }
+  }
+}

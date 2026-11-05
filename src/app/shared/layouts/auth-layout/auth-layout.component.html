@@ -9,14 +9,15 @@
           @if (imageSrc) {
             <img 
               [src]="imageSrc" 
-              alt="Horizon Auth" 
+              alt="" 
+              aria-hidden="true"
               class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
               style="object-position: left center;"
             />
           } @else {
             <div class="auth-bg-overlay"></div>
             <div class="position-relative z-2 text-center max-w-brand text-white p-5 h-100 d-flex flex-column align-items-center justify-content-center">
-              <h1 class="display-4 fw-bold mb-3 tracking-tight">Horizon</h1>
+              <p class="display-4 fw-bold mb-3 tracking-tight">Horizon</p>
               <p class="lead mb-0 text-white-50">
                 Sua agência de viagens com recomendações inteligentes e personalizadas.
               </p>
@@ -24,15 +25,15 @@
           }
         </div>
 
-        <!-- Coluna de Formulário (Fundo cinza bem claro) -->
-        <div 
+        <!-- Coluna de Formulário (Fundo cinza bem claro) - landmark principal da página -->
+        <main 
           class="position-relative p-0 h-100 auth-form-side"
           [ngClass]="{'order-2': imagePosition === 'left', 'order-1': imagePosition === 'right'}"
         >
           <div class="w-100 h-100 auth-form-container d-flex align-items-center justify-content-center">
             <ng-content></ng-content>
           </div>
-        </div>
+        </main>
         
       </div>
     </div>

@@ -1322,3 +1322,94 @@ $bg-light: #f4f6f9;
     padding: 1.5rem 1.25rem;
   }
 }
+
+
+/* Modo Escuro em Central de Ajuda (FAQ) */
+:host-context([data-theme='dark']) {
+  background-color: #0f172a !important;
+  color: #e5e7eb !important;
+
+  .faq-page,
+  .popular-section,
+  .categories-section,
+  .contact-section {
+    background-color: #0f172a !important;
+  }
+
+  .popular-heading,
+  .section-heading,
+  .category-title,
+  h1, h2, h3, h4, h5, h6 {
+    color: #f1f5f9 !important;
+  }
+
+  .popular-item {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+  }
+
+  .popular-question-btn {
+    background: #1e293b !important;
+    color: #f1f5f9 !important;
+  }
+
+  .popular-question-text {
+    color: #f1f5f9 !important;
+  }
+
+  .popular-answer {
+    background: #1e293b !important;
+    color: #cbd5e1 !important;
+  }
+
+  .category-card,
+  .faq-card,
+  .card,
+  .bg-white {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+  }
+
+  .accordion-item {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+  }
+
+  .accordion-button {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+
+    &:not(.collapsed) {
+      background-color: #273449 !important;
+      color: #8cc4ec !important;
+    }
+  }
+
+  .accordion-body {
+    background-color: #1e293b !important;
+    color: #cbd5e1 !important;
+  }
+
+  .text-dark {
+    color: #f1f5f9 !important;
+  }
+
+  .text-muted,
+  .text-secondary {
+    color: #94a3b8 !important;
+  }
+
+  .hero-search-wrapper {
+    background: #1e293b !important;
+    border-color: #475569 !important;
+  }
+
+  .hero-search-input {
+    color: #f1f5f9 !important;
+
+    &::placeholder {
+      color: #94a3b8 !important;
+    }
+  }
+}

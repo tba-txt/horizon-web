@@ -1,7 +1,7 @@
 <footer class="footer-horizon position-relative overflow-hidden mt-auto">
       <!-- Watermark náutica / bússola sutil de fundo -->
       <div class="footer-watermark pointer-events-none" aria-hidden="true">
-        <i class="bi bi-compass"></i>
+        <i class="bi bi-compass" aria-hidden="true"></i>
       </div>
 
       <div class="container position-relative z-1 py-5">
@@ -28,16 +28,16 @@
             <!-- Redes Sociais -->
             <div class="d-flex align-items-center gap-2 mb-4 mb-md-0">
               <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Instagram da Horizon">
-                <i class="bi bi-instagram"></i>
+                <i class="bi bi-instagram" aria-hidden="true"></i>
               </a>
               <a href="https://x.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="X (antigo Twitter) da Horizon">
-                <i class="bi bi-twitter-x"></i>
+                <i class="bi bi-twitter-x" aria-hidden="true"></i>
               </a>
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="Facebook da Horizon">
-                <i class="bi bi-facebook"></i>
+                <i class="bi bi-facebook" aria-hidden="true"></i>
               </a>
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="LinkedIn da Horizon">
-                <i class="bi bi-linkedin"></i>
+                <i class="bi bi-linkedin" aria-hidden="true"></i>
               </a>
             </div>
           </div>
@@ -63,9 +63,10 @@
               <li><a routerLink="/profile" [queryParams]="{ tab: 'trips' }" class="footer-nav-link">Minhas viagens</a></li>
               <li><a routerLink="/profile" [queryParams]="{ tab: 'privacy' }" class="footer-nav-link">Política de privacidade</a></li>
               <li><a routerLink="/profile" [queryParams]="{ tab: 'feedback' }" class="footer-nav-link">Avaliar plataforma</a></li>
+              <li><a routerLink="/accessibility" class="footer-nav-link">Acessibilidade</a></li>
               <li class="mt-2 pt-1">
                 <a href="mailto:horiozonfatecpi@gmail.com" class="footer-email-link">
-                  <i class="bi bi-envelope me-1"></i>
+                  <i class="bi bi-envelope me-1" aria-hidden="true"></i>
                   horiozonfatecpi&#64;gmail.com
                 </a>
               </li>
@@ -80,7 +81,7 @@
                 Calibre seus gostos e deixe nosso algoritmo planejar a viagem perfeita.
               </p>
               <a routerLink="/quiz" class="btn-footer-cta text-decoration-none d-inline-flex align-items-center justify-content-center gap-2 w-100">
-                <i class="bi bi-compass"></i>
+                <i class="bi bi-compass" aria-hidden="true"></i>
                 <span>Descubra seu Perfil</span>
               </a>
             </div>
@@ -108,7 +109,7 @@
 
           @if (langNotice()) {
             <div class="lang-notice-toast animate-fade-in mt-2 small">
-              <i class="bi bi-info-circle me-1"></i>
+              <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
               <span>{{ langNotice() }}</span>
             </div>
           }

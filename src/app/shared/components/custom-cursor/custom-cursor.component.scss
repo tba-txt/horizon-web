@@ -1,0 +1,107 @@
+:host {
+  display: block;
+  pointer-events: none;
+}
+
+.horizon-figma-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none !important;
+  z-index: 99999999 !important;
+  user-select: none;
+  opacity: 1;
+  visibility: visible;
+  will-change: transform;
+  transform: translate3d(-100px, -100px, 0);
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+
+  &.is-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+
+  .cursor-arrow {
+    display: block;
+    width: 22px;
+    height: 22px;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.28));
+    transform-origin: 0 0;
+    transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .cursor-tag {
+    position: absolute;
+    top: 13px;
+    left: 12px;
+    background-color: #5BA4D8;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Ubuntu', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: 0.2px;
+    padding: 2.5px 8px;
+    border-radius: 0 4px 4px 4px; /* Figma multiplayer style: attached to cursor notch, strictly non-pill */
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
+    white-space: nowrap;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-top: none;
+    border-left: none;
+    pointer-events: none;
+    line-height: 1.3;
+    transform-origin: 0 0;
+    transition: transform 0.12s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.12s ease;
+
+    .cursor-name {
+      display: inline-block;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      vertical-align: middle;
+    }
+  }
+
+  /* Interaction feedback */
+  &.is-pointer {
+    .cursor-arrow {
+      transform: scale(1.08);
+    }
+    .cursor-tag {
+      transform: scale(1.04) translate(1px, 1px);
+      box-shadow: 0 4px 12px rgba(91, 164, 216, 0.45);
+    }
+  }
+
+  &.is-clicking {
+    .cursor-arrow {
+      transform: scale(0.92);
+    }
+    .cursor-tag {
+      transform: scale(0.92);
+    }
+  }
+}
+
+/* High Contrast Mode support */
+:host-context(body.high-contrast) {
+  .horizon-figma-cursor {
+    .cursor-arrow {
+      filter: drop-shadow(0 0 2px #000000);
+      path {
+        stroke: #ffffff !important;
+        stroke-width: 2px !important;
+      }
+    }
+    .cursor-tag {
+      border: 1.5px solid #ffffff !important;
+      box-shadow: 0 0 0 1px #000000, 0 4px 10px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+}
+
+/* Touchscreens / mobile devices safeguard */
+@media (hover: none) or (pointer: coarse) {
+  .horizon-figma-cursor {
+    display: none !important;
+  }
+}

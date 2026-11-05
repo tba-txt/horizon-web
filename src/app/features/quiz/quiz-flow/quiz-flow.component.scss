@@ -599,6 +599,18 @@
   border: 2px solid #ffffff;
   box-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
   transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.35s ease, box-shadow 0.3s ease;
+  will-change: transform, opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  contain: paint layout;
+
+  img {
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
 }
 
 .option-next-balloon {
@@ -655,5 +667,233 @@
 
   &:hover {
     background-color: #4895cc !important;
+  }
+}
+
+
+/* Atalhos de Orçamento (Presets) */
+.quiz-budget-preset-btn {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #f1f5f9;
+  }
+
+  &.is-active {
+    background-color: rgba(91, 164, 216, 0.12);
+    border: 1.5px solid #5BA4D8;
+    color: #2b7bb9;
+  }
+}
+
+/* Card de Passaporte */
+.quiz-passport-card {
+  background-color: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  transition: all 0.2s ease;
+
+  &.is-active {
+    background-color: rgba(91, 164, 216, 0.08);
+    border-color: #5BA4D8;
+  }
+}
+
+.quiz-passport-icon {
+  background-color: #e2e8f0;
+  color: #64748b;
+  transition: all 0.2s ease;
+
+  &.is-active {
+    background-color: #5BA4D8;
+    color: #ffffff;
+  }
+}
+
+.quiz-passport-title {
+  color: #0f172a;
+  transition: color 0.2s ease;
+}
+
+.quiz-passport-desc {
+  color: #64748b;
+  transition: color 0.2s ease;
+}
+
+/* Modo Escuro em Quiz */
+:host-context([data-theme='dark']) {
+  background-color: #0f172a !important;
+  color: #e5e7eb !important;
+
+  main {
+    background-color: #0f172a !important;
+  }
+
+  .card,
+  .question-wizard-card,
+  .bg-white {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #e5e7eb !important;
+  }
+
+  .text-dark {
+    color: #f1f5f9 !important;
+  }
+
+  .text-secondary,
+  .text-muted {
+    color: #94a3b8 !important;
+  }
+
+  .quiz-deck-card {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+  }
+
+  .bg-light {
+    background-color: #273449 !important;
+    border-color: #334155 !important;
+  }
+
+  .badge.bg-white {
+    background-color: #273449 !important;
+    color: #f1f5f9 !important;
+    border: 1px solid #475569 !important;
+  }
+
+  .border {
+    border-color: #334155 !important;
+  }
+
+  /* Orçamento Presets em Dark */
+  .quiz-budget-preset-btn {
+    background-color: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #cbd5e1 !important;
+
+    &:hover {
+      background-color: #273449 !important;
+    }
+
+    &.is-active {
+      background-color: rgba(91, 164, 216, 0.2) !important;
+      border: 1.5px solid #5BA4D8 !important;
+      color: #5BA4D8 !important;
+    }
+  }
+
+  /* Card de Passaporte em Dark */
+  .quiz-passport-card {
+    background-color: #1e293b !important;
+    border: 1.5px solid #334155 !important;
+
+    &.is-active {
+      background-color: rgba(91, 164, 216, 0.12) !important;
+      border: 1.5px solid #5BA4D8 !important;
+    }
+  }
+
+  .quiz-passport-icon {
+    background-color: #273449 !important;
+    color: #94a3b8 !important;
+
+    &.is-active {
+      background-color: #5BA4D8 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .quiz-passport-title {
+    color: #f1f5f9 !important;
+  }
+
+  .quiz-passport-desc {
+    color: #94a3b8 !important;
+  }
+
+  .quiz-passport-badge-active {
+    background-color: #65A30D !important;
+    color: #ffffff !important;
+  }
+}
+
+/* Modo Escuro + Alto Contraste em Quiz */
+:host-context(html.a11y-high-contrast[data-theme='dark']),
+:host-context(.a11y-high-contrast[data-theme='dark']) {
+  .quiz-budget-preset-btn {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+
+    &.is-active {
+      background-color: #5BA4D8 !important;
+      border: 2px solid #ffffff !important;
+      color: #000000 !important;
+    }
+  }
+
+  .quiz-passport-card {
+    background-color: #000000 !important;
+    border: 2px solid #ffffff !important;
+
+    &.is-active {
+      background-color: #000000 !important;
+      border: 2.5px solid #5BA4D8 !important;
+    }
+  }
+
+  .quiz-passport-icon {
+    background-color: #000000 !important;
+    border: 1.5px solid #ffffff !important;
+    color: #ffffff !important;
+
+    &.is-active {
+      background-color: #5BA4D8 !important;
+      border: 1.5px solid #ffffff !important;
+      color: #ffffff !important;
+    }
+  }
+
+  .quiz-passport-title {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+  }
+
+  .quiz-passport-desc {
+    color: #ffffff !important;
+  }
+
+  .quiz-passport-badge-active {
+    background-color: #65A30D !important;
+    color: #ffffff !important;
+    border: 1.5px solid #ffffff !important;
+    font-weight: 800 !important;
+  }
+}
+
+/* Alto Contraste Claro em Quiz */
+:host-context(html.a11y-high-contrast:not([data-theme='dark'])),
+:host-context(.a11y-high-contrast:not([data-theme='dark'])) {
+  .quiz-passport-card {
+    border: 2px solid #000000 !important;
+    &.is-active {
+      border: 2px solid #000000 !important;
+    }
+  }
+  .quiz-passport-title {
+    color: #000000 !important;
+    font-weight: 800 !important;
+  }
+  .quiz-passport-desc {
+    color: #000000 !important;
+  }
+  .quiz-budget-preset-btn {
+    border: 2px solid #000000 !important;
+    color: #000000 !important;
+    font-weight: 700 !important;
   }
 }

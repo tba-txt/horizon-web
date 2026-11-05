@@ -8,7 +8,7 @@
       <div class="radar-ring ring-3"></div>
       <!-- Ícone Central -->
       <div class="radar-center shadow-lg">
-        <i class="bi bi-fingerprint text-white fs-1"></i>
+        <i class="bi bi-fingerprint text-white fs-1" aria-hidden="true"></i>
       </div>
     </div>
     
@@ -98,9 +98,9 @@
                   <div class="d-flex align-items-center gap-3">
                     <div class="empty-state-icon-box flex-shrink-0 d-flex align-items-center justify-content-center">
                       @if (resetSuccess()) {
-                        <i class="bi bi-check2-circle fs-4 theme-text"></i>
+                        <i class="bi bi-check2-circle fs-4 theme-text" aria-hidden="true"></i>
                       } @else {
-                        <i class="bi bi-sliders2-vertical fs-4 theme-text"></i>
+                        <i class="bi bi-sliders2-vertical fs-4 theme-text" aria-hidden="true"></i>
                       }
                     </div>
                     <div>
@@ -119,10 +119,10 @@
 
                   <div class="d-flex align-items-center gap-2 flex-shrink-0">
                     <a routerLink="/quiz" class="btn-empty-action primary-action">
-                      <i class="bi bi-patch-question-fill me-1"></i> Fazer Quiz
+                      <i class="bi bi-patch-question-fill me-1" aria-hidden="true"></i> Fazer Quiz
                     </a>
                     <a routerLink="/feed" class="btn-empty-action secondary-action">
-                      <i class="bi bi-compass me-1"></i> Explorar Feed
+                      <i class="bi bi-compass me-1" aria-hidden="true"></i> Explorar Feed
                     </a>
                   </div>
                 </div>
@@ -196,7 +196,7 @@
             [disabled]="isResetting()"
             aria-label="Fechar"
           >
-            <i class="bi bi-x-lg"></i>
+            <i class="bi bi-x-lg" aria-hidden="true"></i>
           </button>
         </div>
 
