@@ -11,6 +11,7 @@ import { ReservationService } from '../../core/reservations/services/reservation
 import { PaymentService } from '../../core/reservations/services/payment.service';
 import { TokenStorageService } from '../../core/auth/services/token-storage.service';
 import { UserService } from '../../core/user/services/user.service';
+import { FeedbackService } from '../../core/feedback/services/feedback.service';
 import { UserProfile } from '../../core/user/models/user.model';
 import { findLocalImage } from '../destinations/services/destinations.service';
 import { 
@@ -37,6 +38,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   private paymentService = inject(PaymentService);
   private tokenStorage = inject(TokenStorageService);
   private userService = inject(UserService);
+  private feedbackService = inject(FeedbackService);
 
   draft = signal<CheckoutDraft | null>(null);
   currentReservation = signal<ReservationResponse | null>(null);
@@ -283,10 +285,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     this.reservationService.getReservationById(id).subscribe({
       next: (res) => {
         this.currentReservation.set(res);
-        const alreadySubmitted = typeof localStorage !== 'undefined' && localStorage.getItem('horizon_checkout_csat_' + res.reservationId) === 'true';
-        if (typeof localStorage !== 'undefined') {
-          this.hasSubmittedCheckoutCsat.set(alreadySubmitted);
-        }
+        const alreadySubmitted = this.feedbackService.hasSubmittedCheckoutCsat(res.reservationId);
+        this.hasSubmittedCheckoutCsat.set(alreadySubmitted);
         this.isLoading.set(false);
         if ((res.status === 'CONFIRMADA' || res.status === 'CONCLUIDA') && !alreadySubmitted) {
           setTimeout(() => {
@@ -304,10 +304,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   onCheckoutCsatSubmitted(): void {
     this.hasSubmittedCheckoutCsat.set(true);
     this.isCsatModalOpen.set(false);
-    const resId = this.currentReservation()?.reservationId;
-    if (resId && typeof localStorage !== 'undefined') {
-      localStorage.setItem(`horizon_checkout_csat_${resId}`, 'true');
-    }
+    this.feedbackService.markCheckoutCsatSubmitted(this.currentReservation()?.reservationId);
   }
 
   private initPassengersForm(count: number): void {
@@ -676,10 +673,8 @@ export class CheckoutComponent implements OnInit, OnDestroy {
               (updated.returnFlight as any).seatClass = previousReturnClass;
             }
             this.currentReservation.set(updated);
-            const alreadySubmitted = typeof localStorage !== 'undefined' && localStorage.getItem('horizon_checkout_csat_' + (updated.reservationId || res.reservationId)) === 'true';
-            if (typeof localStorage !== 'undefined') {
-              this.hasSubmittedCheckoutCsat.set(alreadySubmitted);
-            }
+            const alreadySubmitted = this.feedbackService.hasSubmittedCheckoutCsat(updated.reservationId || res.reservationId);
+            this.hasSubmittedCheckoutCsat.set(alreadySubmitted);
             this.isProcessing.set(false);
             this.successMessage.set(null);
             if (!alreadySubmitted) {

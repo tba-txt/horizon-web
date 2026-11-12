@@ -5,6 +5,7 @@ import {
   inject, 
   signal, 
   computed, 
+  effect,
   ElementRef, 
   ViewChild, 
   NgZone 
@@ -12,6 +13,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../core/user/services/user.service';
 import { AuthService } from '../../../core/auth/services/auth.service';
+import { TokenStorageService } from '../../../core/auth/services/token-storage.service';
 
 @Component({
   selector: 'app-custom-cursor',
@@ -23,34 +25,47 @@ import { AuthService } from '../../../core/auth/services/auth.service';
 export class CustomCursorComponent implements OnInit, OnDestroy {
   private userService = inject(UserService);
   private authService = inject(AuthService);
+  private tokenStorage = inject(TokenStorageService);
   private ngZone = inject(NgZone);
 
   @ViewChild('cursorContainer') cursorRef?: ElementRef<HTMLElement>;
 
   isEnabled = signal<boolean>(false);
 
+  constructor() {
+    // Reage imediatamente quando o usuário loga ou desloga
+    effect(() => {
+      const logged = this.authService.isLoggedIn();
+      if (logged) {
+        this.userService.loadProfileIfNeeded();
+      }
+    });
+  }
+
   displayName = computed<string>(() => {
+    // 1. Prioridade: Perfil do usuário já em memória
     const user = this.userService.currentUser();
     if (user) {
-      if (user.socialName && user.socialName.trim().length > 0) {
-        return this.formatName(user.socialName);
-      }
-      if (user.name && user.name.trim().length > 0) {
-        return this.formatName(user.name);
-      }
+      return this.formatName(user.socialName, user.name);
     }
 
+    // 2. Cache persistido no localStorage (recuperação imediata em refresh de página)
     if (typeof localStorage !== 'undefined') {
-      const cachedName = localStorage.getItem('horizon_user_name');
-      if (cachedName && cachedName.trim().length > 0) {
-        return this.formatName(cachedName);
+      const cached = localStorage.getItem('horizon_user_name');
+      if (cached && cached.trim().length > 0) {
+        return this.formatName(undefined, cached);
       }
     }
 
+    // 3. Claims no token JWT (disponível instantaneamente no momento do login)
     if (this.authService.isLoggedIn()) {
-      return 'Viajante';
+      const claims = this.tokenStorage.getUserClaims();
+      if (claims && (claims.socialName || claims.name)) {
+        return this.formatName(claims.socialName, claims.name);
+      }
     }
 
+    // Conta desconhecida / visitante
     return 'Explorador';
   });
 
@@ -151,13 +166,19 @@ export class CustomCursorComponent implements OnInit, OnDestroy {
     }
   }
 
-  private formatName(name: string): string {
-    const clean = name.trim();
-    if (!clean) return 'Explorador';
-    const first = clean.split(' ')[0];
-    if (first.length > 15) {
-      return first.slice(0, 14) + '…';
+  /**
+   * Regra estrita:
+   * 1. Usa o Nome Social (se preenchido e não vazio)
+   * 2. Caso contrário (if == null), usa o Nome Normal
+   * 3. Limite de no máximo 10 caracteres; se passar, adiciona "..." no final
+   */
+  private formatName(socialName?: string | null, name?: string | null): string {
+    const raw = (socialName?.trim() || name?.trim() || '').trim();
+    if (!raw) return 'Explorador';
+
+    if (raw.length > 10) {
+      return raw.slice(0, 10) + '...';
     }
-    return first;
+    return raw;
   }
 }

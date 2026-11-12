@@ -420,12 +420,12 @@ html.a11y-high-contrast:not([data-theme='dark']) {
   .sidebar-user-name,
   .view-header-title,
   .a11y-block-title,
-  h1:not(.text-white):not([class*='text-white']),
-  h2:not(.text-white):not([class*='text-white']),
-  h3:not(.text-white):not([class*='text-white']):not(.dest-title),
-  h4:not(.text-white):not([class*='text-white']),
-  h5:not(.text-white):not([class*='text-white']),
-  h6:not(.text-white):not([class*='text-white']) {
+  h1:not(.text-white):not([class*='text-white']):not(.dest-title):not(.card-3d-title),
+  h2:not(.text-white):not([class*='text-white']):not(.dest-title):not(.card-3d-title),
+  h3:not(.text-white):not([class*='text-white']):not(.dest-title):not(.card-3d-title),
+  h4:not(.text-white):not([class*='text-white']):not(.dest-title):not(.card-3d-title),
+  h5:not(.text-white):not([class*='text-white']):not(.dest-title):not(.card-3d-title),
+  h6:not(.text-white):not([class*='text-white']):not(.dest-title):not(.card-3d-title) {
     color: #000000 !important;
     font-weight: 800 !important;
   }
@@ -449,18 +449,36 @@ html.a11y-high-contrast:not([data-theme='dark']) {
       text-shadow: 0 2px 8px #000000, 0 0 12px #000000 !important;
     }
     .dest-title,
-    .card-3d-title {
+    .card-3d-title,
+    h3.card-3d-title {
       color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
       font-weight: 800 !important;
-      -webkit-text-stroke: 1px #000000;
+      -webkit-text-stroke: 1.5px #000000 !important;
       paint-order: stroke fill;
       text-shadow: 
-        -1.5px -1.5px 0 #000000,
-         1.5px -1.5px 0 #000000,
-        -1.5px  1.5px 0 #000000,
-         1.5px  1.5px 0 #000000,
+        -2px -2px 0 #000000,
+         2px -2px 0 #000000,
+        -2px  2px 0 #000000,
+         2px  2px 0 #000000,
          0 2px 8px #000000,
          0 0 12px #000000 !important;
+    }
+
+    .btn-discover {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      border: 2px solid #000000 !important;
+      text-shadow: none !important;
+      font-weight: 800 !important;
+      text-decoration: none !important;
+
+      &:hover,
+      &:focus-visible {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border: 2px solid #ffffff !important;
+      }
     }
   }
 
@@ -913,6 +931,39 @@ html.a11y-high-contrast[data-theme='dark'] {
     span, p {
       color: #ffffff !important;
       text-shadow: 0 2px 8px #000000, 0 0 12px #000000 !important;
+    }
+
+    .dest-title,
+    .card-3d-title,
+    h3.card-3d-title {
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important;
+      font-weight: 800 !important;
+      -webkit-text-stroke: 1.5px #000000 !important;
+      paint-order: stroke fill;
+      text-shadow: 
+        -2px -2px 0 #000000,
+         2px -2px 0 #000000,
+        -2px  2px 0 #000000,
+         2px  2px 0 #000000,
+         0 2px 8px #000000,
+         0 0 12px #000000 !important;
+    }
+
+    .btn-discover {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 2px solid #ffffff !important;
+      text-shadow: none !important;
+      font-weight: 800 !important;
+      text-decoration: none !important;
+
+      &:hover,
+      &:focus-visible {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 2px solid #000000 !important;
+      }
     }
   }
 

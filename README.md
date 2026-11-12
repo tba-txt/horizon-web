@@ -1,59 +1,72 @@
-# HorizonWeb
+# Horizon (Web)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.8.
+Interface Web Single Page Application (SPA) da plataforma **Horizon**, desenvolvida com **Angular 22** e arquitetura reativa moderna baseada em **Signals**, **Standalone Components** e alinhamento às diretrizes internacionais de acessibilidade digital **WCAG 2.1 (Nível AA)**.
 
-## Development server
+Consulte o [Repositório Principal e Documentação Completa da API](https://github.com/tba-txt/Horizon-Travel) para a visão de ponta a ponta da arquitetura do sistema.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
-```
+## 🚀 Começando
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Estas instruções permitirão executar o frontend localmente em modo de desenvolvimento conectado à API do Horizon.
 
-## Code scaffolding
+### 📋 Pré-requisitos
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+* **Node.js**: versão 22.x ou superior
+* **npm**: gerenciador de dependências incluso no Node.js
+* **Horizon API**: backend em execução (localmente em `http://localhost:8080` ou em nuvem no Render)
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🔧 Instalação
 
 ```bash
-ng generate --help
+# 1. Instalar as dependências do projeto
+npm install
+
+# 2. Iniciar o servidor de desenvolvimento
+npm start
 ```
 
-## Building
+Acesse `http://localhost:4200` no seu navegador. O aplicativo será recarregado automaticamente se você alterar qualquer um dos arquivos de origem.
 
-To build the project run:
+---
+
+## ⚙️ Executando os testes
+
+A suíte de testes unitários do frontend utiliza o test runner **Vitest**:
 
 ```bash
-ng build
+# Execução direta dos testes em modo single-run:
+npm test -- --watch=false
+
+# Ou através do script executável na raiz:
+.\executar-testes.bat
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Os testes cobrem:
+* **Autenticação e Sessão:** Gestão de tokens JWT, persistência em storage e logout seguro;
+* **Acessibilidade e Usabilidade:** Suporte a alto contraste, escalonamento responsivo de tipografia e controles com Web Speech API nativa;
+* **Quiz e Feed Gamificado:** Lógica de navegação wizard e submissão de respostas com feedback CSAT/NPS integrado.
 
-## Running unit tests
+---
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## 🛠️ Construído com
 
-```bash
-ng test
-```
+* [Angular 22](https://angular.dev/) - Framework SPA reativo
+* [TypeScript 6](https://www.typescriptlang.org/) - Tipagem estática
+* [Vitest](https://vitest.dev/) - Testes unitários de alta performance
+* [Bootstrap 5](https://getbootstrap.com/) & [Motion](https://motion.dev/) - Sistema de grid responsivo e microinterações fluidas
+* [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API) - Acessibilidade assistiva integrada
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## ✒️ Autores
 
-```bash
-ng e2e
-```
+* **Gabriel Santana** (*Gabriel Oliveira de Santana*) - [tba-txt](https://github.com/tba-txt)
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
+## 📄 Licença
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Este projeto está sob a licença **MIT** para fins acadêmicos e de portfólio.

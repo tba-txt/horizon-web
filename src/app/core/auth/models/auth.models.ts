@@ -9,6 +9,8 @@ export interface GoogleLoginRequest {
 
 export interface LoginResponse {
   token: string;
+  name?: string;
+  socialName?: string;
 }
 
 export interface User {

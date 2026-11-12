@@ -55,6 +55,22 @@ export class TokenStorageService {
     }
   }
 
+  public getUserClaims(): { name?: string; socialName?: string } | null {
+    const token = this.getToken();
+    if (!token) return null;
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+      return {
+        name: payload.name || undefined,
+        socialName: payload.socialName || undefined
+      };
+    } catch {
+      return null;
+    }
+  }
+
   public clearNewUserLocalCache(userId: string | number): void {
     if (typeof localStorage === 'undefined' || !userId) return;
     localStorage.removeItem(`userInteractions_${userId}`);
@@ -64,6 +80,10 @@ export class TokenStorageService {
     localStorage.removeItem(`articleRead_${userId}`);
     localStorage.removeItem(`quizCompleted_${userId}`);
     localStorage.removeItem(`horizonCoupon_${userId}`);
+    localStorage.removeItem(`horizon_quiz_csat_submitted_${userId}`);
+    localStorage.removeItem(`horizon_submitted_feedbacks_${userId}`);
+    localStorage.removeItem('horizon_quiz_csat_submitted');
+    localStorage.removeItem('horizon_submitted_feedbacks');
   }
 
   public clearStorage(): void {
@@ -85,6 +105,8 @@ export class TokenStorageService {
     localStorage.removeItem('userInteractions_guest');
     localStorage.removeItem('interactedPosts_guest');
     localStorage.removeItem('triviaSelection_guest');
+    localStorage.removeItem('horizon_quiz_csat_submitted');
+    localStorage.removeItem('horizon_submitted_feedbacks');
     localStorage.removeItem('horizon_user_profile');
     localStorage.removeItem('horizon_user_name');
     localStorage.removeItem(TOKEN_KEY);

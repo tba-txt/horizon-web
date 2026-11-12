@@ -284,14 +284,53 @@
     border: 2px solid #ffffff !important;
     color: #ffffff !important;
   }
+
+  /* Botão Descubra em alto contraste: Legibilidade total preto no branco com borda nítida */
+  .btn-discover {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #000000 !important;
+    text-shadow: none !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+
+    &:hover,
+    &:focus-visible {
+      background-color: #000000 !important;
+      color: #ffffff !important;
+      border: 2px solid #ffffff !important;
+    }
+  }
+}
+
+:host-context(html.a11y-high-contrast[data-theme="dark"]) {
+  .btn-discover {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border: 2px solid #ffffff !important;
+    text-shadow: none !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+
+    &:hover,
+    &:focus-visible {
+      background-color: #ffffff !important;
+      color: #000000 !important;
+      border: 2px solid #000000 !important;
+    }
+  }
 }
 
 .btn-discover {
   background: transparent;
   border: none;
+  color: #ffffff;
+  text-decoration: underline;
+  transition: all 0.2s ease;
   
   &:hover {
     color: #e2e8f0 !important;
+    text-decoration: underline;
   }
 }
 

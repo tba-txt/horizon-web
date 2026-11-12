@@ -46,8 +46,8 @@ export class UserService {
     } catch {}
   }
 
-  public loadProfileIfNeeded(): void {
-    if (this.currentUser()) return;
+  public loadProfileIfNeeded(force: boolean = false): void {
+    if (!force && this.currentUser()) return;
     this.getProfile().subscribe({
       error: () => {}
     });

@@ -133,13 +133,11 @@ export class FeedbackModalComponent {
 
   checkAlreadySubmitted(): void {
     if (this.mode() === 'CSAT' && this.taskContext() === 'QUIZ') {
-      const submitted = localStorage.getItem('horizon_quiz_csat_submitted') === 'true';
-      this.isAlreadySubmitted.set(submitted);
+      this.isAlreadySubmitted.set(this.feedbackService.hasSubmittedQuizCsat());
       return;
     }
     if (this.mode() === 'CSAT' && this.taskContext() === 'CHECKOUT' && this.reservationId()) {
-      const submitted = localStorage.getItem('horizon_checkout_csat_' + this.reservationId()) === 'true';
-      if (submitted) {
+      if (this.feedbackService.hasSubmittedCheckoutCsat(this.reservationId())) {
         this.isAlreadySubmitted.set(true);
         return;
       }
@@ -226,10 +224,10 @@ export class FeedbackModalComponent {
 
   private recordCompletion(): void {
     if (this.mode() === 'CSAT' && this.taskContext() === 'QUIZ') {
-      localStorage.setItem('horizon_quiz_csat_submitted', 'true');
+      this.feedbackService.markQuizCsatSubmitted();
     }
     if (this.mode() === 'CSAT' && this.taskContext() === 'CHECKOUT' && this.reservationId()) {
-      localStorage.setItem('horizon_checkout_csat_' + this.reservationId(), 'true');
+      this.feedbackService.markCheckoutCsatSubmitted(this.reservationId());
     }
   }
 

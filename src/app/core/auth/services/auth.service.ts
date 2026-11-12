@@ -9,6 +9,7 @@ import {
   ResetPasswordRequest
 } from '../models/auth.models';
 import { TokenStorageService } from './token-storage.service';
+import { UserService } from '../../user/services/user.service';
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -17,6 +18,7 @@ import { environment } from '../../../../environments/environment';
 export class AuthService {
   private http = inject(HttpClient);
   private tokenStorage = inject(TokenStorageService);
+  private userService = inject(UserService);
   
   private readonly apiUrl = environment.apiUrl;
 
@@ -35,7 +37,12 @@ export class AuthService {
       tap(response => {
         if (response?.token) {
           this.tokenStorage.saveToken(response.token, rememberMe);
+          const chosenName = response.socialName?.trim() || response.name?.trim();
+          if (chosenName) {
+            localStorage.setItem('horizon_user_name', chosenName);
+          }
           this.isLoggedIn.set(true);
+          this.userService.loadProfileIfNeeded(true);
         }
       })
     );
@@ -46,7 +53,12 @@ export class AuthService {
       tap(response => {
         if (response?.token) {
           this.tokenStorage.saveToken(response.token, rememberMe);
+          const chosenName = response.socialName?.trim() || response.name?.trim();
+          if (chosenName) {
+            localStorage.setItem('horizon_user_name', chosenName);
+          }
           this.isLoggedIn.set(true);
+          this.userService.loadProfileIfNeeded(true);
         }
       })
     );
@@ -72,6 +84,7 @@ export class AuthService {
 
   public logout(): void {
     this.tokenStorage.clearStorage();
+    this.userService.clearUser();
     this.isLoggedIn.set(false);
   }
 }
